@@ -7,6 +7,8 @@
  * This class can represent the coordinates of each grid point.
  ********************************************/
 
+ // change
+
 public class Coordinate {
     private int x;
     private int y;
