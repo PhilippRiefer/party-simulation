@@ -1,12 +1,7 @@
 package Environment;
 
-import AvatarInterface.*;
-
 import java.awt.Color;
 import java.util.ArrayList;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /**
  * The Environment class represents the environment in which the party
@@ -23,46 +18,24 @@ public class Environment {
      */
     public Environment() {
         this.model = new Room(20, 20);
+   
         System.out.println("Room constructed");
         this.view = new SimulationGUI();
+        view.repaint();
         System.out.println("View constructed");
-
-        this.view.addSlideListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int value = view.getValue();
-                switch (value) {
-                    case 1: // Zoom in
-                        System.out.println("Size changed to small");
-                        view.repaint(value);
-                        model.updateRoom(view.getNumCols(), view.getNumRows());
-                        System.out.println(String.valueOf(view.getNumCols()));
-                        break;
-                    case 2: // original
-                        System.out.println("Size changed to medium");
-                        view.repaint(value);
-                        break;
-                    case 3: // Zoom out
-                        System.out.println("Size changed to large");
-                        view.repaint(value);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
     }
 
     /**
      * Places an avatar in the room.
      * 
-     * @param avatarId the ID of the avatar to be placed
+     * @param avatarID the ID of the avatar to be placed
      */
-    public void placeAvatar(int avatarId) {
-        Coordinate avatarCoordinate = model.findPlaceForAvatar(avatarId);
+    public void placeAvatar(int avatarID) {
+        Coordinate avatarCoordinate = model.findPlaceForAvatar(avatarID);
         if (avatarCoordinate != null) {
-            view.paintAvatar(avatarCoordinate, Color.GREEN);
+            view.paintAvatar(avatarCoordinate, Color.BLUE);
         }
+        System.out.println("Placed Avatar with ID " + avatarID + " at X: " + avatarCoordinate.getX() + ", Y: " + avatarCoordinate.getY());
     }
 
     /**
@@ -88,16 +61,21 @@ public class Environment {
         if (currentPos == null) {
             throw new IllegalArgumentException("Avatar " + avatarID + " does not exist in the room.");
         }
-        System.out.println("getAvatarLocation(Avatar " + avatarID + ") returns: X: " + currentPos.getX() + ", Y: " + currentPos.getY());
 
-        Coordinate newPos = switch (dir) {
-            case UP -> new Coordinate(currentPos.getX() - 1, currentPos.getY());
-            case DOWN -> new Coordinate(currentPos.getX() + 1, currentPos.getY());
-            case LEFT -> new Coordinate(currentPos.getX(), currentPos.getY() - 1);
-            case RIGHT -> new Coordinate(currentPos.getX(), currentPos.getY() + 1);
-            default -> currentPos; // Stay in place for default case
-        };
+        switch (dir){
+            case UP -> currentPos.setY(currentPos.getY() - 1);
+            case DOWN -> currentPos.setY(currentPos.getY() + 1);
+            case LEFT -> currentPos.setX(currentPos.getX() - 1);
+            case RIGHT -> currentPos.setX(currentPos.getX() + 1);
+            default -> {
+            }
 
-        return model.tryToPlaceAvatar(avatarID, newPos);
+        }
+
+        if (model.tryToPlaceAvatar(avatarID, currentPos)) {
+            view.paintAvatar(currentPos, Color.BLUE);
+            return true;
+        }
+        return false;
     }
 }

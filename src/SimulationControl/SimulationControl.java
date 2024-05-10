@@ -1,5 +1,6 @@
 package SimulationControl;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import Environment.*;
 import AvatarInterface.*;
@@ -38,6 +39,10 @@ public class SimulationControl {
                 e.printStackTrace();
             }
         }
+
+        for (SuperAvatar avatar : avatars){
+            environment.placeAvatar(avatar.getAvatarID());
+        }
     }
 
     /**
@@ -51,6 +56,7 @@ public class SimulationControl {
             Direction dir = avatar.yourTurn(si);
             boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir);
             avatar.setHasMoved(hasMoved);
+            System.out.println("Avatar has moved = " + hasMoved);
         }
     }
 }

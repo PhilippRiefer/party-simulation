@@ -58,6 +58,4 @@ public abstract class SuperAvatar implements AvatarInterface {
 		public void setHasMoved(boolean couldMove) {
 			this.couldMove = couldMove;
 		}
-		
-		
 }

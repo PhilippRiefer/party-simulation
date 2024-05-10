@@ -33,7 +33,8 @@ public class Main {
             }
         }
         scanner.close();
-
-        new SimulationControl(perceptionRange).loopThroughAvatars();
+        
+        SimulationControl simcontrol = new SimulationControl(perceptionRange);
+        simcontrol.loopThroughAvatars();
     }
 }

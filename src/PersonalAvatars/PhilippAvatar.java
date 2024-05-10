@@ -1,8 +1,9 @@
 package PersonalAvatars;
 
-import java.util.ArrayList;
-import Environment.*;
 import AvatarInterface.*;
+import Environment.*;
+import java.util.ArrayList;
+
 /**
  * Represents Philipps personal Avatar, a type of avatar that extends the SuperAvatar class.
  */
@@ -41,14 +42,19 @@ public class PhilippAvatar extends SuperAvatar {
 
         switch (directionNumber) {
             case 0:
+                System.out.println("Philipp (" + getAvatarID() + ") wants to go left");
                 return Direction.LEFT;
             case 1:
+                System.out.println("Philipp (" + getAvatarID() + ") wants to go right");
                 return Direction.RIGHT;
             case 2:
+                System.out.println("Philipp (" + getAvatarID() + ") wants to go up");
                 return Direction.UP;
             case 3:
+                System.out.println("Philipp (" + getAvatarID() + ") wants to go down");
                 return Direction.DOWN;
             default:
+                System.out.println("Philipp (" + getAvatarID() + ") wants to stay");
                 return Direction.STAY; // Safety net, though unnecessary as directionNumber is bound by 0-3
         }
     }
@@ -72,4 +78,5 @@ public class PhilippAvatar extends SuperAvatar {
     public void setPerceptionRange(int perceptionRange) {
         super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
     }
+
 }

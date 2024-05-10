@@ -3,10 +3,6 @@ package Environment;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.awt.Color;
-import java.awt.GridLayout;
-import javax.swing.*;
-import AvatarInterface.*;
 
 /**
  * Manages the room environment for avatars in a simulation.
@@ -176,6 +172,7 @@ public class Room {
 
         // Update HashMap avatarsLocations with key avatarID and value targetCoordinate
         avatarsLocations.put(avatarID, targetCoordinate);
+        
     }
 
     /**
@@ -299,12 +296,13 @@ public class Room {
         }
     }
 
+    
     /**
-     * Tries to move the avatar to the specified position.
+     * Tries to place an avatar in the room at the specified position.
      * 
-     * @param avatarID the ID of the avatar to be moved
-     * @param newPos   the new position to move the avatar to
-     * @return true if the avatar was successfully moved, false otherwise
+     * @param avatarID the ID of the avatar to be placed
+     * @param newPos the new position where the avatar should be placed
+     * @return true if the avatar was successfully placed, false otherwise
      */
     public boolean tryToPlaceAvatar(int avatarID, Coordinate newPos) {
         if (isValidCoordinate(newPos) &&

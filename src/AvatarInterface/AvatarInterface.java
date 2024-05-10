@@ -1,7 +1,7 @@
 package AvatarInterface;
 
-import java.util.ArrayList;
 import Environment.*;
+import java.util.ArrayList;
 
 /**
  * The AvatarInterface interface represents an avatar in a simulation.
