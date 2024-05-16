@@ -56,26 +56,65 @@ public class Environment {
      * @param dir      the direction in which to move the avatar
      * @return true if the avatar was successfully moved, false otherwise
      */
+    // public boolean moveAvatar(int avatarID, Direction dir) {
+    //     Coordinate currentPos = model.getAvatarLocation(avatarID);
+    //     if (currentPos == null) {
+    //         throw new IllegalArgumentException("Avatar " + avatarID + " does not exist in the room.");
+    //     }
+        
+
+    //     switch (dir){
+    //         case UP -> currentPos.setY(currentPos.getY() - 1);
+    //         case DOWN -> currentPos.setY(currentPos.getY() + 1);
+    //         case LEFT -> currentPos.setX(currentPos.getX() - 1);
+    //         case RIGHT -> currentPos.setX(currentPos.getX() + 1);
+    //         default -> {
+    //         }
+
+    //     }
+
+    //     if (model.tryToPlaceAvatar(avatarID, currentPos)) {
+    //         view.paintAvatar(currentPos, Color.BLUE);
+    //         return true;
+    //     }
+    //     return false;
+    // }
     public boolean moveAvatar(int avatarID, Direction dir) {
         Coordinate currentPos = model.getAvatarLocation(avatarID);
         if (currentPos == null) {
             throw new IllegalArgumentException("Avatar " + avatarID + " does not exist in the room.");
         }
-
-        switch (dir){
+    
+        // Save the current position
+        int oldX = currentPos.getX();
+        int oldY = currentPos.getY();
+    
+        // Update the coordinates based on the direction
+        switch (dir) {
             case UP -> currentPos.setY(currentPos.getY() - 1);
             case DOWN -> currentPos.setY(currentPos.getY() + 1);
             case LEFT -> currentPos.setX(currentPos.getX() - 1);
             case RIGHT -> currentPos.setX(currentPos.getX() + 1);
             default -> {
+                return false;
             }
-
         }
-
+    
+        // Check if the new position is valid and try to place the avatar there
         if (model.tryToPlaceAvatar(avatarID, currentPos)) {
-            view.paintAvatar(currentPos, Color.BLUE);
+            // Erase the avatar from the old position
+            view.eraseAvatar(new Coordinate(oldX, oldY));
+    
+            // Paint the avatar at the new position
+            view.paintAvatar(currentPos, Color.GREEN);
+            
             return true;
+        } else {
+            // If placing failed, revert the position change
+            currentPos.setX(oldX);
+            currentPos.setY(oldY);
+            return false;
         }
-        return false;
     }
+    
 }

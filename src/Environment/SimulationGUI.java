@@ -166,4 +166,24 @@ public class SimulationGUI {
         cellToRepaint.setBackground(color);
         cellToRepaint.repaint();
     }
+
+    public void eraseAvatar(Coordinate coordinate) {
+        repaintCellToDefault(coordinate);
+    }
+
+    private void repaintCellToDefault(Coordinate coordinate) {
+        // Get the cell to repaint
+        JPanel cellToRepaint = gridCells[coordinate.getX()][coordinate.getY()];
+        
+        // Set the cell's background color to the default color (white)
+        cellToRepaint.setBackground(Color.WHITE);
+        //cellToRepaint.setBackground(Color.GRAY);
+        
+        // Set the cell's border to the default border (light gray)
+        cellToRepaint.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        
+        // Repaint the cell to reflect the changes
+        cellToRepaint.repaint();
+    }
+    
 }

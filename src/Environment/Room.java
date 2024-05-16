@@ -174,6 +174,17 @@ public class Room {
         avatarsLocations.put(avatarID, targetCoordinate);
         
     }
+    // public boolean placeAvatar(int avatarID, Coordinate targetCoordinate){
+    //     if (isValidCoordinate(targetCoordinate)) { // Check if the new position is valid
+    //         Coordinate currentPos = avatarsLocations.get(avatarID); // Get current position
+    //         if (currentPos != null) {
+    //             avatarsLocations.put(avatarID, targetCoordinate); // Update the avatar's position in the model
+    //             return true;
+    //         }
+    //     }
+
+    //     return false;
+    // }
 
     /**
      * Checks if a coordinate is occupied by either an OBSTACLE or another AVATAR.
