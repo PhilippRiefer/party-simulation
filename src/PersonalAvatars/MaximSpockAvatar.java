@@ -6,24 +6,23 @@ import AvatarInterface.SuperAvatar;
 import Environment.Direction;
 import Environment.SpaceInfo;
 
-public class MaximAvatar_Spock extends SuperAvatar {
+public class MaximSpockAvatar extends SuperAvatar {
+     
 
-    public MaximAvatar_Spock(int id, int perceptionRange) {
+
+    // perception Range should be higher than of a human!
+    public MaximSpockAvatar(int id, int perceptionRange) {
         super(id, perceptionRange);
-        //TODO Auto-generated constructor stub
     }
 
     /**
-     * Determines the direction for the avatar's next turn based on the spaces within its perception range.
-     * This method can be overridden to implement a more sophisticated strategy.
-     *
-     * @param spacesInRange the list of spaces within the avatar's perception range
-     * @return the direction for the avatar's next turn
-     */
+    * Determines the direction for the avatar's next turn based on the spaces within its perception range.
+    *
+    * @return the direction for the avatar's next turn
+    */
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-        // Implement a more sophisticated strategy using spacesInRange
-        // For now, let's continue to move randomly as a placeholder
+        // If no logical Direction is available - move in any Direction
         return randomDirection();
     }
 
