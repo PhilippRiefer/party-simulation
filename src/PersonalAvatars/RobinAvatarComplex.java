@@ -32,8 +32,8 @@ public class RobinAvatarComplex extends SuperAvatar {
     }
 
 
-    private int environmentWidth;
-    private int environmentHeight;
+    private final int environmentWidth = 20;
+    private final int environmentHeight = 20;
     private Enum [][][] environment;
     private Coordinate position;
     private State state;
@@ -44,7 +44,11 @@ public class RobinAvatarComplex extends SuperAvatar {
 
     public RobinAvatarComplex(int id) {
         super(id, 1);
-        //TODO Auto-generated constructor stub
+        environment = new Enum[2*environmentWidth+1][2*environmentHeight+1][2];
+        position = new Coordinate(environmentWidth, environmentHeight);
+        state = State.FIND_WALL;
+        lastDirection = Direction.UP;
+        destination = new Coordinate(0, 0);
     }
 
     @Override
@@ -70,6 +74,10 @@ public class RobinAvatarComplex extends SuperAvatar {
         if(coordinate.getX() > 0)
             return Direction.RIGHT;
         return Direction.STAY;
+    }
+
+    private void updateEnvironment(ArrayList<SpaceInfo> spacesInRange){
+
     }
 
 }
