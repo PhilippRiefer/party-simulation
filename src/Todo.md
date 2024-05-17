@@ -3,7 +3,6 @@
 ## Environment
 
 - Add objects
-- Rectify the room size
 
 ## Environment / Simulation Control
 

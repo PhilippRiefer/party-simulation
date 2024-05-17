@@ -2,7 +2,6 @@ package PersonalAvatars;
 
 import AvatarInterface.*;
 import Environment.*;
-
 import java.awt.Color;
 import java.util.ArrayList;
 
