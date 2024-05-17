@@ -17,18 +17,4 @@ public interface AvatarInterface {
    */
   abstract Direction yourTurn(ArrayList<SpaceInfo> spacesInRange);
   
-  /**
-   * Retrieves the perception range of the avatar.
-   * 
-   * @return the perception range of the avatar
-   */
-  abstract int getPerceptionRange();
-  
-  /**
-   * Sets the perception range of the avatar.
-   * 
-   * @param perceptionRange the new perception range of the avatar
-   */
-  abstract void setPerceptionRange(int perceptionRange);
-  
 }

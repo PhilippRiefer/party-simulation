@@ -9,6 +9,8 @@ package PersonalAvatars;
  ********************************************/
 
 import Environment.*;
+
+import java.awt.Color;
 import java.util.ArrayList;
 import AvatarInterface.SuperAvatar;
 
@@ -23,8 +25,8 @@ public class OleAvatar extends SuperAvatar {
     // Object with personal avatar id and
     // perception range of the avatar
     // ------------------------------------
-    public OleAvatar(int id, int perceptionRange) {
-        super(id, perceptionRange);
+    public OleAvatar(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, color); // leverage the super class to handle ID and perceptionRange
     }
 
     @Override

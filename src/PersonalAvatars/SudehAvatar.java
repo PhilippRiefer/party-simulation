@@ -10,13 +10,14 @@ package PersonalAvatars;
 import AvatarInterface.SuperAvatar;
 import Environment.Direction;
 import Environment.SpaceInfo;
+
+import java.awt.Color;
 import java.util.ArrayList;
 
 public class SudehAvatar extends SuperAvatar {
 
-    public SudehAvatar(int id, int perceptionRange) {
-        super(id, perceptionRange);
-        
+    public SudehAvatar(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, color); // leverage the super class to handle ID and perceptionRange
     }
 
     // @Override

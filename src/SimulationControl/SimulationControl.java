@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import Environment.*;
 import PersonalAvatars.SudehAvatar;
 import AvatarInterface.*;
-//import org.reflections.Reflections;
+import java.util.Random;
+import org.reflections.Reflections;
 
 /**
  * The SimulationControl class controls the simulation of avatars in an
@@ -31,33 +32,20 @@ public class SimulationControl {
         environment = new Environment();
         System.out.println("environment created");
 
-        /*Reflections reflections = new Reflections("PersonalAvatars");
+        Reflections reflections = new Reflections("PersonalAvatars");
 
         for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
             try {
-                SuperAvatar avatar = personalAvatarClass.getDeclaredConstructor(int.class, int.class)
-                        .newInstance(nextAvatarID++, perceptionRange);
+                SuperAvatar avatar = personalAvatarClass.getDeclaredConstructor(int.class, int.class, Color.class)
+                        .newInstance(nextAvatarID++, perceptionRange, new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255), 255));
                 avatars.add(avatar);
                 String avatarName = avatar.getClass().getSimpleName().replace("Avatar", "");
                 System.out.println("Added " + avatarName + ": ID: " + avatar.getAvatarID() + ", Perception Range: "
-                        + avatar.getPerceptionRange());
+                        + avatar.getPerceptionRange() + ", Color: " + avatar.getAvatarColor());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }*/
-
-        SudehAvatar s1 = new SudehAvatar(nextAvatarID++, perceptionRange);
-        avatars.add(s1);
-        SudehAvatar s2 = new SudehAvatar(nextAvatarID++, perceptionRange);
-        avatars.add(s2);
-        SudehAvatar s3 = new SudehAvatar(nextAvatarID++, perceptionRange);
-        avatars.add(s3);
-        SudehAvatar s4 = new SudehAvatar(nextAvatarID++, perceptionRange);
-        avatars.add(s4);
-        SudehAvatar s5 = new SudehAvatar(nextAvatarID++, perceptionRange);
-        avatars.add(s5);
-        SudehAvatar s6 = new SudehAvatar(nextAvatarID++, perceptionRange);
-        avatars.add(s6);
+        }
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
@@ -80,13 +68,17 @@ public class SimulationControl {
      */
     public void loopThroughAvatars() {
         for (SuperAvatar avatar : avatars) {
-            ArrayList<SpaceInfo> si = environment.getAdjacentToAvatar(avatar.getAvatarID(),
-                    avatar.getPerceptionRange());
-            Direction dir = avatar.yourTurn(si);
-            boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir);
-            avatar.setHasMoved(hasMoved);
-            System.out.println("Avatar has moved = " + hasMoved);
-            wait(1);
+            try {
+                ArrayList<SpaceInfo> si = environment.getAdjacentToAvatar(avatar.getAvatarID(), avatar.getPerceptionRange());
+                Direction dir = avatar.yourTurn(si);
+                boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
+                avatar.setHasMoved(hasMoved);
+                System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
+                wait(100);
+            } catch (Exception e) {
+                System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 }
