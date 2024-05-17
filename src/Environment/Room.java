@@ -27,14 +27,14 @@ public class Room {
      */
     public Room(int numCols, int numRows) {
 
-        this.numRows = numRows;
-        this.numCols = numCols;
-        cellsOccupancy = new ArrayList<>(numRows);
+        this.numRows = numRows;//y
+        this.numCols = numCols;//x
+        cellsOccupancy = new ArrayList<>(numCols);
         // Initialize the rows
-        for (int i = 0; i < numRows; i++) {
-            cellsOccupancy.add(new ArrayList<>(numCols));
+        for (int i = 0; i < numCols; i++) {
+            cellsOccupancy.add(new ArrayList<>(numRows));
             // Initialize the columns within each row
-            for (int j = 0; j < numCols; j++) {
+            for (int j = 0; j < numRows; j++) {
                 cellsOccupancy.get(i).add(SpaceType.EMPTY); // SpaceType.EMPTY is the default value for the moment
             }
         }
@@ -136,9 +136,9 @@ public class Room {
         int x = position.getX();
         int y = position.getY();
         return x >= 0
-                && x < numRows
+                && x < numCols
                 && y >= 0
-                && y < numCols;
+                && y <  numRows;
     }
 
     /**
@@ -316,8 +316,7 @@ public class Room {
      * @return true if the avatar was successfully placed, false otherwise
      */
     public boolean tryToPlaceAvatar(int avatarID, Coordinate newPos) {
-        if (isValidCoordinate(newPos) &&
-                isOccupied(newPos) == false) {
+        if (isValidCoordinate(newPos) && !isOccupied(newPos)) {
             placeAvatar(avatarID, newPos);
             return true;
         }

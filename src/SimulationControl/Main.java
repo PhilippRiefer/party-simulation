@@ -34,6 +34,6 @@ public class Main {
         // scanner.close();
         
         SimulationControl simcontrol = new SimulationControl(perceptionRange);
-        simcontrol.loopThroughAvatars();
+        while(true) simcontrol.loopThroughAvatars();
     }
 }
