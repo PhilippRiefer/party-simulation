@@ -7,11 +7,10 @@ package PersonalAvatars;
  * Description: personal avatar class which extends SuperAvatar...
  */
 
-import java.util.ArrayList;
-
 import AvatarInterface.SuperAvatar;
 import Environment.Direction;
 import Environment.SpaceInfo;
+import java.util.ArrayList;
 
 public class SudehAvatar extends SuperAvatar {
 
@@ -32,7 +31,6 @@ public class SudehAvatar extends SuperAvatar {
 
         //change this to an appropriate return
         return Direction.LEFT;
-        
     }
 
 }
