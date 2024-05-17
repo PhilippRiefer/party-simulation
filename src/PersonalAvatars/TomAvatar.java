@@ -3,6 +3,7 @@ package PersonalAvatars;
 import Environment.*;
 import java.util.ArrayList;
 import AvatarInterface.*;
+import java.awt.Color;
 
 public class TomAvatar extends SuperAvatar {
 
@@ -13,8 +14,8 @@ public class TomAvatar extends SuperAvatar {
     private int xDirection;
     private int yDirection;
 
-    public TomAvatar(int id) {
-        super(id);
+    public TomAvatar(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, color);
         this.mentalMap = new SpaceType[mapSizeX][mapSizeY];
         this.direction = Direction.STAY;
         this.xDirection = 0;
