@@ -2,7 +2,6 @@ package PersonalAvatars;
 
 import java.util.ArrayList;
 
-import AvatarInterface.State;
 import AvatarInterface.SuperAvatar;
 import Environment.Coordinate;
 import Environment.Direction;
@@ -11,11 +10,33 @@ import Environment.SpaceType;
 
 public class RobinAvatarComplex extends SuperAvatar {
 
+    enum State{
+        FIND_WALL,
+        FOLLOW_WALL,
+        FIND_EMPTY,
+        MOVE_TO_EMPTY
+    }
+
+    enum PersonalFieldType{
+        EMPTY(true),
+        WALKED(true),
+        WALL(false),
+        UNKNOWN(false),
+        REACHABLE(false);
+
+        private final boolean walkable;
+
+        PersonalFieldType(boolean walkable){
+            this.walkable = walkable;
+        }
+    }
+
+
     private int environmentWidth;
     private int environmentHeight;
-    private int [][][] environment;
+    private Enum [][][] environment;
     private Coordinate position;
-    private int state;
+    private State state;
     private Direction lastDirection;
     private Direction lastWall;
     private Coordinate destination;
