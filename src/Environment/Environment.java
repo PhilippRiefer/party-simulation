@@ -17,7 +17,7 @@ public class Environment {
      * Initializes the room and the simulation GUI.
      */
     public Environment() {
-        this.model = new Room(20, 20);
+        this.model = new Room(40, 20);
    
         System.out.println("Room constructed");
         this.view = new SimulationGUI();
@@ -87,6 +87,12 @@ public class Environment {
             }
 
             // Erase the avatar from the old position
+            try {
+                model.setSpace(new Coordinate(oldX, oldY), SpaceType.EMPTY);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             view.eraseAvatar(new Coordinate(oldX, oldY));
     
             // Paint the avatar at the new position
