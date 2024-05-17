@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Avatar_Interface/SimulationControl.Main",
+            "projectName": "party-simulation_6b7abf7f"
+        },
+        {
+            "type": "java",
+            "name": "Java Launch",
+            "request": "launch",
+            "mainClass": "SimulationControl.Main"
+        }
+    ]
+}
