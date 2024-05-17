@@ -56,29 +56,6 @@ public class Environment {
      * @param dir      the direction in which to move the avatar
      * @return true if the avatar was successfully moved, false otherwise
      */
-    // public boolean moveAvatar(int avatarID, Direction dir) {
-    //     Coordinate currentPos = model.getAvatarLocation(avatarID);
-    //     if (currentPos == null) {
-    //         throw new IllegalArgumentException("Avatar " + avatarID + " does not exist in the room.");
-    //     }
-        
-
-    //     switch (dir){
-    //         case UP -> currentPos.setY(currentPos.getY() - 1);
-    //         case DOWN -> currentPos.setY(currentPos.getY() + 1);
-    //         case LEFT -> currentPos.setX(currentPos.getX() - 1);
-    //         case RIGHT -> currentPos.setX(currentPos.getX() + 1);
-    //         default -> {
-    //         }
-
-    //     }
-
-    //     if (model.tryToPlaceAvatar(avatarID, currentPos)) {
-    //         view.paintAvatar(currentPos, Color.BLUE);
-    //         return true;
-    //     }
-    //     return false;
-    // }
     public boolean moveAvatar(int avatarID, Direction dir) {
         Coordinate currentPos = model.getAvatarLocation(avatarID);
         if (currentPos == null) {
