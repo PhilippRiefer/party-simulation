@@ -55,6 +55,7 @@ public class Environment {
      * @param avatarID the ID of the avatar to be moved
      * @param dir      the direction in which to move the avatar
      * @return true if the avatar was successfully moved, false otherwise
+     * @throws Exception 
      */
     public boolean moveAvatar(int avatarID, Direction dir) {
         Coordinate currentPos = model.getAvatarLocation(avatarID);
@@ -79,6 +80,12 @@ public class Environment {
     
         // Check if the new position is valid and try to place the avatar there
         if (model.tryToPlaceAvatar(avatarID, currentPos)) {
+            try {
+                model.setSpace(new Coordinate(oldX, oldY), SpaceType.EMPTY);
+            } catch (Exception e) {
+                System.out.println("Failed to set space to empty at " + oldX + ", " + oldY + ".");
+            }
+
             // Erase the avatar from the old position
             view.eraseAvatar(new Coordinate(oldX, oldY));
     

@@ -71,8 +71,8 @@ public class SimulationControl {
             Direction dir = avatar.yourTurn(si);
             boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir);
             avatar.setHasMoved(hasMoved);
-            System.out.println("Avatar has moved = " + hasMoved);
-            wait(1000);
+            System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
+            wait(300);
         }
     }
 }
