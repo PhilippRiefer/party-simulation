@@ -1,33 +1,92 @@
 package SimulationControl;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import Environment.*;
+import PersonalAvatars.SudehAvatar;
 import AvatarInterface.*;
+//import org.reflections.Reflections;
 
+/**
+ * The SimulationControl class controls the simulation of avatars in an
+ * environment.
+ * It manages the creation of avatars, their perception range, and their
+ * movement within the environment.
+ */
 public class SimulationControl {
 
-	private ArrayList<SuperAvatar> avatars = new ArrayList<SuperAvatar>();
-	private Environment environment;
-	
-	public SimulationControl() {
-		System.out.println("Hallo");
+    private ArrayList<SuperAvatar> avatars = new ArrayList<>();
+    private Environment environment;
+    private static int nextAvatarID = 0; // Static counter to ensure unique IDs
 
-		environment = new Environment();
+    /**
+     * Constructs a SimulationControl object with the specified perception range.
+     * Initializes the environment and creates avatars based on the available
+     * personal avatar classes.
+     *
+     * @param perceptionRange the perception range of the avatars
+     */
+    public SimulationControl(int perceptionRange) {
+        System.out.println("gonna create environment");
+        environment = new Environment();
+        System.out.println("environment created");
 
-		for (int i = 0; i < 12; i++){
-			avatars.add(new TestAvatar(i));
-		}
-		// avatars.add(new AvatarNasser(i+1));
-	}
-	
-	public void loopThroughAvatars() {
-		for (SuperAvatar avatar : avatars) {
-			ArrayList<SpaceInfo> si = environment.getAdjacentToAvatar(avatar.getAvatarID());
-			Direction dir = avatar.yourTurn(si);
-			// boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir);
-			// avatars.setHasMoved(hasMoved);
-			// Avatar mitteilen, ob er sich tatsächlich bewegt hat: hasMoved
-		}
-	}
-	
+        /*Reflections reflections = new Reflections("PersonalAvatars");
+
+        for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
+            try {
+                SuperAvatar avatar = personalAvatarClass.getDeclaredConstructor(int.class, int.class)
+                        .newInstance(nextAvatarID++, perceptionRange);
+                avatars.add(avatar);
+                String avatarName = avatar.getClass().getSimpleName().replace("Avatar", "");
+                System.out.println("Added " + avatarName + ": ID: " + avatar.getAvatarID() + ", Perception Range: "
+                        + avatar.getPerceptionRange());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }*/
+
+        SudehAvatar s1 = new SudehAvatar(nextAvatarID++, perceptionRange);
+        avatars.add(s1);
+        SudehAvatar s2 = new SudehAvatar(nextAvatarID++, perceptionRange);
+        avatars.add(s2);
+        SudehAvatar s3 = new SudehAvatar(nextAvatarID++, perceptionRange);
+        avatars.add(s3);
+        SudehAvatar s4 = new SudehAvatar(nextAvatarID++, perceptionRange);
+        avatars.add(s4);
+        SudehAvatar s5 = new SudehAvatar(nextAvatarID++, perceptionRange);
+        avatars.add(s5);
+        SudehAvatar s6 = new SudehAvatar(nextAvatarID++, perceptionRange);
+        avatars.add(s6);
+
+        for (SuperAvatar avatar : avatars) {
+            environment.placeAvatar(avatar.getAvatarID());
+        }
+    }
+
+    public static void wait(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    /**
+     * Loops through all the avatars and performs their turn in the simulation.
+     * Retrieves the adjacent space information for each avatar, determines their
+     * move direction,
+     * and updates their movement status in the environment.
+     */
+    public void loopThroughAvatars() {
+        for (SuperAvatar avatar : avatars) {
+            ArrayList<SpaceInfo> si = environment.getAdjacentToAvatar(avatar.getAvatarID(),
+                    avatar.getPerceptionRange());
+            Direction dir = avatar.yourTurn(si);
+            boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir);
+            avatar.setHasMoved(hasMoved);
+            System.out.println("Avatar has moved = " + hasMoved);
+            wait(1);
+        }
+    }
 }

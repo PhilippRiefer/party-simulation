@@ -1,40 +1,46 @@
-// package PersonalAvatars;
-// import java.util.ArrayList;
-// import AvatarInterface.*;
-// import Environment.SpaceType;
+package PersonalAvatars;
 
-// /*
-//  * Zufällige Bewegung vom Avatar
-//  * Bewegung vom Avatar in gezielte Richtung
-//  */
+import java.util.ArrayList;
+import Environment.*;
+import AvatarInterface.*;
 
-// public class NasserAvatar extends SuperAvatar {
+public class NasserAvatar extends SuperAvatar {
 
-//     public NasserAvatar(int id) {
-//         super(id); 
-//     }
+    public NasserAvatar(int id, int perceptionRange) {
+        super(id, perceptionRange); // leverage the super class to handle ID and perceptionRange
+    }
 
-//     @Override
-//     public Direction yourTurn(SpaceInfo[] si) {
-       
-//         int max = 4;
-// 		int min = 0;
-   
-// 		int directionNumber = (int) (Math.random() * ((max - min) + 1) + min);
+    @Override
+    public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
+        // Implement a more sophisticated strategy using spacesInRange
+        // For now, let's continue to move randomly as a placeholder
+        return randomDirection();
+    }
 
-// 		switch (directionNumber) {
-// 			case 0: return Direction.LEFT;
-// 			case 1: return Direction.RIGHT;
-// 			case 2: return Direction.UP;
-// 			case 3: return Direction.DOWN;
-// 			default: return Direction.STAY;
-// 		}
-        
-//     }
+    private Direction randomDirection() {
+        int directionNumber = (int) (Math.random() * 4);
 
-//     @Override
-//     public Direction yourTurn(ArrayList<SpaceType> si) {
-//         // TODO Auto-generated method stub
-//         throw new UnsupportedOperationException("Unimplemented method 'yourTurn'");
-//     }
-// }
+        switch (directionNumber) {
+            case 0:
+                return Direction.LEFT;
+            case 1:
+                return Direction.RIGHT;
+            case 2:
+                return Direction.UP;
+            case 3:
+                return Direction.DOWN;
+            default:
+                return Direction.STAY; // Safety net, though unnecessary as directionNumber is bound by 0-3
+        }
+    }
+
+    @Override
+    public int getPerceptionRange() {
+        return super.getPerceptionRange(); // Assuming SuperAvatar has a method to get the perception range
+    }
+
+    @Override
+    public void setPerceptionRange(int perceptionRange) {
+        super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
+    }
+}
