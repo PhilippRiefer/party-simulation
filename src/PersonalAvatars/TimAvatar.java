@@ -1,14 +1,15 @@
 package PersonalAvatars;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import Environment.*;
 import AvatarInterface.*;
 
 public class TimAvatar extends SuperAvatar { // implements AvatarInterface
 
-	public TimAvatar(int id, int perceptionRange) {
-		super(id, perceptionRange);
-	}
+	public TimAvatar(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, color); // leverage the super class to handle ID and perceptionRange
+    }
 
 	@Override
 	public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {

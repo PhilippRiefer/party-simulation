@@ -57,7 +57,7 @@ public class Environment {
      * @return true if the avatar was successfully moved, false otherwise
      * @throws Exception 
      */
-    public boolean moveAvatar(int avatarID, Direction dir) {
+    public boolean moveAvatar(int avatarID, Direction dir, Color color) {
         Coordinate currentPos = model.getAvatarLocation(avatarID);
         if (currentPos == null) {
             throw new IllegalArgumentException("Avatar " + avatarID + " does not exist in the room.");
@@ -96,7 +96,7 @@ public class Environment {
             view.eraseAvatar(new Coordinate(oldX, oldY));
     
             // Paint the avatar at the new position
-            view.paintAvatar(currentPos, Color.GREEN);
+            view.paintAvatar(currentPos, color);
             
             return true;
         } else {
