@@ -1,38 +1,66 @@
 package PersonalAvatars;
+
 import Environment.*;
-
 import java.util.ArrayList;
-
-import javax.swing.DropMode;
-
 import AvatarInterface.*;
-
 
 public class TomAvatar extends SuperAvatar {
 
+    private static final int mapSizeX = 200;
+    private static final int mapSizeY = 200;
+    private SpaceType[][] mentalMap;
+    private Direction direction;
+    private int xDirection;
+    private int yDirection;
 
     public TomAvatar(int id) {
         super(id);
+        this.mentalMap = new SpaceType[mapSizeX][mapSizeY];
+        this.direction = Direction.STAY;
+        this.xDirection = 0;
+        this.yDirection = 0;
     }
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
 
-   
-        for(SpaceInfo infos : spacesInRange){
-            if(infos.getType() == SpaceType.AVATAR){
-                Coordinate coordinateOfAvatar = infos.getRelativeToAvatarCoordinate();
-                if(coordinateOfAvatar.getY() < 0)
-                    return Direction.UP;
-                if(coordinateOfAvatar.getY() > 0)
-                    return Direction.DOWN;
-                if(coordinateOfAvatar.getX() < 0)
-                    return Direction.LEFT;
-                if(coordinateOfAvatar.getX() > 0)
-                    return Direction.RIGHT;
+        for (SpaceInfo infos : spacesInRange) {
+
+            Coordinate coordinateOfAvatar = infos.getRelativeToAvatarCoordinate();
+
+            // saving field infos and get Direction of the next empfty field
+            if (coordinateOfAvatar.getY() < 0) {
+                mentalMap[100][100 - yDirection] = infos.getType();
+
+                if(infos.getType() == SpaceType.EMPTY)
+                    direction = Direction.UP;
             }
-            return Direction.STAY;
+
+            if (coordinateOfAvatar.getY() > 0) {
+                mentalMap[100][100 + yDirection] = infos.getType();
+
+                if(infos.getType() == SpaceType.EMPTY)
+                    direction = Direction.DOWN;
+            }
+
+            if (coordinateOfAvatar.getX() < 0) {
+                mentalMap[100 - xDirection][100] = infos.getType();
+
+                if(infos.getType() == SpaceType.EMPTY)
+                    direction = Direction.LEFT;
+            }
+
+            if (coordinateOfAvatar.getX() > 0) {
+                mentalMap[100 + xDirection][100] = infos.getType();
+
+                if(infos.getType() == SpaceType.EMPTY)
+                    direction = Direction.UP;
+            }
+
+            return direction;
+
         }
+
         return Direction.STAY;
     }
 }
