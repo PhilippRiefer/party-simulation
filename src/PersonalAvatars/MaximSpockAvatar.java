@@ -7,8 +7,9 @@ import Environment.Direction;
 import Environment.SpaceInfo;
 
 public class MaximSpockAvatar extends SuperAvatar {
-     
-
+    int energy = 100;
+    int bowelMovement = 0;
+    int urination = 0;
 
     // perception Range should be higher than of a human!
     public MaximSpockAvatar(int id, int perceptionRange) {
