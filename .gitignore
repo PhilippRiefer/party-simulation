@@ -12,6 +12,7 @@
 
 # Package Files #
 *.jar
+!lib/*
 *.war
 *.nar
 *.ear
@@ -25,3 +26,7 @@ replay_pid*
 
 # Eclipse creates .project files, these need to be ignored.
 .project
+.DS_Store
+src/.DS_Store
+party-simulation.iml
+.idea/
