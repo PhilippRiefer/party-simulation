@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.reflections.Reflections;
 
 import Environment.*;
+import PersonalAvatars.OleAvatar;
 import PersonalAvatars.SudehAvatar;
 import AvatarInterface.*;
 //import org.reflections.Reflections;
@@ -34,33 +35,29 @@ public class SimulationControl {
         environment = new Environment();
         System.out.println("environment created");
 
-        Reflections reflections = new Reflections("PersonalAvatars");
+        // Reflections reflections = new Reflections("PersonalAvatars");
 
-        for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
-            try {
-                SuperAvatar avatar = personalAvatarClass.getDeclaredConstructor(int.class, int.class)
-                        .newInstance(nextAvatarID++, perceptionRange);
-                avatars.add(avatar);
-                String avatarName = avatar.getClass().getSimpleName().replace("Avatar", "");
-                System.out.println("Added " + avatarName + ": ID: " + avatar.getAvatarID() + ", Perception Range: "
-                        + avatar.getPerceptionRange());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        // for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
+        //     try {
+        //         SuperAvatar avatar = personalAvatarClass.getDeclaredConstructor(int.class, int.class)
+        //                 .newInstance(nextAvatarID++, perceptionRange);
+        //         avatars.add(avatar);
+        //         String avatarName = avatar.getClass().getSimpleName().replace("Avatar", "");
+        //         System.out.println("Added " + avatarName + ": ID: " + avatar.getAvatarID() + ", Perception Range: "
+        //                 + avatar.getPerceptionRange());
+        //     } catch (Exception e) {
+        //         e.printStackTrace();
+        //     }
+        // }
 
-        // SudehAvatar s1 = new SudehAvatar(nextAvatarID++, perceptionRange);
-        // avatars.add(s1);
-        // SudehAvatar s2 = new SudehAvatar(nextAvatarID++, perceptionRange);
-        // avatars.add(s2);
-        // SudehAvatar s3 = new SudehAvatar(nextAvatarID++, perceptionRange);
-        // avatars.add(s3);
-        // SudehAvatar s4 = new SudehAvatar(nextAvatarID++, perceptionRange);
-        // avatars.add(s4);
-        // SudehAvatar s5 = new SudehAvatar(nextAvatarID++, perceptionRange);
-        // avatars.add(s5);
-        // SudehAvatar s6 = new SudehAvatar(nextAvatarID++, perceptionRange);
-        // avatars.add(s6);
+        OleAvatar s1 = new OleAvatar(nextAvatarID++, perceptionRange);
+        avatars.add(s1);
+        OleAvatar s2 = new OleAvatar(nextAvatarID++, perceptionRange);
+        avatars.add(s2);
+        OleAvatar s3 = new OleAvatar(nextAvatarID++, perceptionRange);
+        avatars.add(s3);
+        OleAvatar s4 = new OleAvatar(nextAvatarID++, perceptionRange);
+        avatars.add(s4);
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
@@ -89,7 +86,7 @@ public class SimulationControl {
             boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir);
             avatar.setHasMoved(hasMoved);
             System.out.println("Avatar has moved = " + hasMoved);
-            wait(1);
+            wait(10);
         }
     }
 }

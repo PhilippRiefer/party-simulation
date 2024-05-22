@@ -10,173 +10,232 @@ package PersonalAvatars;
 
 import Environment.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import AvatarInterface.SuperAvatar;
 
 public class OleAvatar extends SuperAvatar {
-
-    // Coordinates
-    // ==================================
-    Coordinate Up = new Coordinate(0, -1);
-    Coordinate Right = new Coordinate(1, 0);
-    Coordinate Down = new Coordinate(0, 1);
-    Coordinate Left = new Coordinate(-1, 0);
-
-    // Object with personal avatar id and perception range of the avatar
-    // ==================================
     public OleAvatar(int id, int perceptionRange) {
         super(id, perceptionRange);
     }
-
     // My avatar is the next to move.
     // ----------------------------------
-    // 1. get an idea of wich objects are around and rank them
-    // (lookArroundAndRank())
-    // 2. try to get the cell of the wanted target (makeDesicion())
-    // 3. return -> direction (for now randomDesicion())
-    // ==================================
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-
-        // Step 1.
-        int[] array = lookArroundAndRank(spacesInRange);
-        // Step 2.
-        //makeDesicion(array);
-        // Step 3.
-        // Direction move = goInTargetedDirection(target);
-        // return move;
-
-        return randomDesicion();
+        int[] left = checkSpace(spacesInRange, 1);          // check cell to the left
+        int[] above = checkSpace(spacesInRange, 3);         // check cell above
+        int[] bottom = checkSpace(spacesInRange, 4);        // check cell down
+        int[] right = checkSpace(spacesInRange, 6);         // check cell to the right
+        // merge the arrays
+        int[][] directions = { left, above, bottom, right };
+        // take cell as minimum 
+        int minValue = left[0];
+        // return the target
+        return makeDesicion(directions, minValue);
     }
 
-    // Step 1.
+    // Check the spaces arround the avatar
     // ----------------------------------
-    // get a hang of wich objects are around the avatar
-    // - wich object in wich direction?
-    // - direction is important
-    // EMPTY, -> 1
-    // OBSTACLE, -> 8
-    // AVATAR, -> 7 (2)
-    // DANCEFLOOR, -> 5
-    // DJBOOTH, -> 3
-    // TOILET, -> 6
-    // BAR -> 2
-    // SEATS -> 4
-    // ==================================
-    // Array mit 3 werten zurückgeben
-    // 1: type
-    // 2: X
-    // 3: Y
-    private int[] lookArroundAndRank(ArrayList<SpaceInfo> spacesInRange) {
-        // Get each Spacetype with the belonging X and Y
-        SpaceType type;
-        String typeAsString;
-        int[] array = new int[3];
-        int coordX;
-        int coordY;
+    // spaceNumber:
+    // 0 -- 3 -- 5
+    // 1 -- A -- 6
+    // 2 -- 4 -- 7
+    private int[] checkSpace(ArrayList<SpaceInfo> spacesInRange, int spaceNumber) {
+        SpaceType type;                     // store the type of space
+        String typeAsString;                // hold the type of space as a string
+        int coordX;                         // store x coordinate
+        int coordY;                         // store y coordinate
+        int[] obstacle = new int[3];        // integer array to store obstacle data
+        if (spacesInRange.size() >= 8) {
+            SpaceInfo space = spacesInRange.get(spaceNumber);           // get the space information
+            Coordinate coord = space.getRelativeToAvatarCoordinate();   // get the coordinates relative to the avatar
+            coordX = coord.getX();      // get X
+            coordY = coord.getY();      // get Y
+            type = space.getType();     // get type
+            typeAsString = type.name(); // convert to string
+            // determine the obstacle based on the type of space and its coordinates
+            obstacle = determinateObstacle(typeAsString, coordX, coordY); 
+            // return the determined obstacle array
+            return obstacle;
+        } else {
+            return obstacle;
+        }
+    }
 
-        for (SpaceInfo space : spacesInRange) {
-            Coordinate coord = space.getRelativeToAvatarCoordinate();
-            coordX = coord.getX();
-            coordY = coord.getY();
-            type = space.getType();
-            typeAsString = type.name();
+    // Determinate wich obstacle is in the way
+    // ----------------------------------
+    // return array[0] = 0 --> BAR
+    // return array[0] = 1 --> DANCEFLOOR
+    // return array[0] = 2 --> EMPTY
+    // return array[0] = 3 --> DJBOOTH
+    // return array[0] = 4 --> SEATS
+    // return array[0] = 5 --> AVATAR
+    // return array[0] = 6 --> TOILET
+    // return array[0] = 7 --> OBSTACLE
+    // return array[0] = 8 --> Wall
+    private int[] determinateObstacle(String typeAsString, int coordX, int coordY) {
+        int minBorderX = 1;         // left wall
+        int minBorderY = 1;         // above wall
+        int maxBorderX = 39;        // right wall
+        int maxBorderY = 19;        // down wall
+        int[] array = new int[3];   // integer array
 
-            if (typeAsString == "EMPTY") {
-                System.out.println("Space is Empty, i can go there.");
-                array[0] = 1;
-                array[1] = coordX;
-                array[2] = coordY;
-                return array;
-            } else if (typeAsString == "AVATAR") {
-                System.out.println("Space is blocked by an avatar, i can't go there.");
-                array[0] = 2;
-                array[1] = coordX;
-                array[2] = coordY;
+        if (typeAsString == "BAR") {
+            array[0] = 0;
+            array[1] = coordX;
+            array[2] = coordY;
+            if (coordX >= maxBorderX || coordX <= minBorderX || coordY >= maxBorderY || coordY <= minBorderY) {
+                array[0] = 8;
+            }
+            return array;
+        } else if (typeAsString == "DANCEFLOOR") {
+            array[0] = 1;
+            array[1] = coordX;
+            array[2] = coordY;
+            if (coordX >= maxBorderX || coordX <= minBorderX || coordY >= maxBorderY || coordY <= minBorderY) {
+                array[0] = 8;
+            }
+            return array;
+        } else if (typeAsString == "EMPTY") {
+            array[0] = 2;
+            array[1] = coordX;
+            array[2] = coordY;
+            if (coordX >= maxBorderX || coordX <= minBorderX || coordY >= maxBorderY || coordY <= minBorderY) {
+                array[0] = 8;
+            }
+            return array;
+        } else if (typeAsString == "DJBOOTH") {
+            array[0] = 3;
+            array[1] = coordX;
+            array[2] = coordY;
+            if (coordX >= maxBorderX || coordX <= minBorderX || coordY >= maxBorderY || coordY <= minBorderY) {
+                array[0] = 8;
+            }
+            return array;
+        } else if (typeAsString == "SEATS") {
+            array[0] = 4;
+            array[1] = coordX;
+            array[2] = coordY;
+            if (coordX >= maxBorderX || coordX <= minBorderX || coordY >= maxBorderY || coordY <= minBorderY) {
+                array[0] = 8;
+            }
+            return array;
+        } else if (typeAsString == "AVATAR") {
+            array[0] = 5;
+            array[1] = coordX;
+            array[2] = coordY;
+            if (coordX >= maxBorderX || coordX <= minBorderX || coordY >= maxBorderY || coordY <= minBorderY) {
+                array[0] = 8;
+            }
+            return array;
+        } else if (typeAsString == "TOILET") {
+            array[0] = 6;
+            array[1] = coordX;
+            array[2] = coordY;
+            if (coordX >= maxBorderX || coordX <= minBorderX || coordY >= maxBorderY || coordY <= minBorderY) {
+                array[0] = 8;
+            }
+            return array;
+        } else {
+            array[0] = 7;
+            array[1] = coordX;
+            array[2] = coordY;
+            if (coordX >= maxBorderX || coordX <= minBorderX || coordY >= maxBorderY || coordY <= minBorderY) {
+                array[0] = 8;
+            }
+            return array;
+        }
+    }
+
+    // Make a desicion based on the obstacles
+    // ----------------------------------
+    private Direction makeDesicion(int[][] directions, int minValue) {
+        int minIndex = 0;
+        List<Integer> minIndices = new ArrayList<>();
+        minIndices.add(0);      // start with the first element
+        // run through all arrays and find the smallest number in cell [0]
+        for (int i = 1; i < directions.length; i++) {
+            if (directions[i][0] < minValue) {
+                minValue = directions[i][0];
+                minIndex = i;
+                minIndices.clear();         // clear the list as we found a new minimum
+                minIndices.add(i);          // add the index of the new minimum
+            } else if (directions[i][0] == minValue) {
+                minIndices.add(i);          // add index if it matches the current minimum
             }
         }
-        return array;
-    }
-
-    // Step 2.
-    // ----------------------------------
-    // on the basis of ranked, try to find the cell with the wanted target
-    // ==================================
-    private int makeDesicion(int[] array) {
-
-        
-        return 49;
-    }
-
-    // Step 2. and 3.
-    // ----------------------------------
-    // generate a random desicion
-    // only for testing
-    // ==================================
-    private Direction randomDesicion() {
-        int random = (int) (Math.random() * 4);
-        switch (random) {
-            case 0:
-                System.out.println("(ID: " + getAvatarID() + ") Ole -> left");
-                return Direction.LEFT;
-            case 1:
-                System.out.println("(ID: " + getAvatarID() + ") Ole -> right");
-                return Direction.RIGHT;
-            case 2:
-                System.out.println("(ID: " + getAvatarID() + ") Ole -> up");
-                return Direction.UP;
-            case 3:
-                System.out.println("(ID: " + getAvatarID() + ") Ole -> down");
-                return Direction.DOWN;
-            default:
-                System.out.println("(ID: " + getAvatarID() + ") Ole -> stay");
-                return Direction.STAY;
+        // check if there are multiple arrays with the same minimum value
+        if (minIndices.size() > 1) {
+            System.out.println("Multiple directions have the same minimum value: " + minValue);
+            for (int index : minIndices) {
+                System.out.println("Direction index: " + index);
+            }
+            // IMPORTANT: randomly select one of the indices with the minimum value
+            Random random = new Random();
+            minIndex = minIndices.get(random.nextInt(minIndices.size()));
+        }
+        // print target
+        String[] arrayNames = { "left", "above", "bottom", "right" };
+        System.out.println("in the direction: " + arrayNames[minIndex]
+                + " has the best ranking: " + minValue);
+        // choose the target
+        if (minValue == 0) {
+            return Direction.STAY;
+        } else if (minIndex == 0) {
+            return Direction.LEFT;
+        } else if (minIndex == 1) {
+            return Direction.UP;
+        } else if (minIndex == 2) {
+            return Direction.DOWN;
+        } else {
+            return Direction.RIGHT;
         }
     }
 
-    // Step 3.
-    // ----------------------------------
-    // Move the Avatar in the targeted Direction.
+    // NOT USED
+    // --------------------------------------------------------------------------
+    // generate a random desicion
     // ==================================
-    private Direction goInTargetedDirection() {
-        return null;
-    }
-
-    // check the space in the avatars range and make a ranking
-    // 1: BAR, 2: EMPTY, 3: DJBOOTH, 4: SEATS,
-    // 5: DANCEFLOOR, 6: TOILET, 7: AVATAR, 8: OBSTACLE
-    // ------------------------------------
-    // @SuppressWarnings("unlikely-arg-type")
-    // private int checkSpace(ArrayList<SpaceInfo> spacesInRange) {
-    // if (spacesInRange.equals("EMPTY")) {
-    // System.out.println("Desired place is empty. I would like to move there.");
-    // return 2;
-    // } else if (spacesInRange.equals("OBSTACLE")) {
-    // System.out.println("There is an obstacle in the targeted area. I cannot move
-    // there.");
-    // return 8;
-    // } else if (spacesInRange.equals("AVATAR")) {
-    // System.out.println("There is an other avatar in the targeted area. I cannot
-    // move there.");
-    // return 7;
-    // } else if (spacesInRange.equals("DANCEFLOOR")) {
-    // System.out.println("It looks as if there is a dance floor there. Get out of
-    // here quickly.");
-    // return 5;
-    // } else if (spacesInRange.equals("DJBOOTH")) {
-    // System.out.println("The music gets louder. There must be a DJ here.");
-    // return 3;
-    // } else if (spacesInRange.equals("TOILET")) {
-    // System.out.println("No, I don't have to yet.");
-    // return 6;
-    // } else if (spacesInRange.equals("BAR")) {
-    // System.out.println("Yes, I like it here.");
-    // return 1;
-    // } else if (spacesInRange.equals("SEATS")) {
-    // System.out.println("My legs are tired, i have to sit.");
-    // return 4;
-    // } else{
-    // return 9;
+    // private Direction randomDesicion() {
+    //     int random = (int) (Math.random() * 4);
+    //     switch (random) {
+    //         case 0:
+    //             System.out.println("(ID: " + getAvatarID() + ") Ole -> left");
+    //             return Direction.LEFT;
+    //         case 1:
+    //             System.out.println("(ID: " + getAvatarID() + ") Ole -> right");
+    //             return Direction.RIGHT;
+    //         case 2:
+    //             System.out.println("(ID: " + getAvatarID() + ") Ole -> up");
+    //             return Direction.UP;
+    //         case 3:
+    //             System.out.println("(ID: " + getAvatarID() + ") Ole -> down");
+    //             return Direction.DOWN;
+    //         default:
+    //             System.out.println("(ID: " + getAvatarID() + ") Ole -> stay");
+    //             return Direction.STAY;
+    //     }
     // }
+
+    // // check wich coordinates are mine
+    // // ==================================
+    // private int[] determineMyCoordinates(ArrayList<SpaceInfo> spacesInRange) {
+    //     int[] knownX = new int[8];
+    //     int[] knownY = new int[8];
+    //     int[] myCoordinates = new int[2];
+    //     int i = 0;
+    //     for (SpaceInfo space : spacesInRange) {
+    //         Coordinate relativeCoord = space.getRelativeToAvatarCoordinate();
+    //         knownX[i] = relativeCoord.getX();
+    //         knownY[i] = relativeCoord.getY();
+    //         ++i;
+    //     }
+    //     int avatarX = knownX[1] + 1;
+    //     int avatarY = knownY[1];
+    //     myCoordinates[0] = avatarX;
+    //     myCoordinates[1] = avatarY;
+    //     return myCoordinates;
     // }
 
     /**
