@@ -109,23 +109,37 @@ public class RobinAvatarComplex extends SuperAvatar {
         }
     }
 
+    private Coordinate addCoordinates(Coordinate coordinate1, Coordinate coordinate2){
+        return new Coordinate(coordinate1.getX() + coordinate2.getX(), coordinate1.getY() + coordinate2.getY());
+    }
+
+    private Enum getFromEnvironment(Coordinate pos, int entry){
+        return environment[pos.getX()][pos.getY()][entry];
+    }
+
+    private void setInEnvironment(Coordinate pos, int entry, Enum value){
+        environment[pos.getX()][pos.getY()][entry] = value;
+    }
+
     private void updateEnvironment(ArrayList<SpaceInfo> spacesInRange) {
         for (SpaceInfo spaceInfo : spacesInRange) {
             Coordinate spaceRelPos = spaceInfo.getRelativeToAvatarCoordinate();
-            Coordinate spaceAbsPos = new Coordinate(position.getX() + spaceRelPos.getX(),
-                    position.getY() + spaceRelPos.getY());
-            if (((PersonalFieldType) (environment[spaceAbsPos.getX()][spaceAbsPos.getY()][1])).isUnknown()) {
-                environment[spaceAbsPos.getX()][spaceAbsPos.getY()][0] = spaceInfo.getType();
+            Coordinate spaceAbsPos = addCoordinates(position, spaceRelPos);
+            if (((PersonalFieldType) getFromEnvironment(spaceAbsPos, 1)).isUnknown()) {
+                setInEnvironment(spaceAbsPos, 0, spaceInfo.getType());
                 if (spaceInfo.getType() == SpaceType.EMPTY || spaceInfo.getType() == SpaceType.AVATAR) {
-                    environment[spaceAbsPos.getX()][spaceAbsPos.getY()][1] = PersonalFieldType.EMPTY;
+                    setInEnvironment(spaceAbsPos,1,PersonalFieldType.EMPTY);
                 } else {
-                    environment[spaceAbsPos.getX()][spaceAbsPos.getY()][1] = PersonalFieldType.WALL;
+                    setInEnvironment(spaceAbsPos, 1, PersonalFieldType.WALL);
                 }
             }
         }
     }
 
     private Direction findWall(){
+        Coordinate searchVector = directionToCoordinate(startDirection);
+        Coordinate searchSpace = addCoordinates(position, searchVector);
+        
         
         return Direction.STAY;
     }
@@ -142,4 +156,15 @@ public class RobinAvatarComplex extends SuperAvatar {
         return Direction.STAY;
     }
 
+
+
+    @Override
+    public int getPerceptionRange() {
+        return super.getPerceptionRange(); // Assuming SuperAvatar has a method to get the perception range
+    }
+
+    @Override
+    public void setPerceptionRange(int perceptionRange) {
+        super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
+    }
 }
