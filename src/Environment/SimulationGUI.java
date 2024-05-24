@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Spring;
 
 /**
  * The SimulationGUI class represents the graphical user interface for the
@@ -166,6 +167,20 @@ public class SimulationGUI {
         cellToRepaint.setBackground(color);
         cellToRepaint.repaint();
     }
+
+    // TODO
+    public void paintComponent(int x, int y, Color color) {
+        if (color == null) {
+            color = Color.BLUE; // Default color is blue
+        }
+
+        JPanel cellToRepaint = gridCells[x][y];
+        cellToRepaint.setBackground(color);
+        cellToRepaint.repaint();
+    }
+
+
+
 
     public void eraseAvatar(Coordinate coordinate) {
         repaintCellToDefault(coordinate);
