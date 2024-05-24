@@ -51,6 +51,8 @@ public class RobinAvatarComplex extends SuperAvatar {
     private Direction lastWall;
     private Coordinate destination;
     private Direction startDirection;
+    private Coordinate extPosition;
+    private boolean extPositionValid;
 
     public RobinAvatarComplex(int id) {
         super(id, 1);
@@ -60,6 +62,8 @@ public class RobinAvatarComplex extends SuperAvatar {
         lastDirection = Direction.UP;
         destination = new Coordinate(0, 0);
         startDirection = Direction.UP;
+        extPosition = new Coordinate(0, 0);
+        extPositionValid = false;
     }
 
     @Override
@@ -111,6 +115,10 @@ public class RobinAvatarComplex extends SuperAvatar {
         return new Coordinate(coordinate1.getX() + coordinate2.getX(), coordinate1.getY() + coordinate2.getY());
     }
 
+    private Coordinate subCoordinates(Coordinate coordinate1, Coordinate coordinate2) {
+        return new Coordinate(coordinate1.getX() - coordinate2.getX(), coordinate1.getY() - coordinate2.getY());
+    }
+
     private Enum getFromEnvironment(Coordinate pos, int entry) {
         return environment[pos.getX()][pos.getY()][entry];
     }
@@ -125,6 +133,31 @@ public class RobinAvatarComplex extends SuperAvatar {
 
     private void setInEnvironment(Direction dir, int entry, Enum value) {
         setInEnvironment(addCoordinates(position, directionToCoordinate(dir)), entry, value);
+    }
+
+    private void findExternalCoordinate(ArrayList<SpaceInfo> spacesInRange){
+        int minX = environmentWidth;
+        int maxX = 0;
+        int minY = environmentHeight;
+        int maxY = 0;
+        for (SpaceInfo spaceInfo : spacesInRange) {
+            int x = spaceInfo.getRelativeToAvatarCoordinate().getX();
+            int y = spaceInfo.getRelativeToAvatarCoordinate().getY();
+            if(x < minX)
+                minX = x;
+            if(y > maxY)
+                maxY = y;
+            if(y < minY)
+                minY = y;
+            if(y > maxY)
+                maxY = y;
+        }
+        extPosition = new Coordinate((maxX - minX)/2, (maxY - minY)/2);
+        extPositionValid = true;
+    }
+
+    private Coordinate absToRelPos(Coordinate absPos){
+        return subCoordinates(absPos, extPosition);
     }
 
     private Direction rotate90Clkw(Direction direction, int times) {
@@ -157,8 +190,10 @@ public class RobinAvatarComplex extends SuperAvatar {
     }
 
     private void updateEnvironment(ArrayList<SpaceInfo> spacesInRange) {
+        if(!extPositionValid)
+            findExternalCoordinate(spacesInRange);
         for (SpaceInfo spaceInfo : spacesInRange) {
-            Coordinate spaceRelPos = spaceInfo.getRelativeToAvatarCoordinate();
+            Coordinate spaceRelPos = absToRelPos(spaceInfo.getRelativeToAvatarCoordinate());
             Coordinate spaceAbsPos = addCoordinates(position, spaceRelPos);
             if (((PersonalFieldType) getFromEnvironment(spaceAbsPos, 1)).isUnknown()) {
                 setInEnvironment(spaceAbsPos, 0, spaceInfo.getType());
@@ -167,6 +202,7 @@ public class RobinAvatarComplex extends SuperAvatar {
                 } else {
                     setInEnvironment(spaceAbsPos, 1, PersonalFieldType.WALL);
                 }
+                updateReachable(spaceAbsPos);
             }
         }
     }
