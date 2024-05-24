@@ -2,8 +2,20 @@ package PersonalAvatars;
 
 import Environment.*;
 import java.util.ArrayList;
+
+import javax.swing.DropMode;
+
 import AvatarInterface.*;
 import java.awt.Color;
+
+
+ //find my position and set to (0,0)
+        //spacesInRange
+        /* 0 |  3  | 5
+         * 1 |  ME | 6
+         * 2 |  4  | 7
+        */
+
 
 public class TomAvatar extends SuperAvatar {
 
@@ -11,57 +23,38 @@ public class TomAvatar extends SuperAvatar {
     private static final int mapSizeY = 200;
     private SpaceType[][] mentalMap;
     private Direction direction;
-    private int xDirection;
-    private int yDirection;
 
     public TomAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
         this.mentalMap = new SpaceType[mapSizeX][mapSizeY];
         this.direction = Direction.STAY;
-        this.xDirection = 0;
-        this.yDirection = 0;
+
     }
 
+    
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
 
-        for (SpaceInfo infos : spacesInRange) {
+        int x = spacesInRange.get(0).getRelativeToAvatarCoordinate().getX();
 
-            Coordinate coordinateOfAvatar = infos.getRelativeToAvatarCoordinate();
+        for(int i = 0; i < spacesInRange.size(); i++){
+            if(i < 3){
+                mentalMap[spacesInRange.get(0).getRelativeToAvatarCoordinate().getX()]
+                [spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
+            }else if(i < 5){
 
-            // saving field infos and get Direction of the next empfty field
-            if (coordinateOfAvatar.getY() < 0) {
-                mentalMap[100][100 - yDirection] = infos.getType();
-
-                if(infos.getType() == SpaceType.EMPTY)
-                    direction = Direction.UP;
-            }
-
-            if (coordinateOfAvatar.getY() > 0) {
-                mentalMap[100][100 + yDirection] = infos.getType();
-
-                if(infos.getType() == SpaceType.EMPTY)
-                    direction = Direction.DOWN;
-            }
-
-            if (coordinateOfAvatar.getX() < 0) {
-                mentalMap[100 - xDirection][100] = infos.getType();
-
-                if(infos.getType() == SpaceType.EMPTY)
-                    direction = Direction.LEFT;
-            }
-
-            if (coordinateOfAvatar.getX() > 0) {
-                mentalMap[100 + xDirection][100] = infos.getType();
-
-                if(infos.getType() == SpaceType.EMPTY)
-                    direction = Direction.UP;
-            }
-
-            return direction;
-
+            }            
         }
+        return Direction.DOWN;
+    }
 
-        return Direction.STAY;
+    @Override
+    public int getPerceptionRange() {
+        return super.getPerceptionRange(); // Assuming SuperAvatar has a method to get the perception range
+    }
+
+    @Override
+    public void setPerceptionRange(int perceptionRange) {
+        super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
     }
 }
