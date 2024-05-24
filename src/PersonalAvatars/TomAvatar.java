@@ -19,8 +19,8 @@ import java.awt.Color;
 
 public class TomAvatar extends SuperAvatar {
 
-    private static final int mapSizeX = 200;
-    private static final int mapSizeY = 200;
+    private static final int mapSizeX = 50;
+    private static final int mapSizeY = 50;
     private SpaceType[][] mentalMap;
     private Direction direction;
 
@@ -39,10 +39,11 @@ public class TomAvatar extends SuperAvatar {
 
         for(int i = 0; i < spacesInRange.size(); i++){
             if(i < 3){
-                mentalMap[spacesInRange.get(0).getRelativeToAvatarCoordinate().getX()]
-                [spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
+                mentalMap[spacesInRange.get(0).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
             }else if(i < 5){
-
+                mentalMap[spacesInRange.get(3).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
+            }else{
+                mentalMap[spacesInRange.get(5).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
             }            
         }
         return Direction.DOWN;
