@@ -145,6 +145,17 @@ public class RobinAvatarComplex extends SuperAvatar {
         }
     }
 
+    private void updateReachable(Coordinate pos){
+        if(!(((PersonalFieldType) getFromEnvironment(pos, 1)).isWalkable()))
+            return;
+        for(Direction dir : Direction.values()){
+            Coordinate spaceAbsPos = addCoordinates(pos, directionToCoordinate(dir));
+            if (((PersonalFieldType) getFromEnvironment(spaceAbsPos, 1)).isUnknown()) {
+                setInEnvironment(spaceAbsPos, 1, PersonalFieldType.REACHABLE);
+            }
+        }
+    }
+
     private void updateEnvironment(ArrayList<SpaceInfo> spacesInRange) {
         for (SpaceInfo spaceInfo : spacesInRange) {
             Coordinate spaceRelPos = spaceInfo.getRelativeToAvatarCoordinate();
@@ -171,6 +182,7 @@ public class RobinAvatarComplex extends SuperAvatar {
     }
 
     private Direction followWall() {
+        setInEnvironment(position, 1, PersonalFieldType.WALKED);
         for (int i = 0; i < 4; i++) {
             if(getFromEnvironment(rotate90Clkw(lastWall, i), 1) == PersonalFieldType.EMPTY){
                 lastWall = rotate90Clkw(lastWall, 3+i);
