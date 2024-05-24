@@ -32,7 +32,7 @@ public class SimulationControl {
         environment = new Environment();
         System.out.println("environment created");
 
-        Reflections reflections = new Reflections("PersonalAvatars");
+        /*Reflections reflections = new Reflections("PersonalAvatars");
 
         for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
             try {
@@ -47,6 +47,10 @@ public class SimulationControl {
                 e.printStackTrace();
             }
         }
+            */
+        Color color = Color.red;
+        SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange, color);
+        avatars.add(Nasser);
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());

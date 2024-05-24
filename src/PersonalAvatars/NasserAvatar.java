@@ -6,33 +6,96 @@ import Environment.*;
 import AvatarInterface.*;
 
 public class NasserAvatar extends SuperAvatar {
+    private int moveCounter = 0; 
+    private int stepsPerDirection = 3;
+    
 
     public NasserAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, color); // leverage the super class to handle ID and perceptionRange
+        super(id, perceptionRange, color); // Leverage the super class to handle ID and perceptionRange
+    }
+
+
+    public void changeToRelativeToCoordinate(ArrayList<SpaceInfo>spacesInRange){
+        SpaceInfo leftTop = spacesInRange.get(0);
+        Coordinate leftTopCoordinate = leftTop.getRelativeToAvatarCoordinate();
+        System.out.println("x-Koordinate: " + leftTopCoordinate.getX() + " y-Koordinate: " + leftTopCoordinate.getY()+" Spacetyp: " + leftTop.getType());
+
+        System.out.println();
+
+        SpaceInfo left = spacesInRange.get(1);
+        Coordinate leftCoordinate = left.getRelativeToAvatarCoordinate();
+        System.out.println("x-Koordinate: " + leftCoordinate.getX() + " y-Koordinate: " + leftCoordinate.getY()+" Spacetyp: " + left.getType());
+
+        System.out.println();
+
+        SpaceInfo leftBottom = spacesInRange.get(2);
+        Coordinate leftBottomCoordinate = leftBottom.getRelativeToAvatarCoordinate();
+        System.out.println("x-Koordinate: " + leftBottomCoordinate.getX() + " y-Koordinate: " + leftBottomCoordinate.getY()+" Spacetyp: " + leftBottom.getType());
+
+        
+        System.out.println();
+
+        SpaceInfo top = spacesInRange.get(3);
+        Coordinate topCoordinate = top.getRelativeToAvatarCoordinate();
+        System.out.println("x-Koordinate: " + topCoordinate.getX() + " y-Koordinate: " + topCoordinate.getY()+" Spacetyp: " + top.getType());
+
+        System.out.println();
+
+        SpaceInfo bottom = spacesInRange.get(4);
+        Coordinate bottomCoordinate = bottom.getRelativeToAvatarCoordinate();
+        System.out.println("x-Koordinate: " + bottomCoordinate.getX() + " y-Koordinate: " + bottomCoordinate.getY()+" Spacetyp: " + bottom.getType());
+
+        System.out.println();
+
+        SpaceInfo rightTop = spacesInRange.get(5);
+        Coordinate rightTopCoordinate = rightTop.getRelativeToAvatarCoordinate();
+        System.out.println("x-Koordinate: " + rightTopCoordinate.getX() + " y-Koordinate: " + rightTopCoordinate.getY()+" Spacetyp: " + rightTop.getType());
+
+        
+        System.out.println();
+
+        SpaceInfo right = spacesInRange.get(6);
+        Coordinate rightCoordinate = right.getRelativeToAvatarCoordinate();
+        System.out.println("x-Koordinate: " + rightCoordinate.getX() + " y-Koordinate: " + rightCoordinate.getY()+" Spacetyp: " + right.getType());
+
+        System.out.println();
+
+        SpaceInfo rightBottom = spacesInRange.get(7);
+        Coordinate rightBottomCoordinate = rightBottom.getRelativeToAvatarCoordinate();
+        System.out.println("x-Koordinate: " + rightBottomCoordinate.getX() + " y-Koordinate: " + rightBottomCoordinate.getY()+" Spacetyp: " + rightBottom.getType());
     }
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-        // Implement a more sophisticated strategy using spacesInRange
-        // For now, let's continue to move randomly as a placeholder
-        return randomDirection();
+        changeToRelativeToCoordinate(spacesInRange);
+        //Coordinate coordinateOfAvatar = infos.getRelativeToAvatarCoordinate();
+        // Kreisförmige Bewegung in einem größeren Kreis
+        return circularDirection();
     }
 
-    private Direction randomDirection() {
-        int directionNumber = (int) (Math.random() * 4);
+    private Direction circularDirection() {
 
-        switch (directionNumber) {
+        int currentPhase = moveCounter / stepsPerDirection; // Bestimmt die aktuelle Phase basierend auf der Anzahl der Schritte
+
+        Direction direction = Direction.STAY; // Standardmäßig keine Bewegung
+
+        switch (currentPhase % 4) { // Wechselt die Richtung 
             case 0:
-                return Direction.LEFT;
+                direction = Direction.UP;
+                break;
             case 1:
-                return Direction.RIGHT;
+                direction = Direction.RIGHT;
+                break;
             case 2:
-                return Direction.UP;
+                direction = Direction.DOWN;
+                break;
             case 3:
-                return Direction.DOWN;
-            default:
-                return Direction.STAY; // Safety net, though unnecessary as directionNumber is bound by 0-3
+                direction = Direction.LEFT;
+                break;
+            default: return Direction.STAY;
         }
+        moveCounter++; // Erhöht den Zähler nach jedem Zug
+        return direction;
     }
 
     @Override
@@ -45,3 +108,4 @@ public class NasserAvatar extends SuperAvatar {
         super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
     }
 }
+
