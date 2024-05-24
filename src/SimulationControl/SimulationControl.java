@@ -6,7 +6,7 @@ import Environment.*;
 import PersonalAvatars.*;
 import AvatarInterface.*;
 import java.util.Random;
-import org.reflections.Reflections;
+//import org.reflections.Reflections;
 
 /**
  * The SimulationControl class controls the simulation of avatars in an
