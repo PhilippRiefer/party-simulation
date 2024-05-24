@@ -1,5 +1,9 @@
 # To Do List
 
+## Problems
+
+- The Personal Avatars don't have a way of finding out if their move was legal or not. How do we give them the array of what is around them? What do we do if they get stuck for several turns?
+
 ## Environment
 
 - Add objects
