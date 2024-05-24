@@ -10,14 +10,19 @@ import java.util.ArrayList;
  */
 public class PhilippAvatar extends SuperAvatar {
 
+    private ArrayList<SpaceInfo> spaces;
+    private Color color;
+    private int perceptionRange;
+
     /**
      * Constructs a PhilippAvatar object with the specified ID and perception range.
      *
      * @param id              the ID of the avatar
      * @param perceptionRange the perception range of the avatar
+     * @param color           the color of the avatar
      */
     public PhilippAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, color); // leverage the super class to handle ID and perceptionRange
+        super(id, perceptionRange, color); // leverage the super class to handle ID, perceptionRange and color
     }
 
     /**
@@ -30,7 +35,7 @@ public class PhilippAvatar extends SuperAvatar {
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         // Implement a more sophisticated strategy using spacesInRange
         // For now, let's continue to move randomly as a placeholder
-        return randomDirection();
+        return decideMove(spacesInRange);
     }
 
     /**
@@ -40,44 +45,82 @@ public class PhilippAvatar extends SuperAvatar {
      */
     private Direction randomDirection() {
         int directionNumber = (int) (Math.random() * 4);
-
+        System.out.println("Philipp (" + getAvatarID() + ") is using a random direction");
         switch (directionNumber) {
-            case 0:
-                System.out.println("Philipp (" + getAvatarID() + ") wants to go left");
-                return Direction.LEFT;
-            case 1:
-                System.out.println("Philipp (" + getAvatarID() + ") wants to go right");
-                return Direction.RIGHT;
-            case 2:
-                System.out.println("Philipp (" + getAvatarID() + ") wants to go up");
-                return Direction.UP;
-            case 3:
-                System.out.println("Philipp (" + getAvatarID() + ") wants to go down");
-                return Direction.DOWN;
-            default:
-                System.out.println("Philipp (" + getAvatarID() + ") wants to stay");
-                return Direction.STAY; // Safety net, though unnecessary as directionNumber is bound by 0-3
+            case 0 -> {
+                return moveUp();
+            }
+            case 1 -> {
+                return moveDown();
+            }
+            case 2 -> {
+                return moveLeft();
+            }
+            case 3 -> {
+                return moveRight();
+            }
+            default -> {
+                return stay(); // Safety net, though unnecessary as directionNumber is bound by 0-3
+            }
         }
     }
 
-    /**
-     * Gets the perception range of the avatar.
-     *
-     * @return the perception range of the avatar
-     */
-    @Override
-    public int getPerceptionRange() {
-        return super.getPerceptionRange(); // Assuming SuperAvatar has a method to get the perception range
+    private Direction decideMove(ArrayList<SpaceInfo> spacesInRange) {
+        System.out.println("Philipp (" + getAvatarID() + ") is deciding move");
+        
+        setPerceptionRange(4);
+        System.out.println("Philipp (" + getAvatarID() + ") has perception range: " + getPerceptionRange());
+
+        int i = 0;
+        for (SpaceInfo spaceInfo : spacesInRange) {
+            // System.out.println("Philipp (" + getAvatarID() + ") got this space: " + spaceInfo + " with type " + spaceInfo.getType() + " at x: " + spaceInfo.getRelativeToAvatarCoordinate().getX() + ", y: " + spaceInfo.getRelativeToAvatarCoordinate().getY() + " (Array Index: " + i++ + ")");
+            // this.spaces = spacesInRange;
+        }
+        System.out.println("Philipp (" + getAvatarID() + ") has this many spaces: " + spaces.size());
+
+        // For now, let's continue to move randomly as a placeholder
+        return randomDirection();
     }
 
-    /**
-     * Sets the perception range of the avatar.
-     *
-     * @param perceptionRange the new perception range of the avatar
-     */
-    @Override
-    public void setPerceptionRange(int perceptionRange) {
-        super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
+    public static int calculateTheoreticallyVisibleFields(int perceptionRange) {
+        int sideLength = 2 * perceptionRange + 1;
+        int totalFields = sideLength * sideLength;
+        int visibleFields = totalFields - 1; // Subtracting the field the character stands on
+
+        return visibleFields;
+    }
+
+    private Direction findUpperLeftCorner(ArrayList<SpaceInfo> spacesInRange) {
+        System.out.println("Philipp (" + getAvatarID() + ") wants to go to the upper left corner");
+        for (SpaceInfo spaceInfo : spacesInRange) {
+            // this.spaces = spacesInRange;
+        }
+
+    }
+
+    private Direction moveUp() {
+        System.out.println("Philipp (" + getAvatarID() + ") wants to go up");
+        return Direction.UP;
+    }
+
+    private Direction moveDown() {
+        System.out.println("Philipp (" + getAvatarID() + ") wants to go down");
+        return Direction.DOWN;
+    }
+
+    private Direction moveLeft() {
+        System.out.println("Philipp (" + getAvatarID() + ") wants to go left");
+        return Direction.LEFT;
+    }
+
+    private Direction moveRight() {
+        System.out.println("Philipp (" + getAvatarID() + ") wants to go right");
+        return Direction.RIGHT;
+    }
+
+    private Direction stay() {
+        System.out.println("Philipp (" + getAvatarID() + ") wants to stay");
+        return Direction.STAY;
     }
 
 }
