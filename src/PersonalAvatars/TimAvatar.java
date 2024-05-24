@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.lang.Math;
 
 import Environment.*;
 import AvatarInterface.*;
@@ -21,7 +23,16 @@ public class TimAvatar extends SuperAvatar { // implements AvatarInterface
      * @param perceptionRange the perception range of the avatar
      */
 
-	private final Map<String, Integer> CharacterTraits;
+	private final Map<String, Integer> characterTraits;
+	HashMap<String, Integer> needs = new HashMap<>();
+	Random random = new Random();
+	String currentSpaceType;
+	Coordinate currentCoordinate;
+	SpaceType[][] knownSpace = new SpaceType[40][20];
+	int NumberOfStepsDown = 0;
+	int NumberOfStepsUp = 0;
+	int NumberOfStepsRight = 0;
+	int NumberOfStepsLeft = 0;
 
     public TimAvatar(int id, int perceptionRange) {
 		super(id, perceptionRange);
@@ -34,9 +45,7 @@ public class TimAvatar extends SuperAvatar { // implements AvatarInterface
 		tempCharacterTraits.put("good eater", 40);
 		tempCharacterTraits.put("strong bladder", 20);
 
-		CharacterTraits = Collections.unmodifiableMap(tempCharacterTraits);
-
-		HashMap<String, Integer> needs = new HashMap<>();
+		characterTraits = Collections.unmodifiableMap(tempCharacterTraits);
 
 		needs.put("thirst", 60);
 		needs.put("hunger", 30);
@@ -47,58 +56,266 @@ public class TimAvatar extends SuperAvatar { // implements AvatarInterface
 
 	}
 
-	x y type 
+    public void updateNeeds() {
 
-	
+        updateNeedsOverTime();
+        applyRandomEvents();
+        updateNeedsAfterAction(currentSpaceType);
 
-	private void extendKnownSpace(ArrayList<SpaceInfo> spacesInRange){
-		SpaceInfo SpaceInFront = spacesInRange.get(0);
-		SpaceInfo SpaceInBack = spacesInRange.get(1);
-		SpaceInfo SpaceLeft = spacesInRange.get(2);
-		SpaceInfo SpaceRight = spacesInRange.get(3);
+    }
 
-		Coordinate FrontCoordinate = SpaceInFront.getRelativeToAvatarCoordinate();
-		SpaceType FrontType = SpaceInFront.getType();
+    private void updateNeedsOverTime() {
+        // Grundlegende Änderungen pro Schleifendurchlauf
+        int thirstChange = 1;
+        int hungerChange = 1;
+        int bladderChange = 1;
+        int physicalEnergyChange = -1;
+        int funChange = -1;
+        int socialEnergyChange = -1;
 
-		Coordinate BackCoordinate = SpaceInBack.getRelativeToAvatarCoordinate();
-		SpaceType BackType = SpaceInBack.getType();
+        // Anpassung basierend auf Charaktereigenschaften
+        thirstChange *= 1.0  - (characterTraits.get("good drinker") / 100.0);
+        hungerChange *= 1.0 - (characterTraits.get("good eater") / 100.0);
+        bladderChange *= 1.0 - (characterTraits.get("strong bladder") / 100.0);
+        physicalEnergyChange *= 1.0 + (characterTraits.get("active") / 100.0);
+        socialEnergyChange *= 1.0 + (characterTraits.get("social") / 100.0);
 
-		Coordinate LeftCoordinate = SpaceLeft.getRelativeToAvatarCoordinate();
-		SpaceType LeftType = SpaceLeft.getType();
+        // Aktualisieren der Bedürfnisse
+        needs.put("thirst", adjustNeed(needs.get("thirst"), thirstChange));
+        needs.put("hunger", adjustNeed(needs.get("hunger"), hungerChange));
+        needs.put("bladder", adjustNeed(needs.get("bladder"), bladderChange));
+        needs.put("physical energy", adjustNeed(needs.get("physical energy"), physicalEnergyChange));
+        needs.put("fun", adjustNeed(needs.get("fun"), funChange));
+        needs.put("social energy", adjustNeed(needs.get("social energy"), socialEnergyChange));
+    }
 
-		Coordinate RightCoordinate = SpaceRight.getRelativeToAvatarCoordinate();
-		SpaceType RightType = SpaceRight.getType();
+    private void applyRandomEvents() {
+        if (random.nextDouble() < 0.1) { // 10% Wahrscheinlichkeit für ein zufälliges Ereignis
+            int randomThirstIncrease = random.nextInt(10);
+            needs.put("thirst", increaseNeed(needs.get("thirst"), randomThirstIncrease));
+            System.out.println("Zufälliges Ereignis: Durst erhöht um " + randomThirstIncrease);
+        }
+    }
+
+    private int adjustNeed(int currentValue, double change) {
+        int newValue = (int) (currentValue + change);
+        return Math.max(0, Math.min(newValue, 100));
+    }
+
+    private int increaseNeed(int currentValue, int amount) {
+        return Math.min(currentValue + amount, 100);
+    }
+
+    private int decreaseNeed(int currentValue, int amount) {
+        return Math.max(currentValue - amount, 0);
+    }
+
+    // Update Needs Methoden bei Interaktionen
+    public void drink() {
+        needs.put("thirst", decreaseNeed(needs.get("thirst"), 30));
+        needs.put("bladder", increaseNeed(needs.get("bladder"), 10));
+        System.out.println("Der Avatar hat getrunken. Durst gesenkt, Blase erhöht.");
+    }
+
+    public void eat() {
+        needs.put("hunger", decreaseNeed(needs.get("hunger"), 30));
+        needs.put("physical energy", increaseNeed(needs.get("physical energy"), 10));
+        System.out.println("Der Avatar hat gegessen. Hunger gesenkt, physische Energie erhöht.");
+    }
+
+    public void dance() {
+        needs.put("fun", increaseNeed(needs.get("fun"), 30));
+        needs.put("physical energy", decreaseNeed(needs.get("physical energy"), 10));
+        needs.put("social energy", increaseNeed(needs.get("social energy"), 10));
+        System.out.println("Der Avatar hat getanzt. Spaß und soziale Energie erhöht, physische Energie gesenkt.");
+    }
 
 
-
-
-
+	public void socialize() {
+   		needs.put("social energy", decreaseNeed(needs.get("social energy"), 30));
+   	 	needs.put("fun", increaseNeed(needs.get("fun"), 20));
+    	System.out.println("Der Avatar hate Soziale interaktion. Soziale Energie gesenkt, Spaß erhöht.");
 	}
 
-	private void calculationNeeds(){
-				
+	//NICHT FERTIG
+	public void playMusic() {
+		needs.put("physical energy", decreaseNeed(needs.get("social energy"), 30));
+		needs.put("fun", increaseNeed(needs.get("fun"), 20));
+	 	System.out.println("Der Avatar Musik aufgelegt. Physische Energie gesenkt, Spaß erhöht");
+ }
+
+ 	//NICHT FERTIG
+	 public void pee() {
+		needs.put("bladder", increaseNeed(needs.get("social energy"), 30));
+ 		System.out.println("Der Avatar war auf Toilette.");
+}
+
+ 	//NICHT FERTIG
+ 	public void relax() {
+		needs.put("physical energy", increaseNeed(needs.get("social energy"), 30));
+		needs.put("social energy", increaseNeed(needs.get("social energy"), 30));
+ 		System.out.println("Der Avatar hat sich entspannt.");
+}
+
+ 
+private void updateNeedsAfterAction(String currentSpaceType){
+	
+	switch(currentSpaceType){
+
+		case "AVATAR":
+			socialize();
+		break;
+
+		case "DANCEFLOOR":
+			dance();
+		break;
+
+		case "DJBOOTH":
+			playMusic();
+		break;
+
+		case "TOILET":
+			pee();
+		break;
+
+		case "BAR":
+			drink();
+			eat();
+		break;
+
+		case "SEATS":
+			relax();
+		break;
+
+		default:
+		break;
+
+	}
+}
+
+InteractivObject Dancefloor;
+InteractivObject DJBooth;
+InteractivObject Toilet;
+InteractivObject Bar;
+InteractivObject Seats;
+
+
+	private void extendKnownSpace(ArrayList<SpaceInfo> spacesInRange){
+		SpaceType type;
+		Coordinate space;
+	
+		for(int i = 0; i < spacesInRange.size(); i++){
+		
+			space.setX(spacesInRange.get(i).getRelativeToAvatarCoordinate().getX());
+			space.setY(spacesInRange.get(i).getRelativeToAvatarCoordinate().getY());
+			type = spacesInRange.get(i).getType();
+	
+			knownSpace[space.getX()][space.getY()] = type;
+
+			switch(type){
+				case DANCEFLOOR:
+					Dancefloor.setObjectCoordinate(space);
+				break;
+
+				case DJBOOTH:
+					DJBooth.setObjectCoordinate(space);
+				break;
+
+				case TOILET:
+					Toilet.setObjectCoordinate(space);
+				break;
+
+				case BAR:
+					Bar.setObjectCoordinate(space);
+				break;
+
+				case SEATS:
+					Seats.setObjectCoordinate(space);
+				break;
+
+				default:
+				break;
+
+			}
+
+		}
 	}
 
 	private SpaceType makeSpaceTypeDecision(){
 		SpaceType spaceType;
 
+
+
 		return spaceType; 
 	}
 
-	
 
-	private Coordinate searchInKnownSpace(SpaceType spaceType){
-		Coordinate coordinate;
-
-		return coordinate;
-	}
-
-	private int pathFinding(Coordinate coordinate){
+	private void pathFinding(SpaceType spacetype){
 		int direction = 4;
+		Coordinate destination;
+		int xSteps;
+		int ySteps;
+
+		switch(spacetype){
+			case DANCEFLOOR:
+			destination = Dancefloor.getObjectCoordinate();
+			break;
+
+			case DJBOOTH:
+			destination = DJBooth.getObjectCoordinate();
+			break;
+
+			case TOILET:
+			destination = Toilet.getObjectCoordinate();
+			break;
+
+			case BAR:
+			destination = Bar.getObjectCoordinate();
+			break;
+
+			case SEATS:
+			destination = Seats.getObjectCoordinate();
+			break;
+
+			default:
+			break;
+		}
+		
+		xSteps = destination.getX() - currentCoordinate.getX();
+		ySteps = destination.getY() - currentCoordinate.getX();
+
+		// Postiver X Wert nach Rechts
+		// Positver Y Wert nach Unten
+
+		if(xSteps > 0){
+			NumberOfStepsRight = xSteps;
+			NumberOfStepsLeft = 0;
+		}
+		else if(xSteps > 0){
+			NumberOfStepsRight = 0;
+			NumberOfStepsLeft = xSteps;
+		}
+		else{
+			NumberOfStepsRight = 0;
+			NumberOfStepsLeft = 0;
+		}
 
 
-		return direction;
+
+		if(ySteps > 0){
+			NumberOfStepsDown = ySteps;
+			NumberOfStepsUp = 0;
+		}
+		else if(ySteps > 0){
+			NumberOfStepsDown = 0;
+			NumberOfStepsUp = ySteps;
+		}
+		else{
+			NumberOfStepsDown = 0;
+			NumberOfStepsUp = 0;
+		}
 	}
+
 
 	private Direction doAction(int direction){
 		switch (direction) {
@@ -125,8 +342,8 @@ public class TimAvatar extends SuperAvatar { // implements AvatarInterface
      */
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
+		updateNeeds();
 		extendKnownSpace(spacesInRange);
-		calculationNeeds();
 		SpaceType spaceType = makeSpaceTypeDecision();
 		Coordinate coordinate = searchInKnownSpace(spaceType);
 		int direction = pathFinding(coordinate);
@@ -165,15 +382,5 @@ public class TimAvatar extends SuperAvatar { // implements AvatarInterface
 
 
 }
-
-
-/*EMPTY,
-OBSTACLE,
-AVATAR,
-DANCEFLOOR,
-DJBOOTH,
-TOILET,
-BAR,
-SEATS*/
 
 
