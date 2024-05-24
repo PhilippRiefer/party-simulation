@@ -177,14 +177,22 @@ public class SimulationGUI {
                 cell.setBackground(Color.WHITE);
                 cell.setBorder(BorderFactory.createLineBorder(Color.lightGray));
                 // create tool tip for each cell to identify it later
+<<<<<<< Updated upstream
                 cell.setToolTipText("(" + i + "," + j + ")");
                 pitchPanel.add(cell);
+=======
+                cell.setToolTipText("(" + j + "," + i + ")");
+                pitchPanel.add(cell);
+                // Store the cell in the array
+                gridCells[j][i] = cell;
+>>>>>>> Stashed changes
             }
         }
 
         panelLeft.add(pitchPanel);
     }
 
+<<<<<<< Updated upstream
     // create the pitch
     // ------------------------------------------
     public void createSlider(JPanel panel) {
@@ -201,6 +209,30 @@ public class SimulationGUI {
         labelTable.put(3, new JLabel("ZoomOut"));
         slider.setLabelTable(labelTable);
         slider.setBackground(Color.WHITE);
+=======
+    public void paintObject(int x, int y, Color color) {
+        if (color == null) {
+            color = Color.BLUE; // Default color is blue
+        }
+
+        JPanel cellToRepaint = gridCells[x][y];
+        cellToRepaint.setBackground(color);
+        cellToRepaint.repaint();
+    }
+
+    /**
+     * Paints the avatar on the simulation GUI at the specified coordinate with the
+     * given color.
+     * If the color is null, the default color is blue.
+     *
+     * @param coordinate the coordinate where the avatar should be painted
+     * @param color      the color of the avatar
+     */
+    public void paintAvatar(Coordinate coordinate, Color color) {
+        if (color == null) {
+            color = Color.BLUE; // Default color is blue
+        }
+>>>>>>> Stashed changes
 
         panel.add(slider, BorderLayout.CENTER);
     }
