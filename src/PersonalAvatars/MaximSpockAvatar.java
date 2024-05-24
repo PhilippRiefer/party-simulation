@@ -4,22 +4,33 @@ import java.util.ArrayList;
 
 import AvatarInterface.SuperAvatar;
 import Environment.Direction;
-import Environment.Environment;
 import Environment.SpaceInfo;
 import Environment.SpaceType;
 import java.awt.Color;
+import java.awt.List;
 
 public class MaximSpockAvatar extends SuperAvatar {
-    int energy = 100;
-    int hydration = 100;
-    int bowelMovement = 0;
-    int urination = 0;
-    SpaceType currentObjective = SpaceType.EMPTY; // current Objective to move to for the Avatar
-    SpaceType[][] clubMemory= new SpaceType[40][20];
+    // internal stats of Mr. Spock
+    final private int MAXSTAT = 200;
+    final private int MINSTAT = 0;
+    final private int THRESHOLD = 30;
+    int energy = MAXSTAT;
+    int hydration = MAXSTAT;
+    int bowelMovement = MINSTAT;
+    int urination = MINSTAT;
+    int countedTurns = MINSTAT;
+    // internal memory of Mr. Spock
+    SpaceType currentObjective = SpaceType.EMPTY;       // current Objective to move to for the Avatar
+    SpaceType[][] clubMemory= new SpaceType[40][20];    // Mr. Spocks internal map of the Environment  
+    // internal variables for movement
+    boolean scouting = true;    // scouting for first *100 turns
+    boolean hasPreComputed = false;
+    boolean hasWaitedOneTurn = false;
+    ArrayList<Direction> listOfDirections = new ArrayList<Direction>();
 
     // perception Range should be higher than of a human!
-    public MaximSpockAvatar(int id, int perceptionRange) {
-        super(id, perceptionRange);
+    public MaximSpockAvatar(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, color);
     }
 
     /**
@@ -30,13 +41,40 @@ public class MaximSpockAvatar extends SuperAvatar {
      */
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-        saveSpacesInRange(spacesInRange);           // 1. step is to save Environment in memory
-        if(currentObjective == SpaceType.EMPTY){    // deciding for next Object to move to
-            decideNextMovement();      // next move is decided based on internal stats
-        }
-        updateStats();                              // stats are updated each turn (getting thirstier for e.g.)
+        saveSpacesInRange(spacesInRange);                   // 1. step is to save Environment in memory
+        if(countedTurns > 99){
+            scouting = false;
+        } 
 
-        return moveTo(spacesInRange, currentObjective); // returning next chosen direction to SimulationControl
+        currentObjective = decideNextMovement();
+        if(currentObjective == SpaceType.EMPTY){            // choosing next Objective to move to
+            scouting = true;
+        }
+
+        if(scouting){                                       // moving to nearest empty space
+            updateStats(); 
+            return moveTo(clubMemory, null);
+        }
+        else{                                               // go after needs
+            updateStats();                                  // stats are updated each turn (getting thirstier for e.g.)
+            return moveTo(clubMemory, currentObjective);    // returning next chosen direction to SimulationControl
+        }
+        
+    }
+
+    public Direction moveTo(SpaceType[][] clubMemory, SpaceType currentObjective){
+        // 1. check for unchecked spaces in memory
+        // 2. compute 
+        int i = 0;
+
+        if(!hasPreComputed) {
+            listOfDirections = preComputeDirection(clubMemory, currentObjective);
+            hasPreComputed = true;
+            return listOfDirections.get(i++);
+        }   
+        else {
+            return listOfDirections.get(i++);
+        }
     }
 
     // saves latest Information on Environment
@@ -52,16 +90,12 @@ public class MaximSpockAvatar extends SuperAvatar {
         return;
     }
 
-    public Direction moveTo(ArrayList<SpaceInfo> spacesInRange, SpaceType currentObjective){
-        return Direction.STAY;
-    }
-
     public SpaceType decideNextMovement(){
-        if (bowelMovement > 25 || urination > 25) {
+        if (bowelMovement > (200 - THRESHOLD) || urination > (200 - THRESHOLD)) {
             return currentObjective = SpaceType.TOILET;
-        } else if (hydration < 25) {
+        } else if (hydration < THRESHOLD) {
             return currentObjective = SpaceType.BAR;
-        } else if (energy < 25) {
+        } else if (energy < THRESHOLD) {
             return currentObjective = SpaceType.SEATS;
         }
         else{
@@ -70,10 +104,11 @@ public class MaximSpockAvatar extends SuperAvatar {
     }
 
     public void updateStats() {
-        energy = energy - 1;
-        hydration = hydration - 1;
-        bowelMovement = bowelMovement + 1;
-        urination = urination + 1;
+        energy--;
+        hydration--;
+        bowelMovement++;
+        urination++;
+        countedTurns++;
 
         return;
     }
