@@ -71,12 +71,9 @@ public class PhilippAvatar extends SuperAvatar {
         setPerceptionRange(4);
         System.out.println("Philipp (" + getAvatarID() + ") has perception range: " + getPerceptionRange());
 
-        int i = 0;
-        for (SpaceInfo spaceInfo : spacesInRange) {
-            // System.out.println("Philipp (" + getAvatarID() + ") got this space: " + spaceInfo + " with type " + spaceInfo.getType() + " at x: " + spaceInfo.getRelativeToAvatarCoordinate().getX() + ", y: " + spaceInfo.getRelativeToAvatarCoordinate().getY() + " (Array Index: " + i++ + ")");
-            // this.spaces = spacesInRange;
-        }
-        System.out.println("Philipp (" + getAvatarID() + ") has this many spaces: " + spaces.size());
+        addSpaceInfos(spacesInRange);
+        System.out.println("Philipp (" + getAvatarID() + ") added SpaceInfos to this.spaces");
+        System.out.println("Philipp (" + getAvatarID() + ") sees this many spaces: " + spacesInRange.size());
 
         // For now, let's continue to move randomly as a placeholder
         return randomDirection();
@@ -95,7 +92,12 @@ public class PhilippAvatar extends SuperAvatar {
         for (SpaceInfo spaceInfo : spacesInRange) {
             // this.spaces = spacesInRange;
         }
+        return randomDirection();
+    }
 
+    private ArrayList<SpaceInfo> addSpaceInfos(ArrayList<SpaceInfo> spacesInRange) {
+        // TODO correct saving of spacesInRange in spaces
+        return spacesInRange;
     }
 
     private Direction moveUp() {
