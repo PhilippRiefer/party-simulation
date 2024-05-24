@@ -3,7 +3,6 @@ package PersonalAvatars;
 import Environment.*;
 import java.util.ArrayList;
 
-import javax.swing.DropMode;
 
 import AvatarInterface.*;
 import java.awt.Color;
@@ -19,8 +18,8 @@ import java.awt.Color;
 
 public class TomAvatar extends SuperAvatar {
 
-    private static final int mapSizeX = 50;
-    private static final int mapSizeY = 50;
+    private static final int mapSizeX = 40;
+    private static final int mapSizeY = 20;
     private SpaceType[][] mentalMap;
     private Direction direction;
 
@@ -31,22 +30,46 @@ public class TomAvatar extends SuperAvatar {
 
     }
 
+    public void createMentalMap(ArrayList<SpaceInfo> spacesInRange){
+        for(int i = 0; i < spacesInRange.size(); i++){
+            if(i < 3){
+                mentalMap[spacesInRange.get(0).getRelativeToAvatarCoordinate().getX()]
+                [spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
+            }else if(i < 5){
+                mentalMap[spacesInRange.get(3).getRelativeToAvatarCoordinate().getX()]
+                [spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
+            }else{
+                mentalMap[spacesInRange.get(5).getRelativeToAvatarCoordinate().getX()]
+                [spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
+            }
+        } 
+    }
+
+    public Direction goToEmpty(ArrayList<SpaceInfo> spacesInRange){
+        for(int i = 0; i < spacesInRange.size(); i++){
+            if(spacesInRange.get(i).getType() == SpaceType.EMPTY){        
+                if(i == 1){
+                        return Direction.LEFT;
+                    }else if(i == 3){
+                        return Direction.UP;
+                    }else if(i == 4){
+                        return Direction.DOWN;             
+                    }else if(i == 6){
+                        return Direction.RIGHT;
+                        }
+                    }
+                }
+        return Direction.DOWN;
+    }
     
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
 
-        int x = spacesInRange.get(0).getRelativeToAvatarCoordinate().getX();
-
-        for(int i = 0; i < spacesInRange.size(); i++){
-            if(i < 3){
-                mentalMap[spacesInRange.get(0).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
-            }else if(i < 5){
-                mentalMap[spacesInRange.get(3).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
-            }else{
-                mentalMap[spacesInRange.get(5).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
-            }            
-        }
-        return Direction.DOWN;
+        createMentalMap(spacesInRange);
+        return goToEmpty(spacesInRange);
+        //diogonal is not interesting           
+        
+        
     }
 
     @Override
