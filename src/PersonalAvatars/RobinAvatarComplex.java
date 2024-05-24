@@ -7,6 +7,7 @@ import Environment.Coordinate;
 import Environment.Direction;
 import Environment.SpaceInfo;
 import Environment.SpaceType;
+import java.awt.Color;
 
 public class RobinAvatarComplex extends SuperAvatar {
 
@@ -53,9 +54,10 @@ public class RobinAvatarComplex extends SuperAvatar {
     private Direction startDirection;
     private Coordinate extPosition;
     private boolean extPositionValid;
+    
 
-    public RobinAvatarComplex(int id) {
-        super(id, 1);
+    public RobinAvatarComplex(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, color);
         environment = new Enum[2 * environmentWidth + 1][2 * environmentHeight + 1][2];
         position = new Coordinate(environmentWidth, environmentHeight);
         state = State.FIND_WALL;

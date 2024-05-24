@@ -7,11 +7,12 @@ import Environment.Coordinate;
 import Environment.Direction;
 import Environment.SpaceInfo;
 import Environment.SpaceType;
+import java.awt.Color;
 
 public class RobinAvatarSimple extends SuperAvatar {
 
-    public RobinAvatarSimple(int id) {
-        super(id, 1);
+    public RobinAvatarSimple(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, color);
         //TODO Auto-generated constructor stub
     }
 
