@@ -21,12 +21,11 @@ public class TomAvatar extends SuperAvatar {
     private static final int mapSizeX = 40;
     private static final int mapSizeY = 20;
     private SpaceType[][] mentalMap;
-    private Direction direction;
+
 
     public TomAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
         this.mentalMap = new SpaceType[mapSizeX][mapSizeY];
-        this.direction = Direction.STAY;
 
     }
 
@@ -66,8 +65,7 @@ public class TomAvatar extends SuperAvatar {
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
 
         createMentalMap(spacesInRange);
-        return goToEmpty(spacesInRange);
-        //diogonal is not interesting           
+        return goToEmpty(spacesInRange);       
         
         
     }
