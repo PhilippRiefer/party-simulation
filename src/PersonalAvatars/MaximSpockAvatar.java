@@ -4,12 +4,18 @@ import java.util.ArrayList;
 
 import AvatarInterface.SuperAvatar;
 import Environment.Direction;
+import Environment.Environment;
 import Environment.SpaceInfo;
+import Environment.SpaceType;
+import java.awt.Color;
 
 public class MaximSpockAvatar extends SuperAvatar {
     int energy = 100;
+    int hydration = 100;
     int bowelMovement = 0;
     int urination = 0;
+    SpaceType currentObjective = SpaceType.EMPTY; // current Objective to move to for the Avatar
+    SpaceType[][] clubMemory= new SpaceType[40][20];
 
     // perception Range should be higher than of a human!
     public MaximSpockAvatar(int id, int perceptionRange) {
@@ -17,14 +23,59 @@ public class MaximSpockAvatar extends SuperAvatar {
     }
 
     /**
-    * Determines the direction for the avatar's next turn based on the spaces within its perception range.
-    *
-    * @return the direction for the avatar's next turn
-    */
+     * Determines the direction for the avatar's next turn based on the spaces
+     * within its perception range.
+     *
+     * @return the direction for the avatar's next turn
+     */
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-        // If no logical Direction is available - move in any Direction
-        return randomDirection();
+        saveSpacesInRange(spacesInRange);           // 1. step is to save Environment in memory
+        if(currentObjective == SpaceType.EMPTY){    // deciding for next Object to move to
+            decideNextMovement();      // next move is decided based on internal stats
+        }
+        updateStats();                              // stats are updated each turn (getting thirstier for e.g.)
+
+        return moveTo(spacesInRange, currentObjective); // returning next chosen direction to SimulationControl
+    }
+
+    // saves latest Information on Environment
+    public void saveSpacesInRange(ArrayList<SpaceInfo> spacesInRange){
+        int i = 0;
+        while(i < spacesInRange.size()){
+            int clubMemoryCoordinateX = 0;
+            int clubMemoryCoordinateY = 0;
+            clubMemoryCoordinateX = spacesInRange.get(i).getRelativeToAvatarCoordinate().getX();
+            clubMemoryCoordinateY = spacesInRange.get(i).getRelativeToAvatarCoordinate().getY();
+            clubMemory[clubMemoryCoordinateX][clubMemoryCoordinateY] = spacesInRange.get(i).getType();  
+        }
+        return;
+    }
+
+    public Direction moveTo(ArrayList<SpaceInfo> spacesInRange, SpaceType currentObjective){
+        return Direction.STAY;
+    }
+
+    public SpaceType decideNextMovement(){
+        if (bowelMovement > 25 || urination > 25) {
+            return currentObjective = SpaceType.TOILET;
+        } else if (hydration < 25) {
+            return currentObjective = SpaceType.BAR;
+        } else if (energy < 25) {
+            return currentObjective = SpaceType.SEATS;
+        }
+        else{
+            return currentObjective = SpaceType.EMPTY;
+        }
+    }
+
+    public void updateStats() {
+        energy = energy - 1;
+        hydration = hydration - 1;
+        bowelMovement = bowelMovement + 1;
+        urination = urination + 1;
+
+        return;
     }
 
     /**
@@ -68,5 +119,5 @@ public class MaximSpockAvatar extends SuperAvatar {
     public void setPerceptionRange(int perceptionRange) {
         super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
     }
-    
+
 }
