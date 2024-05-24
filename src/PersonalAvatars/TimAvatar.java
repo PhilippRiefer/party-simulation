@@ -202,7 +202,7 @@ InteractivObject Seats;
 
 	private void extendKnownSpace(ArrayList<SpaceInfo> spacesInRange){
 		SpaceType type;
-		Coordinate space;
+		Coordinate space = new Coordinate(0, 0);
 	
 		for(int i = 0; i < spacesInRange.size(); i++){
 		
@@ -241,12 +241,8 @@ InteractivObject Seats;
 		}
 	}
 
-	private SpaceType makeSpaceTypeDecision(){
-		SpaceType spaceType;
-
-
-
-		return spaceType; 
+	private void makeSpaceTypeDecision(){
+	
 	}
 
 
@@ -266,7 +262,7 @@ InteractivObject Seats;
 			break;
 
 			case TOILET:
-			destination = Toilet.getObjectCoordinate();
+			destination = Toilet.getObjectCoordinate();+
 			break;
 
 			case BAR:
@@ -313,6 +309,16 @@ InteractivObject Seats;
 		else{
 			NumberOfStepsDown = 0;
 			NumberOfStepsUp = 0;
+		}
+	}
+
+	private Direction coordianteSteps(SpaceType spactype){
+		
+		if(NumberOfStepsDown == 0 && NumberOfStepsUp == 0 && NumberOfStepsRight == 0 && NumberOfStepsLeft == 0 ){
+			pathFinding(spacetype);
+		}
+		else{
+
 		}
 	}
 
