@@ -68,6 +68,7 @@ public class RobinAvatarComplex extends SuperAvatar {
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
+        updatePosition();
         updateEnvironment(spacesInRange);
         switch (state) {
             case FIND_WALL:
@@ -207,12 +208,20 @@ public class RobinAvatarComplex extends SuperAvatar {
         }
     }
 
+    private void updatePosition(){
+        if(getCouldMove()){
+            position = addCoordinates(position, directionToCoordinate(lastDirection));
+            extPosition = addCoordinates(extPosition, directionToCoordinate(lastDirection));
+        }
+    }
+
     private Direction findWall() {
         if (getFromEnvironment(startDirection, 1) == PersonalFieldType.WALL) {
             lastWall = startDirection;
             state = State.FOLLOW_WALL;
             return followWall();
         } else {
+            lastDirection = startDirection;
             return startDirection;
         }
     }
@@ -222,6 +231,7 @@ public class RobinAvatarComplex extends SuperAvatar {
         for (int i = 0; i < 4; i++) {
             if(getFromEnvironment(rotate90Clkw(lastWall, i), 1) == PersonalFieldType.EMPTY){
                 lastWall = rotate90Clkw(lastWall, 3+i);
+                lastDirection = rotate90Clkw(lastWall, i);
                 return rotate90Clkw(lastWall, i);
             }
         }
