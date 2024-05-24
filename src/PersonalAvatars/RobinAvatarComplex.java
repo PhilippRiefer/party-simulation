@@ -64,8 +64,6 @@ public class RobinAvatarComplex extends SuperAvatar {
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-        // TODO Auto-generated method stub
-        // throw new UnsupportedOperationException("Unimplemented method 'yourTurn'");
         updateEnvironment(spacesInRange);
         switch (state) {
             case FIND_WALL:
@@ -94,7 +92,7 @@ public class RobinAvatarComplex extends SuperAvatar {
         return Direction.STAY;
     }
 
-    private Coordinate directionToCoordinate(Direction direction){
+    private Coordinate directionToCoordinate(Direction direction) {
         switch (direction) {
             case UP:
                 return new Coordinate(0, -1);
@@ -109,16 +107,42 @@ public class RobinAvatarComplex extends SuperAvatar {
         }
     }
 
-    private Coordinate addCoordinates(Coordinate coordinate1, Coordinate coordinate2){
+    private Coordinate addCoordinates(Coordinate coordinate1, Coordinate coordinate2) {
         return new Coordinate(coordinate1.getX() + coordinate2.getX(), coordinate1.getY() + coordinate2.getY());
     }
 
-    private Enum getFromEnvironment(Coordinate pos, int entry){
+    private Enum getFromEnvironment(Coordinate pos, int entry) {
         return environment[pos.getX()][pos.getY()][entry];
     }
 
-    private void setInEnvironment(Coordinate pos, int entry, Enum value){
+    private Enum getFromEnvironment(Direction dir, int entry){
+        return getFromEnvironment(addCoordinates(position, directionToCoordinate(dir)), entry);
+    }
+
+    private void setInEnvironment(Coordinate pos, int entry, Enum value) {
         environment[pos.getX()][pos.getY()][entry] = value;
+    }
+
+    private void setInEnvironment(Direction dir, int entry, Enum value) {
+        setInEnvironment(addCoordinates(position, directionToCoordinate(dir)), entry, value);
+    }
+
+    private Direction rotate90Clkw(Direction direction, int times) {
+        if (times == 0)
+            return direction;
+        switch (direction) {
+
+            case UP:
+                return rotate90Clkw(Direction.RIGHT, times - 1);
+            case RIGHT:
+                return rotate90Clkw(Direction.DOWN, times - 1);
+            case DOWN:
+                return rotate90Clkw(Direction.LEFT, times - 1);
+            case LEFT:
+                return rotate90Clkw(Direction.UP, times - 1);
+            default:
+                return Direction.STAY;
+        }
     }
 
     private void updateEnvironment(ArrayList<SpaceInfo> spacesInRange) {
@@ -128,7 +152,7 @@ public class RobinAvatarComplex extends SuperAvatar {
             if (((PersonalFieldType) getFromEnvironment(spaceAbsPos, 1)).isUnknown()) {
                 setInEnvironment(spaceAbsPos, 0, spaceInfo.getType());
                 if (spaceInfo.getType() == SpaceType.EMPTY || spaceInfo.getType() == SpaceType.AVATAR) {
-                    setInEnvironment(spaceAbsPos,1,PersonalFieldType.EMPTY);
+                    setInEnvironment(spaceAbsPos, 1, PersonalFieldType.EMPTY);
                 } else {
                     setInEnvironment(spaceAbsPos, 1, PersonalFieldType.WALL);
                 }
@@ -136,27 +160,34 @@ public class RobinAvatarComplex extends SuperAvatar {
         }
     }
 
-    private Direction findWall(){
-        Coordinate searchVector = directionToCoordinate(startDirection);
-        Coordinate searchSpace = addCoordinates(position, searchVector);
-        
-        
+    private Direction findWall() {
+        if (getFromEnvironment(startDirection, 1) == PersonalFieldType.WALL) {
+            lastWall = startDirection;
+            state = State.FOLLOW_WALL;
+            return followWall();
+        } else {
+            return startDirection;
+        }
+    }
+
+    private Direction followWall() {
+        for (int i = 0; i < 4; i++) {
+            if(getFromEnvironment(rotate90Clkw(lastWall, i), 1) == PersonalFieldType.EMPTY){
+                lastWall = rotate90Clkw(lastWall, 3+i);
+                return rotate90Clkw(lastWall, i);
+            }
+        }
+        state = State.FIND_EMPTY;
+        return findEmpty();
+    }
+
+    private Direction findEmpty() {
         return Direction.STAY;
     }
 
-    private Direction followWall(){
+    private Direction moveToEmpty() {
         return Direction.STAY;
     }
-
-    private Direction findEmpty(){
-        return Direction.STAY;
-    }
-
-    private Direction moveToEmpty(){
-        return Direction.STAY;
-    }
-
-
 
     @Override
     public int getPerceptionRange() {
