@@ -1,13 +1,14 @@
 package PersonalAvatars;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import Environment.*;
 import AvatarInterface.*;
 
 public class NasserAvatar extends SuperAvatar {
 
-    public NasserAvatar(int id, int perceptionRange) {
-        super(id, perceptionRange); // leverage the super class to handle ID and perceptionRange
+    public NasserAvatar(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, color); // leverage the super class to handle ID and perceptionRange
     }
 
     @Override

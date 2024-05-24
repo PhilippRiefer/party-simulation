@@ -176,8 +176,8 @@ public class SimulationGUI {
         JPanel cellToRepaint = gridCells[coordinate.getX()][coordinate.getY()];
         
         // Set the cell's background color to the default color (white)
-        // cellToRepaint.setBackground(Color.WHITE);
-        cellToRepaint.setBackground(Color.GRAY);
+        cellToRepaint.setBackground(Color.WHITE);
+        // cellToRepaint.setBackground(Color.GRAY);
         
         // Set the cell's border to the default border (light gray)
         cellToRepaint.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));

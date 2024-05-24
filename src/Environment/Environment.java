@@ -17,7 +17,7 @@ public class Environment {
      * Initializes the room and the simulation GUI.
      */
     public Environment() {
-        this.model = new Room(20, 20);
+        this.model = new Room(40, 20);
    
         System.out.println("Room constructed");
         this.view = new SimulationGUI();
@@ -55,8 +55,9 @@ public class Environment {
      * @param avatarID the ID of the avatar to be moved
      * @param dir      the direction in which to move the avatar
      * @return true if the avatar was successfully moved, false otherwise
+     * @throws Exception 
      */
-    public boolean moveAvatar(int avatarID, Direction dir) {
+    public boolean moveAvatar(int avatarID, Direction dir, Color color) {
         Coordinate currentPos = model.getAvatarLocation(avatarID);
         if (currentPos == null) {
             throw new IllegalArgumentException("Avatar " + avatarID + " does not exist in the room.");
@@ -79,11 +80,23 @@ public class Environment {
     
         // Check if the new position is valid and try to place the avatar there
         if (model.tryToPlaceAvatar(avatarID, currentPos)) {
+            try {
+                model.setSpace(new Coordinate(oldX, oldY), SpaceType.EMPTY);
+            } catch (Exception e) {
+                System.out.println("Failed to set space to empty at " + oldX + ", " + oldY + ".");
+            }
+
             // Erase the avatar from the old position
+            try {
+                model.setSpace(new Coordinate(oldX, oldY), SpaceType.EMPTY);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             view.eraseAvatar(new Coordinate(oldX, oldY));
     
             // Paint the avatar at the new position
-            view.paintAvatar(currentPos, Color.GREEN);
+            view.paintAvatar(currentPos, color);
             
             return true;
         } else {
