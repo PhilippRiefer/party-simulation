@@ -40,14 +40,13 @@ public class OleAvatar extends SuperAvatar {
         TYPE.put("TOILET", 6);
     }
     // My avatar is the next to move.
-    // return Direction;
     // ----------------------------------
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-        int[] left = checkSpace(spacesInRange, 1);      // check cell to the left
-        int[] above = checkSpace(spacesInRange, 3);     // check cell above
-        int[] bottom = checkSpace(spacesInRange, 4);    // check cell down
-        int[] right = checkSpace(spacesInRange, 6);     // check cell to the right
+        int[] left = checkSpace(spacesInRange, 1); // check cell to the left
+        int[] above = checkSpace(spacesInRange, 3); // check cell above
+        int[] bottom = checkSpace(spacesInRange, 4); // check cell down
+        int[] right = checkSpace(spacesInRange, 6); // check cell to the right
         // merge the arrays
         int[][] directions = { left, above, bottom, right };
         // take cell as minimum
@@ -57,26 +56,24 @@ public class OleAvatar extends SuperAvatar {
     }
 
     // Check the spaces arround the avatar
-    // return int[];
     // ----------------------------------
-    // Further informations:
     // spaceNumber:
     // 0 -- 3 -- 5
     // 1 -- A -- 6
     // 2 -- 4 -- 7
     private int[] checkSpace(ArrayList<SpaceInfo> spacesInRange, int spaceNumber) {
-        SpaceType type;                 // store the type of space
-        String typeAsString;            // hold the type of space as a string
-        int coordX;                     // store x coordinate
-        int coordY;                     // store y coordinate
-        int[] obstacle = new int[3];    // integer array to store obstacle data
+        SpaceType type; // store the type of space
+        String typeAsString; // hold the type of space as a string
+        int coordX; // store x coordinate
+        int coordY; // store y coordinate
+        int[] obstacle = new int[3]; // integer array to store obstacle data
         if (spacesInRange.size() >= 8) {
-            SpaceInfo space = spacesInRange.get(spaceNumber);           // get the space information
-            Coordinate coord = space.getRelativeToAvatarCoordinate();   // get the coordinates relative to the avatar
-            coordX = coord.getX();          // get X
-            coordY = coord.getY();          // get Y
-            type = space.getType();         // get type
-            typeAsString = type.name();     // convert to string
+            SpaceInfo space = spacesInRange.get(spaceNumber); // get the space information
+            Coordinate coord = space.getRelativeToAvatarCoordinate(); // get the coordinates relative to the avatar
+            coordX = coord.getX(); // get X
+            coordY = coord.getY(); // get Y
+            type = space.getType(); // get type
+            typeAsString = type.name(); // convert to string
             // determine the obstacle based on the type of space and its coordinates
             obstacle = determinateObstacle(typeAsString, coordX, coordY);
             // return the determined obstacle array
@@ -85,10 +82,9 @@ public class OleAvatar extends SuperAvatar {
             return obstacle;
         }
     }
+
     // Determinate wich obstacle is in the way
-    // return int[];
     // ----------------------------------
-    // Further informations:
     // return array[0] = 0 --> BAR
     // return array[0] = 1 --> DANCEFLOOR
     // return array[0] = 2 --> EMPTY
@@ -105,34 +101,31 @@ public class OleAvatar extends SuperAvatar {
         // check the obstacles around the avatar and rank them 
         array[0] = TYPE.getOrDefault(typeAsString, 7);
         // if the avatar is out of bounds -> give bad ranking
-        // if (isOutOfBounds(coordX, coordY)) {
-        //     array[0] = 8;
-        // }
+        if (isOutOfBounds(coordX, coordY)) {
+            array[0] = 8;
+        }
         return array;
     }
     // check if the avatar is out of bounds
-    // and try to stay away from the walls
-    // return: boolean 
     // ----------------------------------
     private boolean isOutOfBounds(int x, int y) {
         return x <= MIN_BORDER_X || x >= MAX_BORDER_X || y <= MIN_BORDER_Y || y >= MAX_BORDER_Y;
     }
     // Make a desicion based on the obstacles
-    // return: Direction
     // ----------------------------------
     private Direction makeDesicion(int[][] directions, int minValue) {
         int minIndex = 0;
         List<Integer> minIndices = new ArrayList<>();
-        minIndices.add(0);      // start with the first element
+        minIndices.add(0); // start with the first element
         // run through all arrays and find the smallest number in cell [0]
         for (int i = 1; i < directions.length; i++) {
             if (directions[i][0] < minValue) {
                 minValue = directions[i][0];
                 minIndex = i;
-                minIndices.clear();     // clear the list as we found a new minimum
-                minIndices.add(i);      // add the index of the new minimum
+                minIndices.clear(); // clear the list as we found a new minimum
+                minIndices.add(i); // add the index of the new minimum
             } else if (directions[i][0] == minValue) {
-                minIndices.add(i);      // add index if it matches the current minimum
+                minIndices.add(i); // add index if it matches the current minimum
             }
         }
         // check if there are multiple arrays with the same minimum value
@@ -164,25 +157,6 @@ public class OleAvatar extends SuperAvatar {
             }
         }
     }
-    /**
-     * Gets the perception range of the avatar.
-     *
-     * @return the perception range of the avatar
-     */
-    @Override
-    public int getPerceptionRange() {
-        return super.getPerceptionRange(); // Assuming SuperAvatar has a method to get the perception range
-    }
-    /**
-     * Sets the perception range of the avatar.
-     *
-     * @param perceptionRange the new perception range of the avatar
-     */
-    @Override
-    public void setPerceptionRange(int perceptionRange) {
-        super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
-    }
-}
 
     // NOT USED
     // --------------------------------------------------------------------------
@@ -228,3 +202,24 @@ public class OleAvatar extends SuperAvatar {
     // myCoordinates[1] = avatarY;
     // return myCoordinates;
     // }
+
+    /**
+     * Gets the perception range of the avatar.
+     *
+     * @return the perception range of the avatar
+     */
+    @Override
+    public int getPerceptionRange() {
+        return super.getPerceptionRange(); // Assuming SuperAvatar has a method to get the perception range
+    }
+
+    /**
+     * Sets the perception range of the avatar.
+     *
+     * @param perceptionRange the new perception range of the avatar
+     */
+    @Override
+    public void setPerceptionRange(int perceptionRange) {
+        super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
+    }
+}

@@ -12,6 +12,7 @@
 
 # Package Files #
 *.jar
+!lib/*
 *.war
 *.nar
 *.ear
@@ -28,5 +29,5 @@ replay_pid*
 .DS_Store
 src/.DS_Store
 party-simulation.iml
-src/Avatar_Interface/Avatar_Interface.iml
 .idea/
+diff

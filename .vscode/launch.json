@@ -1,42 +1,18 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
             "type": "java",
             "name": "Main",
             "request": "launch",
-            "mainClass": "SimulationControl.Main",
-            "projectName": "party-simulation_d7bc398c"
+            "mainClass": "SimulationControl/SimulationControl.Main",
+            "projectName": "party-simulation_6b7abf7f"
         },
         {
             "type": "java",
-            "name": "Current File",
+            "name": "Java Launch",
             "request": "launch",
-            "mainClass": "${file}"
-        },
-        {
-            "type": "java",
-            "name": "TestAvatar",
-            "request": "launch",
-            "mainClass": "Avatar_Interface.TestAvatar",
-            "projectName": "party-simulation_ee65170d"
-        },
-        {
-            "type": "java",
-            "name": "Main",
-            "request": "launch",
-            "mainClass": "Environment.Main",
-            "projectName": "party-simulation_ee65170d"
-        },
-        {
-            "type": "java",
-            "name": "Main(1)",
-            "request": "launch",
-            "mainClass": "SimulationControl.Main",
-            "projectName": "party-simulation_ee65170d"
+            "mainClass": "SimulationControl.Main"
         }
     ]
 }
