@@ -32,16 +32,28 @@ public class Environment {
         paintSeats();
     }
 
+    public void setSpaceType(int x, int y, SpaceType spaceType) {
+        // Set the space type in the room model
+        try {
+            model.setSpace(new Coordinate(x, y), spaceType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void paintSeats(){
         Random random = new Random();
         for(int i = 0; i < 4; ++i){
             int randomX = random.nextInt(1, 6);
             int randomY = random.nextInt(14, 19);
             view.paintComponent(randomX, randomY, Color.CYAN);
+            //setSpaceType(randomX, randomY, SpaceType.SEATS);
 
             randomX = random.nextInt(31, 38);
             randomY = random.nextInt(1, 6);
             view.paintComponent(randomX, randomY, Color.CYAN);
+            
+            setSpaceType(randomX, randomY, SpaceType.SEATS);
         }
     }
 
@@ -49,11 +61,13 @@ public class Environment {
         for(int x = 1; x <= 2; ++x){
             for( int y = 7; y <= 12; ++y){
                 view.paintComponent(x, y, Color.BLACK);
+                setSpaceType(x, y, SpaceType.BAR);
             }
         }
         for(int x = 37; x <= 38; ++x){
             for( int y = 7; y <= 12; ++y){
                 view.paintComponent(x, y, Color.BLACK);
+                setSpaceType(x, y, SpaceType.BAR);
             }
         }
     }
@@ -61,6 +75,7 @@ public class Environment {
         for(int x = 13; x <= 21; ++x){
             for( int y = 4; y <= 12; ++y){
                 view.paintComponent(x, y, Color.YELLOW);
+                setSpaceType(x, y, SpaceType.DANCEFLOOR);
             }
         }
     }
@@ -68,22 +83,28 @@ public class Environment {
         for(int x = 14; x <= 20; ++x){
             for( int y = 1; y <= 2; ++y){
                 view.paintComponent(x, y, Color.PINK);
+                setSpaceType(x, y, SpaceType.DJBOOTH);
             }
         }
     }
     public void paintToilet(){
         for(int x = 35; x <= 38; ++x){
             view.paintComponent(x, 18, Color.GREEN);
+            setSpaceType(x, 18, SpaceType.TOILET);
         }
     }
     public void paintWall(){
         for(int x = 0; x < 40; ++x){
-            view.paintComponent(x, 0, Color.RED);
-            view.paintComponent(x, 19, Color.RED);
+            view.paintComponent(x, 0, Color.GRAY);
+            view.paintComponent(x, 19, Color.GRAY);
+            setSpaceType(x, 0, SpaceType.OBSTACLE);
+            setSpaceType(x, 19, SpaceType.OBSTACLE);
         }
         for(int y = 1; y < 19; ++y){
-            view.paintComponent(0, y, Color.RED);
-            view.paintComponent(39, y, Color.RED);
+            view.paintComponent(0, y, Color.GRAY);
+            view.paintComponent(39, y, Color.GRAY);
+            setSpaceType(0, y, SpaceType.OBSTACLE);
+            setSpaceType(39, y, SpaceType.OBSTACLE);
         }
     }
     /**

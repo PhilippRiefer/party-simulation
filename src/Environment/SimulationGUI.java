@@ -187,8 +187,11 @@ public class SimulationGUI {
     }
 
     private void repaintCellToDefault(Coordinate coordinate) {
-        // Get the cell to repaint
+
+        
+            // Get the cell to repaint
         JPanel cellToRepaint = gridCells[coordinate.getX()][coordinate.getY()];
+       
         
         // Set the cell's background color to the default color (white)
         cellToRepaint.setBackground(Color.WHITE);
@@ -199,6 +202,8 @@ public class SimulationGUI {
         
         // Repaint the cell to reflect the changes
         cellToRepaint.repaint();
+            
+        
     }
     
 }
