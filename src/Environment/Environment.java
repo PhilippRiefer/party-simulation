@@ -47,7 +47,7 @@ public class Environment {
             int randomX = random.nextInt(1, 6);
             int randomY = random.nextInt(14, 19);
             view.paintComponent(randomX, randomY, Color.CYAN);
-            //setSpaceType(randomX, randomY, SpaceType.SEATS);
+            setSpaceType(randomX, randomY, SpaceType.SEATS);
 
             randomX = random.nextInt(31, 38);
             randomY = random.nextInt(1, 6);
