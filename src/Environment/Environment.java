@@ -19,7 +19,6 @@ public class Environment {
      */
     public Environment() {
         this.model = new Room(40, 20);
-   
         System.out.println("Room constructed");
         this.view = new SimulationGUI();
         view.repaint();
@@ -30,6 +29,7 @@ public class Environment {
         paintDancefloor();
         paintToilet();
         paintSeats();
+        model.createBlueprint();
     }
 
     public void setSpaceType(int x, int y, SpaceType spaceType) {
@@ -148,6 +148,9 @@ public class Environment {
         // Save the current position
         int oldX = currentPos.getX();
         int oldY = currentPos.getY();
+
+        // Store original spacetype at current Avatar's position
+        SpaceType oldSpaceType = model.getOriginalSpace(currentPos);
     
         // Update the coordinates based on the direction
         switch (dir) {
@@ -163,9 +166,9 @@ public class Environment {
         // Check if the new position is valid and try to place the avatar there
         if (model.tryToPlaceAvatar(avatarID, currentPos)) {
             try {
-                model.setSpace(new Coordinate(oldX, oldY), SpaceType.EMPTY);
+                model.setSpace(new Coordinate(oldX, oldY), oldSpaceType);
             } catch (Exception e) {
-                System.out.println("Failed to set space to empty at " + oldX + ", " + oldY + ".");
+                System.out.println("Failed to set space to oldSpaceType at " + oldX + ", " + oldY + ".");
             }
 
             // Erase the avatar from the old position
@@ -175,7 +178,7 @@ public class Environment {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            view.eraseAvatar(new Coordinate(oldX, oldY));
+            view.eraseAvatar(new Coordinate(oldX, oldY), oldSpaceType);
     
             // Paint the avatar at the new position
             view.paintAvatar(currentPos, color);
