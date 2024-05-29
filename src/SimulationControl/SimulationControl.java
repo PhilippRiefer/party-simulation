@@ -6,33 +6,22 @@ import AvatarInterface.*;
 
 public class SimulationControl {
 
-	private ArrayList<SuperAvatar> avatars = new ArrayList<SuperAvatar>();
-	private Environment environment;
-	
-	public SimulationControl() {
-		System.out.println("Hallo");
+    private ArrayList<SuperAvatar> avatars = new ArrayList<>();
+    private Environment environment;
+    private static int nextAvatarID = 0; // Static counter to ensure unique IDs
 
-		environment = new Environment();
+    /**
+     * Constructs a SimulationControl object with the specified perception range.
+     * Initializes the environment and creates avatars based on the available
+     * personal avatar classes.
+     *
+     * @param perceptionRange the perception range of the avatars
+     */
+    public SimulationControl(int perceptionRange) {
+        System.out.println("gonna create environment");
+        environment = new Environment();
+        System.out.println("environment created");
 
-<<<<<<< Updated upstream
-		for (int i = 0; i < 12; i++){
-			avatars.add(new TestAvatar(i));
-		}
-		// avatars.add(new AvatarNasser(i+1));
-	}
-	
-	public void loopThroughAvatars() {
-		for (SuperAvatar avatar : avatars) {
-			ArrayList<SpaceInfo> si = environment.getAdjacentToAvatar(avatar.getAvatarID());
-			Direction dir = avatar.yourTurn(si);
-			// boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir);
-			// avatars.setHasMoved(hasMoved);
-			// Avatar mitteilen, ob er sich tatsächlich bewegt hat: hasMoved
-		}
-	}
-	
-}
-=======
         // Reflections reflections = new Reflections("PersonalAvatars");
 
         // for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
@@ -49,14 +38,13 @@ public class SimulationControl {
         //     }
         // }
 
-        Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255), 255);
-        OleAvatar s1 = new OleAvatar(nextAvatarID++, perceptionRange, color);
+        OleAvatar s1 = new OleAvatar(nextAvatarID++, perceptionRange, Color.BLUE);
         avatars.add(s1);
-        OleAvatar s2 = new OleAvatar(nextAvatarID++, perceptionRange, color);
+        OleAvatar s2 = new OleAvatar(nextAvatarID++, perceptionRange, Color.BLUE);
         avatars.add(s2);
-        OleAvatar s3 = new OleAvatar(nextAvatarID++, perceptionRange, color);
+        OleAvatar s3 = new OleAvatar(nextAvatarID++, perceptionRange, Color.BLUE);
         avatars.add(s3);
-        OleAvatar s4 = new OleAvatar(nextAvatarID++, perceptionRange, color);
+        OleAvatar s4 = new OleAvatar(nextAvatarID++, perceptionRange, Color.BLUE);
         avatars.add(s4);
 
         for (SuperAvatar avatar : avatars) {

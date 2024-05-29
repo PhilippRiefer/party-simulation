@@ -105,9 +105,9 @@ public class OleAvatar extends SuperAvatar {
         // check the obstacles around the avatar and rank them 
         array[0] = TYPE.getOrDefault(typeAsString, 7);
         // if the avatar is out of bounds -> give bad ranking
-        if (isOutOfBounds(coordX, coordY)) {
-            array[0] = 8;
-        }
+        // if (isOutOfBounds(coordX, coordY)) {
+        //     array[0] = 8;
+        // }
         return array;
     }
     // check if the avatar is out of bounds

@@ -16,12 +16,15 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.Spring;
 
-public class SimulationGUI {
+/**
+ * The SimulationGUI class represents the graphical user interface for the
+ * nightclub simulation.
+ * It provides a grid-based environment for the simulation and allows the user
+ * to adjust the size of the grid using a slider.
+ */
+public class SimulationGUI{
 
     // Sizes of the grid
     // --------------------------------------
@@ -232,9 +235,41 @@ public class SimulationGUI {
         if (color == null) {
             color = Color.BLUE; // Default color is blue
         }
->>>>>>> Stashed changes
 
-        panel.add(slider, BorderLayout.CENTER);
+        JPanel cellToRepaint = gridCells[coordinate.getX()][coordinate.getY()];
+        cellToRepaint.setBackground(color);
+        cellToRepaint.repaint();
     }
 
+
+    // TODO
+    public void paintComponent(int x, int y, Color color) {
+        if (color == null) {
+            color = Color.BLUE; // Default color is blue
+        }
+
+        JPanel cellToRepaint = gridCells[x][y];
+        cellToRepaint.setBackground(color);
+        cellToRepaint.repaint();
+    }
+
+
+    public void eraseAvatar(Coordinate coordinate) {
+        repaintCellToDefault(coordinate);
+    }
+
+    private void repaintCellToDefault(Coordinate coordinate) {
+        // Get the cell to repaint
+        JPanel cellToRepaint = gridCells[coordinate.getX()][coordinate.getY()];
+        
+        // Set the cell's background color to the default color (white)
+        cellToRepaint.setBackground(Color.WHITE);
+        // cellToRepaint.setBackground(Color.GRAY);
+        
+        // Set the cell's border to the default border (light gray)
+        cellToRepaint.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        
+        // Repaint the cell to reflect the changes
+        cellToRepaint.repaint();
+    }
 }
