@@ -102,7 +102,9 @@ public class Environment {
             setSpaceType(x, 18, SpaceType.TOILET);
         }
     }
-
+    /* 
+     * wallCoordinates: an array to store the coordinates of the wall sections.
+     */
     public void paintWall() {
         wallCoordinates = new ArrayList<>();
         for (int x = 0; x < 40; ++x) {
@@ -125,6 +127,8 @@ public class Environment {
 
     /**
      * Starts the animation for the wall.
+     * initializes a Timer that calls the animateWall method every 100 milliseconds
+     * @param timer  to periodically update the colors of the wall sections.
      */
     public void startWallAnimation() {
         Timer timer = new Timer(200, new ActionListener() {
@@ -137,7 +141,8 @@ public class Environment {
     }
 
     /**
-     * Animates the wall color by changing the color of wall sections in sequence.
+     * changes the color of wall sections in a sequence to create the effect of a moving light
+     * @param wallCoordinates  a list that stores the coordinates of all wall sections to be animated.
      */
     public void animateWall() {
         // Reset the previous wall section to gray
