@@ -1,48 +1,121 @@
 package PersonalAvatars;
-/*
- * Author: Soodeh
- * Date: 20240516
- * Version: 0.1
- * 
- * Description: personal avatar class which extends SuperAvatar...
- */
 
 import AvatarInterface.SuperAvatar;
+import Environment.Coordinate;
 import Environment.Direction;
 import Environment.SpaceInfo;
+import Environment.SpaceType;
 
 import java.awt.Color;
 import java.util.ArrayList;
 
+
 public class SudehAvatar extends SuperAvatar {
+
+    
 
     public SudehAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color); // leverage the super class to handle ID and perceptionRange
+        
+    }
+    public static void wait(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 
-    // @Override
-    // public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-    //     // TODO implement an algorithem to move around your avatar:
-    //     //A possible strategy:
-    //     //a loop that iterates over available dorections at enum DIRECTION (UP,RIGHT,DOWN,LEFT,STAY),
-    //     //it checks for the free cells
-    //     //and then choose a random free direction 
-    //     //move there and its location get updated
-    //     //and return the selected direction?
-
-    //     //change this to an appropriate return
-    //     return Direction.LEFT;
-    // }
-    /**
-     * Determines the direction for the avatar's turn based on the spaces in range.
-     *
-     * @param spacesInRange the list of spaces within the perception range
-     * @return the direction for the avatar's turn
-     */
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-        // Implement a more sophisticated strategy using spacesInRange
-        // For now, let's continue to move randomly as a placeholder
+    
+        setAvatarColor(Color.GRAY);
+
+        // Check the spaces in range and decide what to do
+        for (SpaceInfo space : spacesInRange) {
+            SpaceType type = space.getType();
+            Coordinate coordinate = space.getRelativeToAvatarCoordinate();
+            System.out.println("Checking space at " + coordinate + " with type " + type);
+            switch (type) {
+               
+                case OBSTACLE:
+                    continue;
+
+                // case AVATAR:
+                // setAvatarColor(Color.ORANGE);
+                //wait(100);
+
+                case DANCEFLOOR:
+                    setAvatarColor(Color.MAGENTA);
+                    System.out.println("***************DANCEFLOOR!");
+                    wait(100);
+                    return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
+                    //continue;
+
+                case DJBOOTH:
+                    setAvatarColor(Color.BLUE);
+                    System.out.println("*********************DJBOOTH!");
+                    wait(100);
+                    return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
+                    //continue;
+                    
+
+                case TOILET:
+                    System.out.println("*******************TOILET!");
+                    setAvatarColor(Color.BLACK);
+                    wait(1000);
+                    return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
+                    //continue;
+                    
+
+                case BAR:
+                    System.out.println("***************BAR!");
+                    setAvatarColor(Color.RED);
+                    wait(100);
+                    return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
+                    //continue;
+
+                case SEATS:
+                    
+                    System.out.println("***************SEATS area!");
+                    setAvatarColor(Color.PINK);
+                    wait(500);
+                    return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
+                    //continue;
+                    
+
+                default:
+                    System.out.println("Unknown space type, skipping.");
+                    continue;
+            }
+        }
+        
+        // If no suitable action was found, move randomly
+        Direction randomDirection = randomDirection();
+        System.out.println("Moving randomly in direction: " + randomDirection);
+        return randomDirection;
+    }
+
+    /**
+     * Utility method to get the direction based on the relative coordinate.
+     *
+     * @param coordinate the relative coordinate
+     * @return the direction to move
+     */
+    private Direction getDirectionFromCoordinate(Coordinate coordinate) {
+        int x = coordinate.getX();
+        int y = coordinate.getY();
+
+        if (x == 1) {
+            return Direction.RIGHT;
+        } else if (x == - 1) {
+            return Direction.LEFT;
+        } else if (y == 1) {
+            return Direction.DOWN;
+        } else if (y == - 1) {
+            return Direction.UP;
+        }
+
         return randomDirection();
     }
 
@@ -52,45 +125,30 @@ public class SudehAvatar extends SuperAvatar {
      * @return a random direction
      */
     private Direction randomDirection() {
-        int directionNumber = (int) (Math.random() * 4);
+        int directionNumber = (int) (Math.random() * 5);
 
         switch (directionNumber) {
             case 0:
-                System.out.println("Sudeh (" + getAvatarID() + ") wants to go left");
                 return Direction.LEFT;
             case 1:
-                System.out.println("Sudeh (" + getAvatarID() + ") wants to go right");
                 return Direction.RIGHT;
             case 2:
-                System.out.println("Sudeh (" + getAvatarID() + ") wants to go up");
                 return Direction.UP;
             case 3:
-                System.out.println("Sudeh (" + getAvatarID() + ") wants to go down");
                 return Direction.DOWN;
             default:
-                System.out.println("Sudeh (" + getAvatarID() + ") wants to stay");
-                return Direction.STAY; // Safety net, though unnecessary as directionNumber is bound by 0-3
+                return Direction.STAY; 
         }
     }
 
-    /**
-     * Gets the perception range of the avatar.
-     *
-     * @return the perception range of the avatar
-     */
+    
     @Override
     public int getPerceptionRange() {
         return super.getPerceptionRange(); // Assuming SuperAvatar has a method to get the perception range
     }
 
-    /**
-     * Sets the perception range of the avatar.
-     *
-     * @param perceptionRange the new perception range of the avatar
-     */
     @Override
     public void setPerceptionRange(int perceptionRange) {
         super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
     }
-
 }
