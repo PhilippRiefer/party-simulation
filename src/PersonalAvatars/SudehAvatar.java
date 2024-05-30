@@ -47,45 +47,37 @@ public class SudehAvatar extends SuperAvatar {
 
                 case DANCEFLOOR:
                     setAvatarColor(Color.MAGENTA);
-                    System.out.println("***************DANCEFLOOR!");
+                    //System.out.println("***************DANCEFLOOR!");
                     wait(100);
                     return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
-                    //continue;
 
                 case DJBOOTH:
-                    setAvatarColor(Color.BLUE);
-                    System.out.println("*********************DJBOOTH!");
                     wait(100);
+                    setAvatarColor(Color.BLUE);
+                    //System.out.println("*********************DJBOOTH!");
+                    //wait(100);
                     return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
-                    //continue;
-                    
 
                 case TOILET:
-                    System.out.println("*******************TOILET!");
-                    setAvatarColor(Color.BLACK);
+                    //System.out.println("*******************TOILET!");
+                    setAvatarColor(Color.ORANGE);
                     wait(1000);
                     return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
-                    //continue;
-                    
 
                 case BAR:
-                    System.out.println("***************BAR!");
+                    //System.out.println("***************BAR!");
                     setAvatarColor(Color.RED);
                     wait(100);
                     return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
-                    //continue;
 
                 case SEATS:
-                    
-                    System.out.println("***************SEATS area!");
+                    //System.out.println("***************SEATS area!");
                     setAvatarColor(Color.PINK);
                     wait(500);
                     return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
-                    //continue;
-                    
 
                 default:
-                    System.out.println("Unknown space type, skipping.");
+                    //System.out.println("Unknown space type, skipping.");
                     continue;
             }
         }
