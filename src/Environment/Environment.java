@@ -2,6 +2,7 @@ package Environment;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * The Environment class represents the environment in which the party
@@ -23,8 +24,68 @@ public class Environment {
         this.view = new SimulationGUI();
         view.repaint();
         System.out.println("View constructed");
+        paintBar();
+        paintDJBooth();
+        paintWall();
+        paintDancefloor();
+        paintToilet();
+        paintSeats();
     }
 
+    public void paintSeats(){
+        Random random = new Random();
+        for(int i = 0; i < 4; ++i){
+            int randomX = random.nextInt(1, 6);
+            int randomY = random.nextInt(14, 19);
+            view.paintComponent(randomX, randomY, Color.CYAN);
+
+            randomX = random.nextInt(31, 38);
+            randomY = random.nextInt(1, 6);
+            view.paintComponent(randomX, randomY, Color.CYAN);
+        }
+    }
+
+    public void paintBar(){
+        for(int x = 1; x <= 2; ++x){
+            for( int y = 7; y <= 12; ++y){
+                view.paintComponent(x, y, Color.BLACK);
+            }
+        }
+        for(int x = 37; x <= 38; ++x){
+            for( int y = 7; y <= 12; ++y){
+                view.paintComponent(x, y, Color.BLACK);
+            }
+        }
+    }
+    public void paintDancefloor(){
+        for(int x = 13; x <= 21; ++x){
+            for( int y = 4; y <= 12; ++y){
+                view.paintComponent(x, y, Color.YELLOW);
+            }
+        }
+    }
+    public void paintDJBooth(){
+        for(int x = 14; x <= 20; ++x){
+            for( int y = 1; y <= 2; ++y){
+                view.paintComponent(x, y, Color.PINK);
+            }
+        }
+    }
+    public void paintToilet(){
+        for(int x = 35; x <= 38; ++x){
+            view.paintComponent(x, 18, Color.GREEN);
+        }
+    }
+    public void paintWall(){
+        for(int x = 0; x < 40; ++x){
+            view.paintComponent(x, 0, Color.RED);
+            view.paintComponent(x, 19, Color.RED);
+        }
+        for(int y = 1; y < 19; ++y){
+            view.paintComponent(0, y, Color.RED);
+            view.paintComponent(39, y, Color.RED);
+        }
+    }
     /**
      * Places an avatar in the room.
      * 
