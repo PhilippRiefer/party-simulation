@@ -32,12 +32,12 @@ public class SimulationControl {
         environment = new Environment();
         System.out.println("environment created");
 
-<<<<<<< HEAD
+
         /*Reflections reflections = new Reflections("PersonalAvatars");
 =======
         /* 
         Reflections reflections = new Reflections("PersonalAvatars");
->>>>>>> develop
+
 
         for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
             try {
@@ -51,18 +51,13 @@ public class SimulationControl {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-<<<<<<< HEAD
-        }
-            */
-        Color color = Color.red;
-        SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange, color);
-=======
+
         }*/
 
         Color color = Color.orange;
 
         SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange,color);
->>>>>>> develop
+
         avatars.add(Nasser);
 
         for (SuperAvatar avatar : avatars) {
