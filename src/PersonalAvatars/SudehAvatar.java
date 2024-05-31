@@ -29,7 +29,7 @@ public class SudehAvatar extends SuperAvatar {
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
     
-        setAvatarColor(Color.GRAY);
+        setAvatarColor(new Color(0, 255, 100, 100));
 
         // Check the spaces in range and decide what to do
         for (SpaceInfo space : spacesInRange) {
@@ -48,31 +48,31 @@ public class SudehAvatar extends SuperAvatar {
                 case DANCEFLOOR:
                     setAvatarColor(Color.MAGENTA);
                     //System.out.println("***************DANCEFLOOR!");
-                    wait(100);
+                    wait(500);
                     return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
 
                 case DJBOOTH:
                     wait(100);
-                    setAvatarColor(Color.BLUE);
+                    setAvatarColor(Color.MAGENTA);
                     //System.out.println("*********************DJBOOTH!");
                     //wait(100);
                     return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
 
                 case TOILET:
                     //System.out.println("*******************TOILET!");
-                    setAvatarColor(Color.ORANGE);
-                    wait(1000);
+                    setAvatarColor(Color.MAGENTA);
+                    wait(200);
                     return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
 
                 case BAR:
                     //System.out.println("***************BAR!");
-                    setAvatarColor(Color.RED);
-                    wait(100);
+                    setAvatarColor(Color.MAGENTA);
+                    wait(1000);
                     return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
 
                 case SEATS:
                     //System.out.println("***************SEATS area!");
-                    setAvatarColor(Color.PINK);
+                    setAvatarColor(Color.MAGENTA);
                     wait(500);
                     return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
 
