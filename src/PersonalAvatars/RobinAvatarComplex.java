@@ -281,7 +281,12 @@ public class RobinAvatarComplex extends SuperAvatar {
 
     private Direction moveToEmpty() {
         System.out.println("move to empty");
+
         return Direction.STAY;
+    }
+
+    private void findPathReachable(){
+        
     }
 
     @Override
