@@ -73,7 +73,7 @@ public class RobinAvatarComplex extends SuperAvatar {
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         updatePosition();
         updateEnvironment(spacesInRange);
-        printEnv();
+        //printEnv();
         switch (state) {
             case FIND_WALL:
                 return findWall();
@@ -101,7 +101,7 @@ public class RobinAvatarComplex extends SuperAvatar {
     private void printEnv(){
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
-                System.out.print(environment[col][row][0].ordinal());
+                System.out.print(environment[col][row][1].ordinal());
             }
             System.out.print("\n");
         }
@@ -257,12 +257,14 @@ public class RobinAvatarComplex extends SuperAvatar {
                 return lastDirection;
             }
         }
+        printEnv();
         state = State.FIND_EMPTY;
         return findEmpty();
     }
 
     private Direction findEmpty() {
         printEnv();
+        
         state = State.MOVE_TO_EMPTY;
         return Direction.STAY;
     }
