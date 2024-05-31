@@ -14,6 +14,8 @@ public class MaximSpockAvatar extends SuperAvatar {
     final private int MAXSTAT = 200;
     final private int MINSTAT = 0;
     final private int THRESHOLD = 30;
+    final private int XCOORDINATEMAX = 40;
+    final private int YCOORDINATEMAX = 20;
     // internal stats of Mr. Spock
     int energy = MAXSTAT;
     int hydration = MAXSTAT;
@@ -22,7 +24,7 @@ public class MaximSpockAvatar extends SuperAvatar {
     int countedTurns = MINSTAT;
     // internal memory of Mr. Spock
     SpaceType currentObjective = SpaceType.EMPTY;       // current Objective to move to for the Avatar
-    SpaceType[][] clubMemory= new SpaceType[40][20];    // Mr. Spocks internal map of the Environment  
+    SpaceType[][] clubMemory= new SpaceType[XCOORDINATEMAX][YCOORDINATEMAX];    // Mr. Spocks internal map of the Environment  
     // internal variables for movement
     boolean isScouting = true;
     boolean notMovingToObjective = true;
@@ -90,7 +92,12 @@ public class MaximSpockAvatar extends SuperAvatar {
         int x = 0;
         int y = 1;
         while (clubMemory[personalCoordinates.getX() + x][personalCoordinates.getY() + y] != currentObjective) {
-            
+            if(x != XCOORDINATEMAX && ()){
+                
+            }
+            if(y != YCOORDINATEMAX){
+
+            }
         }
         return objectiveCoordinates;
     }
