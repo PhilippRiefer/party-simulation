@@ -15,7 +15,8 @@ public class RobinAvatarComplex extends SuperAvatar {
         FIND_WALL,
         FOLLOW_WALL,
         FIND_EMPTY,
-        MOVE_TO_EMPTY
+        MOVE_TO_EMPTY,
+        FULLY_EXPLORED
     }
 
     enum PersonalFieldType {
@@ -85,6 +86,7 @@ public class RobinAvatarComplex extends SuperAvatar {
                 return moveToEmpty();
 
             default:
+                System.out.println("done");
                 return Direction.STAY;
         }
     }
@@ -264,12 +266,20 @@ public class RobinAvatarComplex extends SuperAvatar {
 
     private Direction findEmpty() {
         printEnv();
-        
-        state = State.MOVE_TO_EMPTY;
+        for (int row = 0; row < environment[0].length; row++) {
+            for (int col = 0; col < environment.length; col++) {
+               if(environment[col][row][1] == PersonalFieldType.REACHABLE){
+                state = State.MOVE_TO_EMPTY;
+                return moveToEmpty();
+               }
+            }
+        }
+        state = State.FULLY_EXPLORED;
         return Direction.STAY;
     }
 
     private Direction moveToEmpty() {
+        System.out.println("move to empty");
         return Direction.STAY;
     }
 
