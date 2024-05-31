@@ -43,7 +43,7 @@ public class RobinAvatarComplex extends SuperAvatar {
 
     }
 
-    private final int environmentWidth = 20;
+    private final int environmentWidth = 40;
     private final int environmentHeight = 20;
     private Enum[][][] environment;
     private Coordinate position;
@@ -66,6 +66,7 @@ public class RobinAvatarComplex extends SuperAvatar {
         startDirection = Direction.UP;
         extPosition = new Coordinate(0, 0);
         extPositionValid = false;
+        initializeEnvironment();
     }
 
     @Override
@@ -84,6 +85,14 @@ public class RobinAvatarComplex extends SuperAvatar {
 
             default:
                 return Direction.STAY;
+        }
+    }
+
+    private void initializeEnvironment(){
+        for (int row = 0; row < environment.length; row++) {
+            for (int col = 0; col < environment[row].length; col++) {
+                environment[row][col][1] = PersonalFieldType.UNKNOWN;
+            }
         }
     }
 
@@ -148,14 +157,14 @@ public class RobinAvatarComplex extends SuperAvatar {
             int y = spaceInfo.getRelativeToAvatarCoordinate().getY();
             if(x < minX)
                 minX = x;
-            if(y > maxY)
-                maxY = y;
+            if(x > maxX)
+                maxX = x;
             if(y < minY)
                 minY = y;
             if(y > maxY)
                 maxY = y;
         }
-        extPosition = new Coordinate((maxX - minX)/2, (maxY - minY)/2);
+        extPosition = new Coordinate((maxX + minX)/2, (maxY + minY)/2);
         extPositionValid = true;
     }
 
@@ -200,7 +209,7 @@ public class RobinAvatarComplex extends SuperAvatar {
             Coordinate spaceAbsPos = addCoordinates(position, spaceRelPos);
             if (((PersonalFieldType) getFromEnvironment(spaceAbsPos, 1)).isUnknown()) {
                 setInEnvironment(spaceAbsPos, 0, spaceInfo.getType());
-                if (spaceInfo.getType() == SpaceType.EMPTY || spaceInfo.getType() == SpaceType.AVATAR) {
+                if (spaceInfo.getType() != SpaceType.OBSTACLE) {
                     setInEnvironment(spaceAbsPos, 1, PersonalFieldType.EMPTY);
                 } else {
                     setInEnvironment(spaceAbsPos, 1, PersonalFieldType.WALL);

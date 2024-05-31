@@ -41,4 +41,6 @@ public class RobinAvatarSimple extends SuperAvatar {
         return Direction.STAY;
     }
 
+
+
 }
