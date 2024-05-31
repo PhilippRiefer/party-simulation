@@ -73,6 +73,7 @@ public class RobinAvatarComplex extends SuperAvatar {
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         updatePosition();
         updateEnvironment(spacesInRange);
+        printEnv();
         switch (state) {
             case FIND_WALL:
                 return findWall();
@@ -89,10 +90,20 @@ public class RobinAvatarComplex extends SuperAvatar {
     }
 
     private void initializeEnvironment(){
-        for (int row = 0; row < environment.length; row++) {
-            for (int col = 0; col < environment[row].length; col++) {
-                environment[row][col][1] = PersonalFieldType.UNKNOWN;
+        for (int row = 0; row < environment[0].length; row++) {
+            for (int col = 0; col < environment.length; col++) {
+                environment[col][row][1] = PersonalFieldType.UNKNOWN;
+                environment[col][row][0] = SpaceType.EMPTY;
             }
+        }
+    }
+
+    private void printEnv(){
+        for (int row = 0; row < environment[0].length; row++) {
+            for (int col = 0; col < environment.length; col++) {
+                System.out.print(environment[col][row][0].ordinal());
+            }
+            System.out.print("\n");
         }
     }
 
@@ -241,9 +252,9 @@ public class RobinAvatarComplex extends SuperAvatar {
         setInEnvironment(position, 1, PersonalFieldType.WALKED);
         for (int i = 0; i < 4; i++) {
             if(getFromEnvironment(rotate90Clkw(lastWall, i), 1) == PersonalFieldType.EMPTY){
-                lastWall = rotate90Clkw(lastWall, 3+i);
                 lastDirection = rotate90Clkw(lastWall, i);
-                return rotate90Clkw(lastWall, i);
+                lastWall = rotate90Clkw(lastWall, 3+i);                
+                return lastDirection;
             }
         }
         state = State.FIND_EMPTY;
@@ -251,6 +262,8 @@ public class RobinAvatarComplex extends SuperAvatar {
     }
 
     private Direction findEmpty() {
+        printEnv();
+        state = State.MOVE_TO_EMPTY;
         return Direction.STAY;
     }
 
@@ -267,4 +280,6 @@ public class RobinAvatarComplex extends SuperAvatar {
     public void setPerceptionRange(int perceptionRange) {
         super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
     }
+
+    
 }
