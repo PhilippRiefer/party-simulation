@@ -10,10 +10,7 @@ import java.lang.Math;
 import Environment.*;
 import AvatarInterface.*;
 
-/**
- * This class represents a template avatar that extends the SuperAvatar class and implements the AvatarInterface.
- * It provides a basic implementation of the avatar's behavior and perception range.
- */
+
 public class TimAvatar extends SuperAvatar { // implements AvatarInterface
 
 	/**
@@ -193,11 +190,29 @@ private void updateNeedsAfterAction(String currentSpaceType){
 	}
 }
 
-InteractivObject Dancefloor;
-InteractivObject DJBooth;
-InteractivObject Toilet;
-InteractivObject Bar;
-InteractivObject Seats;
+
+
+
+Coordinate Steps = new Coordinate(1, 1);
+
+public Direction doAction(ArrayList<SpaceInfo> spacesInRange) {
+
+	extendKnownSpace(spacesInRange);
+
+	if(Steps.getX() == 0 && Steps.getY() == 0){
+		Steps = pathFinding(makeSpaceTypeDecision());
+	}
+
+	return coordianteSteps(Steps);
+}
+
+
+ArrayList<Coordinate> Dancefloor = new ArrayList<Coordinate>();
+ArrayList<Coordinate> Toilet = new ArrayList<Coordinate>();
+ArrayList<Coordinate> Bar = new ArrayList<Coordinate>();
+ArrayList<Coordinate> Seats = new ArrayList<Coordinate>();
+ArrayList<Coordinate> DJBooth = new ArrayList<Coordinate>();
+
 
 
 	private void extendKnownSpace(ArrayList<SpaceInfo> spacesInRange){
@@ -214,23 +229,33 @@ InteractivObject Seats;
 
 			switch(type){
 				case DANCEFLOOR:
-					Dancefloor.setObjectCoordinate(space);
+				if(!Dancefloor.contains(space)){
+					Dancefloor.add(space);
+				}
 				break;
 
 				case DJBOOTH:
-					DJBooth.setObjectCoordinate(space);
+				if(!DJBooth.contains(space)){
+					DJBooth.add(space);
+				}
 				break;
 
 				case TOILET:
-					Toilet.setObjectCoordinate(space);
+				if(!Toilet.contains(space)){
+					Toilet.add(space);
+				}
 				break;
 
 				case BAR:
-					Bar.setObjectCoordinate(space);
+				if(!Bar.contains(space)){
+					Bar.add(space);
+				}
 				break;
 
 				case SEATS:
-					Seats.setObjectCoordinate(space);
+				if(!Seats.contains(space)){
+					Seats.add(space);
+				}
 				break;
 
 				default:
@@ -241,90 +266,79 @@ InteractivObject Seats;
 		}
 	}
 
-	private void makeSpaceTypeDecision(){
-	
+	private SpaceType makeSpaceTypeDecision(){
+		SpaceType decision = SpaceType.BAR;
+		return decision;
 	}
 
 
-	private void pathFinding(SpaceType spacetype){
-		int direction = 4;
-		Coordinate destination;
-		int xSteps;
-		int ySteps;
-
+	
+	private Coordinate pathFinding(SpaceType spacetype){
+		Coordinate destination = new Coordinate(0, 0);
+		Coordinate Steps = new Coordinate(0, 0);
+		
+		
 		switch(spacetype){
 			case DANCEFLOOR:
-			destination = Dancefloor.getObjectCoordinate();
+			destination = Dancefloor.get(1);
 			break;
 
 			case DJBOOTH:
-			destination = DJBooth.getObjectCoordinate();
+			destination = DJBooth.get(1);
 			break;
 
 			case TOILET:
-			destination = Toilet.getObjectCoordinate();+
+			destination = Toilet.get(1);
 			break;
 
 			case BAR:
-			destination = Bar.getObjectCoordinate();
+			destination = Bar.get(1);
 			break;
 
 			case SEATS:
-			destination = Seats.getObjectCoordinate();
+			destination = Seats.get(1);
 			break;
 
 			default:
 			break;
 		}
 		
-		xSteps = destination.getX() - currentCoordinate.getX();
-		ySteps = destination.getY() - currentCoordinate.getX();
-
-		// Postiver X Wert nach Rechts
-		// Positver Y Wert nach Unten
-
-		if(xSteps > 0){
-			NumberOfStepsRight = xSteps;
-			NumberOfStepsLeft = 0;
-		}
-		else if(xSteps > 0){
-			NumberOfStepsRight = 0;
-			NumberOfStepsLeft = xSteps;
-		}
-		else{
-			NumberOfStepsRight = 0;
-			NumberOfStepsLeft = 0;
-		}
-
-
-
-		if(ySteps > 0){
-			NumberOfStepsDown = ySteps;
-			NumberOfStepsUp = 0;
-		}
-		else if(ySteps > 0){
-			NumberOfStepsDown = 0;
-			NumberOfStepsUp = ySteps;
-		}
-		else{
-			NumberOfStepsDown = 0;
-			NumberOfStepsUp = 0;
-		}
+		Steps.setX(destination.getX() - currentCoordinate.getX());
+		Steps.setY(destination.getY() - currentCoordinate.getX());
+		return Steps;
 	}
 
-	private Direction coordianteSteps(SpaceType spactype){
+	private Direction coordianteSteps(Coordinate Steps){
 		
-		if(NumberOfStepsDown == 0 && NumberOfStepsUp == 0 && NumberOfStepsRight == 0 && NumberOfStepsLeft == 0 ){
-			pathFinding(spacetype);
+				// Postiver X Wert nach Rechts
+				// Positver Y Wert nach Unten
+		if(Steps.getY() > 0){
+			Steps.setY(Steps.getY() - 1);
+			return Direction.DOWN;
+		}
+		else if (Steps.getY() < 0) {
+			Steps.setY(Steps.getY() + 1);
+			return Direction.UP;
+		}
+		else if (Steps.getX() < 0) {
+			Steps.setX(Steps.getY() + 1);
+			return Direction.LEFT;
+		}
+		else if (Steps.getX() > 0) {
+			Steps.setX(Steps.getY() - 1);
+			return Direction.RIGHT;
 		}
 		else{
-
+			return Direction.STAY;
 		}
+	
 	}
 
 
-	private Direction doAction(int direction){
-		switch (direction) {
+	private Direction randomDirection() {
+        int directionNumber = (int) (Math.random() * 4);
+
+        switch (directionNumber) {
             case 0:
                 return Direction.LEFT;
             case 1:
@@ -335,8 +349,13 @@ InteractivObject Seats;
                 return Direction.DOWN;
             default:
                 return Direction.STAY; // Safety net, though unnecessary as directionNumber is bound by 0-3
-	}
-}
+        }
+    }
+
+
+
+
+
 
 
     /**
@@ -349,21 +368,10 @@ InteractivObject Seats;
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
 		updateNeeds();
-		extendKnownSpace(spacesInRange);
-		SpaceType spaceType = makeSpaceTypeDecision();
-		Coordinate coordinate = searchInKnownSpace(spaceType);
-		int direction = pathFinding(coordinate);
-        return doAction(direction);
+        return randomDirection();
     }
 	
 
-
-    /**
-     * Generates a random direction for the avatar to move.
-     *
-     * @return a random direction
-     */
- 
   
 
     /**
@@ -388,5 +396,9 @@ InteractivObject Seats;
 
 
 }
+
+
+
+
 
 
