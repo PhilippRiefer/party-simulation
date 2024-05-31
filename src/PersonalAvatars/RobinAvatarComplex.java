@@ -46,7 +46,7 @@ public class RobinAvatarComplex extends SuperAvatar {
 
     private final int environmentWidth = 40;
     private final int environmentHeight = 20;
-    private Enum[][][] environment;
+    private int[][][] environment;
     private Coordinate position;
     private State state;
     private Direction lastDirection;
@@ -55,11 +55,11 @@ public class RobinAvatarComplex extends SuperAvatar {
     private Direction startDirection;
     private Coordinate extPosition;
     private boolean extPositionValid;
-    
+    private PersonalFieldType[] PFTValues = PersonalFieldType.values();
 
     public RobinAvatarComplex(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
-        environment = new Enum[2 * environmentWidth + 1][2 * environmentHeight + 1][2];
+        environment = new int[2 * environmentWidth + 1][2 * environmentHeight + 1][3];
         position = new Coordinate(environmentWidth, environmentHeight);
         state = State.FIND_WALL;
         lastDirection = Direction.UP;
@@ -74,7 +74,7 @@ public class RobinAvatarComplex extends SuperAvatar {
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         updatePosition();
         updateEnvironment(spacesInRange);
-        //printEnv();
+        // printEnv();
         switch (state) {
             case FIND_WALL:
                 return findWall();
@@ -91,19 +91,20 @@ public class RobinAvatarComplex extends SuperAvatar {
         }
     }
 
-    private void initializeEnvironment(){
+    private void initializeEnvironment() {
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
-                environment[col][row][1] = PersonalFieldType.UNKNOWN;
-                environment[col][row][0] = SpaceType.EMPTY;
+                environment[col][row][2] = 0;
+                environment[col][row][1] = PersonalFieldType.UNKNOWN.ordinal();
+                environment[col][row][0] = SpaceType.EMPTY.ordinal();
             }
         }
     }
 
-    private void printEnv(){
+    private void printEnv() {
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
-                System.out.print(environment[col][row][1].ordinal());
+                System.out.print(environment[col][row][1]);
             }
             System.out.print("\n");
         }
@@ -144,23 +145,23 @@ public class RobinAvatarComplex extends SuperAvatar {
         return new Coordinate(coordinate1.getX() - coordinate2.getX(), coordinate1.getY() - coordinate2.getY());
     }
 
-    private Enum getFromEnvironment(Coordinate pos, int entry) {
+    private int getFromEnvironment(Coordinate pos, int entry) {
         return environment[pos.getX()][pos.getY()][entry];
     }
 
-    private Enum getFromEnvironment(Direction dir, int entry){
+    private int getFromEnvironment(Direction dir, int entry) {
         return getFromEnvironment(addCoordinates(position, directionToCoordinate(dir)), entry);
     }
 
     private void setInEnvironment(Coordinate pos, int entry, Enum value) {
-        environment[pos.getX()][pos.getY()][entry] = value;
+        environment[pos.getX()][pos.getY()][entry] = value.ordinal();
     }
 
     private void setInEnvironment(Direction dir, int entry, Enum value) {
         setInEnvironment(addCoordinates(position, directionToCoordinate(dir)), entry, value);
     }
 
-    private void findExternalCoordinate(ArrayList<SpaceInfo> spacesInRange){
+    private void findExternalCoordinate(ArrayList<SpaceInfo> spacesInRange) {
         int minX = environmentWidth;
         int maxX = 0;
         int minY = environmentHeight;
@@ -168,20 +169,20 @@ public class RobinAvatarComplex extends SuperAvatar {
         for (SpaceInfo spaceInfo : spacesInRange) {
             int x = spaceInfo.getRelativeToAvatarCoordinate().getX();
             int y = spaceInfo.getRelativeToAvatarCoordinate().getY();
-            if(x < minX)
+            if (x < minX)
                 minX = x;
-            if(x > maxX)
+            if (x > maxX)
                 maxX = x;
-            if(y < minY)
+            if (y < minY)
                 minY = y;
-            if(y > maxY)
+            if (y > maxY)
                 maxY = y;
         }
-        extPosition = new Coordinate((maxX + minX)/2, (maxY + minY)/2);
+        extPosition = new Coordinate((maxX + minX) / 2, (maxY + minY) / 2);
         extPositionValid = true;
     }
 
-    private Coordinate absToRelPos(Coordinate absPos){
+    private Coordinate absToRelPos(Coordinate absPos) {
         return subCoordinates(absPos, extPosition);
     }
 
@@ -203,24 +204,24 @@ public class RobinAvatarComplex extends SuperAvatar {
         }
     }
 
-    private void updateReachable(Coordinate pos){
-        if(!(((PersonalFieldType) getFromEnvironment(pos, 1)).isWalkable()))
+    private void updateReachable(Coordinate pos) {
+        if (!(PFTValues[getFromEnvironment(pos, 1)].isWalkable()))
             return;
-        for(Direction dir : Direction.values()){
+        for (Direction dir : Direction.values()) {
             Coordinate spaceAbsPos = addCoordinates(pos, directionToCoordinate(dir));
-            if (((PersonalFieldType) getFromEnvironment(spaceAbsPos, 1)).isUnknown()) {
+            if (PFTValues[getFromEnvironment(spaceAbsPos, 1)].isUnknown()) {
                 setInEnvironment(spaceAbsPos, 1, PersonalFieldType.REACHABLE);
             }
         }
     }
 
     private void updateEnvironment(ArrayList<SpaceInfo> spacesInRange) {
-        if(!extPositionValid)
+        if (!extPositionValid)
             findExternalCoordinate(spacesInRange);
         for (SpaceInfo spaceInfo : spacesInRange) {
             Coordinate spaceRelPos = absToRelPos(spaceInfo.getRelativeToAvatarCoordinate());
             Coordinate spaceAbsPos = addCoordinates(position, spaceRelPos);
-            if (((PersonalFieldType) getFromEnvironment(spaceAbsPos, 1)).isUnknown()) {
+            if (PFTValues[getFromEnvironment(spaceAbsPos, 1)].isUnknown()) {
                 setInEnvironment(spaceAbsPos, 0, spaceInfo.getType());
                 if (spaceInfo.getType() != SpaceType.OBSTACLE) {
                     setInEnvironment(spaceAbsPos, 1, PersonalFieldType.EMPTY);
@@ -232,15 +233,15 @@ public class RobinAvatarComplex extends SuperAvatar {
         }
     }
 
-    private void updatePosition(){
-        if(getCouldMove()){
+    private void updatePosition() {
+        if (getCouldMove()) {
             position = addCoordinates(position, directionToCoordinate(lastDirection));
             extPosition = addCoordinates(extPosition, directionToCoordinate(lastDirection));
         }
     }
 
     private Direction findWall() {
-        if (getFromEnvironment(startDirection, 1) == PersonalFieldType.WALL) {
+        if (getFromEnvironment(startDirection, 1) == PersonalFieldType.WALL.ordinal()) {
             lastWall = startDirection;
             state = State.FOLLOW_WALL;
             return followWall();
@@ -253,13 +254,13 @@ public class RobinAvatarComplex extends SuperAvatar {
     private Direction followWall() {
         setInEnvironment(position, 1, PersonalFieldType.WALKED);
         for (int i = 0; i < 4; i++) {
-            if(getFromEnvironment(rotate90Clkw(lastWall, i), 1) == PersonalFieldType.EMPTY){
+            if (getFromEnvironment(rotate90Clkw(lastWall, i), 1) == PersonalFieldType.EMPTY.ordinal()) {
                 lastDirection = rotate90Clkw(lastWall, i);
-                lastWall = rotate90Clkw(lastWall, 3+i);                
+                lastWall = rotate90Clkw(lastWall, 3 + i);
                 return lastDirection;
             }
         }
-        printEnv();
+        // printEnv();
         state = State.FIND_EMPTY;
         return findEmpty();
     }
@@ -268,10 +269,10 @@ public class RobinAvatarComplex extends SuperAvatar {
         printEnv();
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
-               if(environment[col][row][1] == PersonalFieldType.REACHABLE){
-                state = State.MOVE_TO_EMPTY;
-                return moveToEmpty();
-               }
+                if (environment[col][row][1] == PersonalFieldType.REACHABLE.ordinal()) {
+                    state = State.MOVE_TO_EMPTY;
+                    return moveToEmpty();
+                }
             }
         }
         state = State.FULLY_EXPLORED;
@@ -293,5 +294,4 @@ public class RobinAvatarComplex extends SuperAvatar {
         super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
     }
 
-    
 }
