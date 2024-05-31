@@ -2,6 +2,7 @@ package Environment;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * The Environment class represents the environment in which the party
@@ -18,13 +19,94 @@ public class Environment {
      */
     public Environment() {
         this.model = new Room(40, 20);
-   
         System.out.println("Room constructed");
         this.view = new SimulationGUI();
         view.repaint();
         System.out.println("View constructed");
+        paintBar();
+        paintDJBooth();
+        paintWall();
+        paintDancefloor();
+        paintToilet();
+        paintSeats();
+        model.createBlueprint();
     }
 
+    public void setSpaceType(int x, int y, SpaceType spaceType) {
+        // Set the space type in the room model
+        try {
+            model.setSpace(new Coordinate(x, y), spaceType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void paintSeats(){
+        Random random = new Random();
+        for(int i = 0; i < 4; ++i){
+            int randomX = random.nextInt(1, 6);
+            int randomY = random.nextInt(14, 19);
+            view.paintComponent(randomX, randomY, Color.CYAN);
+            setSpaceType(randomX, randomY, SpaceType.SEATS);
+
+            randomX = random.nextInt(31, 38);
+            randomY = random.nextInt(1, 6);
+            view.paintComponent(randomX, randomY, Color.CYAN);
+            
+            setSpaceType(randomX, randomY, SpaceType.SEATS);
+        }
+    }
+
+    public void paintBar(){
+        for(int x = 1; x <= 2; ++x){
+            for( int y = 7; y <= 12; ++y){
+                view.paintComponent(x, y, Color.BLACK);
+                setSpaceType(x, y, SpaceType.BAR);
+            }
+        }
+        for(int x = 37; x <= 38; ++x){
+            for( int y = 7; y <= 12; ++y){
+                view.paintComponent(x, y, Color.BLACK);
+                setSpaceType(x, y, SpaceType.BAR);
+            }
+        }
+    }
+    public void paintDancefloor(){
+        for(int x = 13; x <= 21; ++x){
+            for( int y = 4; y <= 12; ++y){
+                view.paintComponent(x, y, Color.YELLOW);
+                setSpaceType(x, y, SpaceType.DANCEFLOOR);
+            }
+        }
+    }
+    public void paintDJBooth(){
+        for(int x = 14; x <= 20; ++x){
+            for( int y = 1; y <= 2; ++y){
+                view.paintComponent(x, y, Color.PINK);
+                setSpaceType(x, y, SpaceType.DJBOOTH);
+            }
+        }
+    }
+    public void paintToilet(){
+        for(int x = 35; x <= 38; ++x){
+            view.paintComponent(x, 18, Color.GREEN);
+            setSpaceType(x, 18, SpaceType.TOILET);
+        }
+    }
+    public void paintWall(){
+        for(int x = 0; x < 40; ++x){
+            view.paintComponent(x, 0, Color.GRAY);
+            view.paintComponent(x, 19, Color.GRAY);
+            setSpaceType(x, 0, SpaceType.OBSTACLE);
+            setSpaceType(x, 19, SpaceType.OBSTACLE);
+        }
+        for(int y = 1; y < 19; ++y){
+            view.paintComponent(0, y, Color.GRAY);
+            view.paintComponent(39, y, Color.GRAY);
+            setSpaceType(0, y, SpaceType.OBSTACLE);
+            setSpaceType(39, y, SpaceType.OBSTACLE);
+        }
+    }
     /**
      * Places an avatar in the room.
      * 
@@ -66,6 +148,9 @@ public class Environment {
         // Save the current position
         int oldX = currentPos.getX();
         int oldY = currentPos.getY();
+
+        // Store original spacetype at current Avatar's position
+        SpaceType oldSpaceType = model.getOriginalSpace(currentPos);
     
         // Update the coordinates based on the direction
         switch (dir) {
@@ -81,9 +166,9 @@ public class Environment {
         // Check if the new position is valid and try to place the avatar there
         if (model.tryToPlaceAvatar(avatarID, currentPos)) {
             try {
-                model.setSpace(new Coordinate(oldX, oldY), SpaceType.EMPTY);
+                model.setSpace(new Coordinate(oldX, oldY), oldSpaceType);
             } catch (Exception e) {
-                System.out.println("Failed to set space to empty at " + oldX + ", " + oldY + ".");
+                System.out.println("Failed to set space to oldSpaceType at " + oldX + ", " + oldY + ".");
             }
 
             // Erase the avatar from the old position
@@ -93,7 +178,7 @@ public class Environment {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            view.eraseAvatar(new Coordinate(oldX, oldY));
+            view.eraseAvatar(new Coordinate(oldX, oldY), oldSpaceType);
     
             // Paint the avatar at the new position
             view.paintAvatar(currentPos, color);
