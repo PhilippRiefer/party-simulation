@@ -1,5 +1,6 @@
-package AvatarInterface;
+package PersonalAvatars;
 
+import AvatarInterface.SuperAvatar;
 import Environment.*;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
  * This class represents a template avatar that extends the SuperAvatar class and implements the AvatarInterface.
  * It provides a basic implementation of the avatar's behavior and perception range.
  */
-public class TemplateAvatar extends SuperAvatar { // implements AvatarInterface
+public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
 
     /**
      * Constructs a TemplateAvatar object with the specified ID and perception range.
@@ -16,7 +17,7 @@ public class TemplateAvatar extends SuperAvatar { // implements AvatarInterface
      * @param id              the ID of the avatar
      * @param perceptionRange the perception range of the avatar
      */
-    public TemplateAvatar(int id, int perceptionRange, Color color) {
+    public PaolaAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
     }
 

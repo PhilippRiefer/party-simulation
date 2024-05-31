@@ -1,4 +1,5 @@
 package SimulationControl;
+
 /**
  * The main class of the program.
  * It prompts the user to enter a whole number above 0 for the default perception range,
@@ -34,6 +35,6 @@ public class Main {
         // scanner.close();
         
         SimulationControl simcontrol = new SimulationControl(perceptionRange);
-        simcontrol.loopThroughAvatars();
+        while(true) simcontrol.loopThroughAvatars();
     }
 }
