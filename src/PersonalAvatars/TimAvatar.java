@@ -1,5 +1,6 @@
 package PersonalAvatars;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,45 +14,9 @@ import AvatarInterface.*;
 
 public class TimAvatar extends SuperAvatar { // implements AvatarInterface
 
-	/**
-     * Constructs a TemplateAvatar object with the specified ID and perception range.
-     *
-     * @param id              the ID of the avatar
-     * @param perceptionRange the perception range of the avatar
-     */
-
-	private final Map<String, Integer> characterTraits;
-	HashMap<String, Integer> needs = new HashMap<>();
-	Random random = new Random();
-	String currentSpaceType;
-	Coordinate currentCoordinate;
-	SpaceType[][] knownSpace = new SpaceType[40][20];
-	int NumberOfStepsDown = 0;
-	int NumberOfStepsUp = 0;
-	int NumberOfStepsRight = 0;
-	int NumberOfStepsLeft = 0;
-
-    public TimAvatar(int id, int perceptionRange) {
-		super(id, perceptionRange);
-
-		HashMap<String, Integer> tempCharacterTraits = new HashMap<>();
-
-		tempCharacterTraits.put("activ", 100);
-		tempCharacterTraits.put("social", 60);
-		tempCharacterTraits.put("good drinker", 80);
-		tempCharacterTraits.put("good eater", 40);
-		tempCharacterTraits.put("strong bladder", 20);
-
-		characterTraits = Collections.unmodifiableMap(tempCharacterTraits);
-
-		needs.put("thirst", 60);
-		needs.put("hunger", 30);
-		needs.put("bladder", 20);
-		needs.put("physical energy", 20);
-		needs.put("fun", 20);
-		needs.put("social energy", 20);
-
-	}
+	public TimAvatar(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, color); // leverage the super class to handle ID and perceptionRange
+    }
 
     public void updateNeeds() {
 

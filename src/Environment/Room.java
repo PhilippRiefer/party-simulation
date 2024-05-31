@@ -14,7 +14,8 @@ public class Room {
     // Dictionary to store avatar locations by ID.
     private HashMap<Integer, Coordinate> avatarsLocations = new HashMap<>();
     // 2D list representing the type of space at each coordinate.
-    private ArrayList<ArrayList<SpaceType>> cellsOccupancy;
+    private ArrayList<ArrayList<SpaceType>> blueprint; // stores original spaceTyes of room
+    private ArrayList<ArrayList<SpaceType>> cellsOccupancy; // keeps track of what is going on in the room
     private int numRows;
     private int numCols;
 
@@ -27,14 +28,17 @@ public class Room {
      */
     public Room(int numCols, int numRows) {
 
-        this.numRows = numRows;
-        this.numCols = numCols;
-        cellsOccupancy = new ArrayList<>(numRows);
+        this.numRows = numRows;//y
+        this.numCols = numCols;//x
+        blueprint = new ArrayList<>(numCols);
+        cellsOccupancy = new ArrayList<>(numCols);
         // Initialize the rows
-        for (int i = 0; i < numRows; i++) {
-            cellsOccupancy.add(new ArrayList<>(numCols));
+        for (int i = 0; i < numCols; i++) {
+            // blueprint.add(new ArrayList<>(numRows));
+            cellsOccupancy.add(new ArrayList<>(numRows));
             // Initialize the columns within each row
-            for (int j = 0; j < numCols; j++) {
+            for (int j = 0; j < numRows; j++) {
+                // blueprint.get(i).add(SpaceType.EMPTY);
                 cellsOccupancy.get(i).add(SpaceType.EMPTY); // SpaceType.EMPTY is the default value for the moment
             }
         }
@@ -136,9 +140,9 @@ public class Room {
         int x = position.getX();
         int y = position.getY();
         return x >= 0
-                && x < numRows
+                && x < numCols
                 && y >= 0
-                && y < numCols;
+                && y <  numRows;
     }
 
     /**
@@ -316,12 +320,29 @@ public class Room {
      * @return true if the avatar was successfully placed, false otherwise
      */
     public boolean tryToPlaceAvatar(int avatarID, Coordinate newPos) {
-        if (isValidCoordinate(newPos) &&
-                isOccupied(newPos) == false) {
+        if (isValidCoordinate(newPos) && !isOccupied(newPos)) {
             placeAvatar(avatarID, newPos);
             return true;
         }
 
         return false;
+    }
+
+    public SpaceType getOriginalSpace(Coordinate position) {
+        if (isValidCoordinate(position)) {
+            return blueprint.get(position.getX()).get(position.getY());
+        } else {
+            return null; // Or throw an exception?
+        }
+    }
+
+    public void createBlueprint() {
+        blueprint.clear(); // Clear the existing blueprint if any
+
+        for (ArrayList<SpaceType> row : cellsOccupancy) {
+            ArrayList<SpaceType> newRow = new ArrayList<>();
+            newRow.addAll(row); // Enum elements can be shared safely
+            blueprint.add(newRow);
+        }
     }
 }

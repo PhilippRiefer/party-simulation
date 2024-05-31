@@ -1,5 +1,7 @@
 package AvatarInterface;
 
+import java.awt.Color;
+
 /**
  * Abstract base class for all avatar types in the simulation.
  */
@@ -8,15 +10,18 @@ public abstract class SuperAvatar implements AvatarInterface {
 		private final int avatarID;		// identification of Avatar
 		private boolean couldMove;		// Flag to check if the last move was successful
 		private int perceptionRange;	// perception range of Avatar
+		private Color color;			// color of Avatar
 
 		/**
 		 * Constructs a SuperAvatar with a unique ID and perception range.
 		 * @param id The unique identifier for the avatar.
 		 * @param perceptionRange The range within which the avatar can perceive other objects.
+		 * @param color The color of the avatar.
 		 */
-		public SuperAvatar(int id, int perceptionRange) {
+		public SuperAvatar(int id, int perceptionRange, Color color) {
 			this.avatarID = id;
 			this.perceptionRange = perceptionRange;
+			this.color = color;
 		}
 		
 		/**
@@ -57,5 +62,21 @@ public abstract class SuperAvatar implements AvatarInterface {
 		 */
 		public void setHasMoved(boolean couldMove) {
 			this.couldMove = couldMove;
+		}
+
+		/**
+		 * Sets the avatar's color.
+		 * @param color The color to set.
+		 */
+		public void setAvatarColor(Color color) {
+			this.color = color;
+		}
+
+		/**
+		 * Returns the avatar's color.
+		 * @return The avatar's color.
+		 */
+		public Color getAvatarColor() {
+			return color;
 		}
 }

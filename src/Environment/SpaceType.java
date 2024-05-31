@@ -13,5 +13,6 @@ public enum SpaceType {
     DJBOOTH,
     TOILET,
     BAR,
-    SEATS, LEFT
+    SEATS
+    
 }

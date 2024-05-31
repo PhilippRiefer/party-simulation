@@ -2,6 +2,8 @@ package PersonalAvatars;
 
 import AvatarInterface.*;
 import Environment.*;
+
+import java.awt.Color;
 import java.util.ArrayList;
 
 /**
@@ -15,8 +17,8 @@ public class PhilippAvatar extends SuperAvatar {
      * @param id              the ID of the avatar
      * @param perceptionRange the perception range of the avatar
      */
-    public PhilippAvatar(int id, int perceptionRange) {
-        super(id, perceptionRange); // leverage the super class to handle ID and perceptionRange
+    public PhilippAvatar(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, color); // leverage the super class to handle ID and perceptionRange
     }
 
     /**
