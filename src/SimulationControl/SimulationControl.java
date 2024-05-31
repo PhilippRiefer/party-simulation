@@ -32,7 +32,12 @@ public class SimulationControl {
         environment = new Environment();
         System.out.println("environment created");
 
+<<<<<<< HEAD
         /*Reflections reflections = new Reflections("PersonalAvatars");
+=======
+        /* 
+        Reflections reflections = new Reflections("PersonalAvatars");
+>>>>>>> develop
 
         for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
             try {
@@ -46,10 +51,18 @@ public class SimulationControl {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+<<<<<<< HEAD
         }
             */
         Color color = Color.red;
         SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange, color);
+=======
+        }*/
+
+        Color color = Color.orange;
+
+        SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange,color);
+>>>>>>> develop
         avatars.add(Nasser);
 
         for (SuperAvatar avatar : avatars) {
@@ -79,7 +92,7 @@ public class SimulationControl {
                 boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
                 avatar.setHasMoved(hasMoved);
                 System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
-                wait(50);
+                wait(20);
             } catch (Exception e) {
                 System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
                 e.printStackTrace();
@@ -87,3 +100,4 @@ public class SimulationControl {
         }
     }
 }
+

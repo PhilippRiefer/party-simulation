@@ -14,4 +14,5 @@ public enum SpaceType {
     TOILET,
     BAR,
     SEATS
+    
 }
