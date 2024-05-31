@@ -1,8 +1,9 @@
 package PersonalAvatars;
 
+import java.lang.Math;
 import java.util.ArrayList;
-
 import AvatarInterface.SuperAvatar;
+import Environment.Coordinate;
 import Environment.Direction;
 import Environment.SpaceInfo;
 import Environment.SpaceType;
@@ -10,10 +11,10 @@ import java.awt.Color;
 import java.awt.List;
 
 public class MaximSpockAvatar extends SuperAvatar {
-    // internal stats of Mr. Spock
     final private int MAXSTAT = 200;
     final private int MINSTAT = 0;
     final private int THRESHOLD = 30;
+    // internal stats of Mr. Spock
     int energy = MAXSTAT;
     int hydration = MAXSTAT;
     int bowelMovement = MINSTAT;
@@ -23,9 +24,11 @@ public class MaximSpockAvatar extends SuperAvatar {
     SpaceType currentObjective = SpaceType.EMPTY;       // current Objective to move to for the Avatar
     SpaceType[][] clubMemory= new SpaceType[40][20];    // Mr. Spocks internal map of the Environment  
     // internal variables for movement
-    boolean scouting = true;    // scouting for first *100 turns
+    boolean isScouting = true;
+    boolean notMovingToObjective = true;
     boolean hasPreComputed = false;
-    boolean hasWaitedOneTurn = false;
+    boolean hasWaitedOneTurnForOtherAvatarToLeave = false;
+    int stepOfTheGivenDirectionList = 0;
     ArrayList<Direction> listOfDirections = new ArrayList<Direction>();
 
     // perception Range should be higher than of a human!
@@ -41,40 +44,55 @@ public class MaximSpockAvatar extends SuperAvatar {
      */
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
+        Coordinate personalCoordinates = spacesInRange.get(1 + (int)Math.pow(2, this.getPerceptionRange())).getRelativeToAvatarCoordinate();
+
         saveSpacesInRange(spacesInRange);                   // 1. step is to save Environment in memory
-        if(countedTurns > 99){
-            scouting = false;
+        if(countedTurns > 99 && notMovingToObjective){                              // 2. if counted Turns > 99 -> scouting not as default
+            currentObjective = decideNextMovement();
         } 
-
-        currentObjective = decideNextMovement();
-        if(currentObjective == SpaceType.EMPTY){            // choosing next Objective to move to
-            scouting = true;
-        }
-
-        if(scouting){                                       // moving to nearest empty space
-            updateStats(); 
-            return moveTo(clubMemory, null);
-        }
-        else{                                               // go after needs
-            updateStats();                                  // stats are updated each turn (getting thirstier for e.g.)
-            return moveTo(clubMemory, currentObjective);    // returning next chosen direction to SimulationControl
-        }
+        updateStats();                                      // stats are updated each turn (getting thirstier for e.g.)
+        return moveTo(clubMemory, currentObjective, personalCoordinates);    // returning next chosen direction to SimulationControl
         
     }
 
-    public Direction moveTo(SpaceType[][] clubMemory, SpaceType currentObjective){
-        // 1. check for unchecked spaces in memory
-        // 2. compute 
-        int i = 0;
-
-        if(!hasPreComputed) {
-            listOfDirections = preComputeDirection(clubMemory, currentObjective);
+    public Direction moveTo(SpaceType[][] clubMemory, SpaceType currentObjective, Coordinate personalCoordinates){
+        if(!hasPreComputed || hasWaitedOneTurnForOtherAvatarToLeave == true) { // definitely preComputing path to Objective
+            listOfDirections = preComputeDirection(clubMemory, currentObjective, personalCoordinates);
             hasPreComputed = true;
-            return listOfDirections.get(i++);
         }   
-        else {
-            return listOfDirections.get(i++);
+        return listOfDirections.get(stepOfTheGivenDirectionList++);
+    }
+
+    ArrayList<Direction> preComputeDirection(SpaceType[][] clubMemory, SpaceType currentObjective, Coordinate personalCoordinates) {
+        ArrayList<Direction> listOfDirectionsToObjective = new ArrayList<Direction>();
+        Coordinate objectiveCoordinates;
+
+        // find cell that is objective in Memory
+        objectiveCoordinates = findObjectiveInMemory(clubMemory, currentObjective, personalCoordinates);
+
+        if (objectiveCoordinates == personalCoordinates) { // found nothing in Memory -> scout Empty Spaces
+            objectiveCoordinates = findObjectiveInMemory(clubMemory, SpaceType.EMPTY , personalCoordinates);
         }
+        // compute Route
+
+        return listOfDirectionsToObjective;
+    }
+
+    Coordinate findObjectiveInMemory(SpaceType[][] clubMemory, SpaceType currentObjective, Coordinate personalCoordinates) {
+         // 1. while(SpaceType[x][y] != currentObjective) -> keep looking
+        // 2. start with avatar as center
+        // 3. start checking for OBjective right from avatar
+        // order of searching == right, down, left, up, right,....
+        // mathematicaly one to right, one down, two left, two up, three right...
+        // so amount of steps is +1 for each third turn right(1+2*i)
+
+        Coordinate objectiveCoordinates = new Coordinate(personalCoordinates.getX(), personalCoordinates.getY());
+        int x = 0;
+        int y = 1;
+        while (clubMemory[personalCoordinates.getX() + x][personalCoordinates.getY() + y] != currentObjective) {
+            
+        }
+        return objectiveCoordinates;
     }
 
     // saves latest Information on Environment
@@ -99,6 +117,7 @@ public class MaximSpockAvatar extends SuperAvatar {
             return currentObjective = SpaceType.SEATS;
         }
         else{
+            isScouting = true;
             return currentObjective = SpaceType.EMPTY;
         }
     }
