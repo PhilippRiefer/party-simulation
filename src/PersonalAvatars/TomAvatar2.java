@@ -15,7 +15,7 @@ import java.awt.Color;
  * 2 |  4  | 7
 */
 
-public class TomAvatar extends SuperAvatar {
+public class TomAvatar2 extends SuperAvatar {
 
     private static final int mapSizeX = 40;
     private static final int mapSizeY = 20;
@@ -25,7 +25,7 @@ public class TomAvatar extends SuperAvatar {
     private Coordinate myCoordinate;
     boolean nextDirection = false;
 
-    public TomAvatar(int id, int perceptionRange, Color color) {
+    public TomAvatar2(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
         storePerceptionRange = perceptionRange;
         this.mentalMap = new SpaceType[mapSizeX][mapSizeY];
@@ -66,62 +66,60 @@ public class TomAvatar extends SuperAvatar {
 
     public Direction goToStart() {
 
-        if (myCoordinate.getX() > 19)
+        if (myCoordinate.getX() > 1)
             return Direction.LEFT;
-        else if (myCoordinate.getX() < 19)
-            return Direction.RIGHT;
-        else if (myCoordinate.getY() > 9)
+        else if (myCoordinate.getY() > 1)
             return Direction.UP;
-        else if (myCoordinate.getY() < 9)
-            return Direction.DOWN;
         else
             return Direction.STAY;
 
     }
 
     
-    public Direction startSpiral(ArrayList<SpaceInfo> spacesInRange){
+    public Direction startMapWalk(ArrayList<SpaceInfo> spacesInRange){
+
+        if(myCoordinate.getY() == 18 & myCoordinate.getX() == 38){
+            nextDirection = true;
+        }
+
+        if(nextDirection == true){
+            return goToStart();
+        }
         
-        
-
-        while(myCoordinate.getX() > 1){
-            stepCounter++;
-
-
-            if(directionCounter == 0 & stepCounter <= (2*storePerceptionRange + 1)*(2*circleCounter + 1)){
-                if((stepCounter == (2*storePerceptionRange + 1)*(2*circleCounter + 1)) || (myCoordinate.getX() == 38)){
-                    stepCounter = 0;
+        switch(directionCounter){
+            case 0:
+                if(myCoordinate.getX() == 38){
                     directionCounter = 1;
-                    return Direction.UP;
-                }        
+                    return Direction.DOWN;
+                }
                 return Direction.RIGHT;
-            } else if(directionCounter == 1 & stepCounter <= (2*storePerceptionRange + 1)*(2*circleCounter + 1)){
-                System.out.println("Y" + myCoordinate.getY());
-                if((stepCounter == (2*storePerceptionRange + 1)*(2*circleCounter + 1)) || (myCoordinate.getY() == 1)){
+            case 1: 
+                stepCounter++;
+                if(stepCounter == (storePerceptionRange*2)+1 || myCoordinate.getY() == 18){
                     stepCounter = 0;
                     directionCounter = 2;
                     return Direction.LEFT;
                 }
-                return Direction.UP;
-            } else if(directionCounter == 2 & stepCounter <= ((2*storePerceptionRange + 1)*2) * (circleCounter+1)){
-                if((stepCounter == ((2*storePerceptionRange + 1)*2) * (circleCounter + 1)) || (myCoordinate.getX() == 1)){
-                    stepCounter = 0;
+                return Direction.DOWN;
+            case 2:
+                if(myCoordinate.getX() == 1){
                     directionCounter = 3;
                     return Direction.DOWN;
                 }
                 return Direction.LEFT;
-            }else if(directionCounter == 3 & stepCounter <= ((2*storePerceptionRange + 1)*2) * (circleCounter + 1)){
-                if((stepCounter == ((2*storePerceptionRange + 1)*2) * (circleCounter + 1)) || (myCoordinate.getY() == 18)){
+            case 3:
+                stepCounter++;
+                if(stepCounter == (storePerceptionRange*2)+1 || myCoordinate.getY() == 18){
                     stepCounter = 0;
                     directionCounter = 0;
-                    circleCounter++;
                     return Direction.RIGHT;
-                }
+                    }
                 return Direction.DOWN;
-            }
+
+            default:
+                return Direction.STAY;               
         }
-        
-        return Direction.STAY;
+      
     }
 
 
@@ -131,8 +129,9 @@ public class TomAvatar extends SuperAvatar {
         // createMentalMap(spacesInRange);
         Direction dir = Direction.STAY;
 
-        if(myCoordinate.getX() == 19 & myCoordinate.getY() == 9){
+        if(myCoordinate.getX() == 1 && myCoordinate.getY() == 1){
             phase = 1;
+            nextDirection = false;
         }
 
 
@@ -143,7 +142,7 @@ public class TomAvatar extends SuperAvatar {
             break;
             case 1: 
             getMyPosition(spacesInRange);
-            dir = startSpiral(spacesInRange);
+            dir = startMapWalk(spacesInRange);
             break;
             default:
                 break;
