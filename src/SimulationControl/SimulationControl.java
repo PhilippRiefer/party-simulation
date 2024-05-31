@@ -1,11 +1,9 @@
 package SimulationControl;
 
-import java.awt.Color;
-import java.util.ArrayList;
+import AvatarInterface.*;
 import Environment.*;
 import PersonalAvatars.*;
-import AvatarInterface.*;
-import java.util.Random;
+import java.util.ArrayList;
 import org.reflections.Reflections;
 
 /**
@@ -47,7 +45,7 @@ public class SimulationControl {
                 e.printStackTrace();
             }
         }
-
+        
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
         }
@@ -69,17 +67,13 @@ public class SimulationControl {
      */
     public void loopThroughAvatars() {
         for (SuperAvatar avatar : avatars) {
-            try {
-                ArrayList<SpaceInfo> si = environment.getAdjacentToAvatar(avatar.getAvatarID(), avatar.getPerceptionRange());
-                Direction dir = avatar.yourTurn(si);
-                boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
-                avatar.setHasMoved(hasMoved);
-                System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
-                wait(1);
-            } catch (Exception e) {
-                System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
-                e.printStackTrace();
-            }
+            ArrayList<SpaceInfo> si = environment.getAdjacentToAvatar(avatar.getAvatarID(),
+                    avatar.getPerceptionRange());
+            Direction dir = avatar.yourTurn(si);
+            boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir);
+            avatar.setHasMoved(hasMoved);
+            System.out.println("Avatar has moved = " + hasMoved);
+            wait(20);
         }
     }
 }

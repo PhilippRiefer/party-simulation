@@ -206,10 +206,10 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		public void memory(ArrayList<SpaceInfo> spacesInRange){
 			for (int i=0; i<spacesInRange.size() ;i++){
 
-			if (spacesInRange.get(i).getType() != SpaceType.AVATAR){
-				Mind[spacesInRange.get(i).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
+				if (spacesInRange.get(i).getType() != SpaceType.AVATAR){
+					Mind[spacesInRange.get(i).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
+				}
 			}
-		}
 		}
 
 	private  class BorderException extends Exception{

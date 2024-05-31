@@ -195,6 +195,7 @@ public class SimulationGUI {
        
 
         // Set the cell's background color to the default color (white)
+<<<<<<< Updated upstream
         switch (spaceType) {
             case DANCEFLOOR:
                 cellToRepaint.setBackground(Color.YELLOW);
@@ -217,6 +218,10 @@ public class SimulationGUI {
         }
         // cellToRepaint.setBackground(Color.WHITE);
         // cellToRepaint.setBackground(Color.GRAY);
+=======
+        cellToRepaint.setBackground(Color.WHITE);
+        //cellToRepaint.setBackground(Color.GRAY);
+>>>>>>> Stashed changes
         
         // Set the cell's border to the default border (light gray)
         cellToRepaint.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));

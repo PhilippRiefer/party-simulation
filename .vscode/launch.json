@@ -5,8 +5,13 @@
             "type": "java",
             "name": "Main",
             "request": "launch",
+<<<<<<< Updated upstream
             "mainClass": "SimulationControl/SimulationControl.Main",
             "projectName": "party-simulation_6b7abf7f"
+=======
+            "mainClass": "Avatar_Interface/SimulationControl.Main",
+            "projectName": "party-simulation_5708a265"
+>>>>>>> Stashed changes
         },
         {
             "type": "java",
