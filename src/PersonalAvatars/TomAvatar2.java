@@ -23,7 +23,7 @@ public class TomAvatar2 extends SuperAvatar {
     private int storePerceptionRange = 0;
     private int phase = 0, stepCounter = 0, directionCounter = 0, circleCounter = 0;
     private Coordinate myCoordinate;
-    boolean nextDirection = false;
+    boolean returnToStart = false;
 
     public TomAvatar2(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
@@ -34,7 +34,7 @@ public class TomAvatar2 extends SuperAvatar {
     }
 
     public void createMentalMap(ArrayList<SpaceInfo> spacesInRange) {
-        for (int i = 0; i < spacesInRange.size(); i++) {
+        /*for (int i = 0; i < spacesInRange.size(); i++) {
             if (i < 3) {
                 mentalMap[spacesInRange.get(0).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i)
                         .getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
@@ -45,6 +45,12 @@ public class TomAvatar2 extends SuperAvatar {
                 mentalMap[spacesInRange.get(5).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i)
                         .getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
             }
+        }*/
+
+        for(int i = 0; i < spacesInRange.size(); i++){
+            int x = spacesInRange.get(i).getRelativeToAvatarCoordinate().getX();
+            int y = spacesInRange.get(i). getRelativeToAvatarCoordinate().getY();
+            mentalMap[x][y] = spacesInRange.get(i).getType();
         }
     }
 
@@ -68,8 +74,25 @@ public class TomAvatar2 extends SuperAvatar {
 
         if (myCoordinate.getX() > 1)
             return Direction.LEFT;
-        else if (myCoordinate.getY() > 1)
+        else if (myCoordinate.getY() > storePerceptionRange)
             return Direction.UP;
+        else if (myCoordinate.getY() < storePerceptionRange)
+            return Direction.DOWN;
+        else
+            return Direction.STAY;
+
+    }
+
+    public Direction goToStartTest() {
+
+        if (myCoordinate.getX() < 17)
+            return Direction.RIGHT;
+        else if (myCoordinate.getY() > 8)
+            return Direction.UP;      
+        else if (myCoordinate.getY() < 8)
+            return Direction.DOWN;
+        else if(myCoordinate.getX() > 17)
+            return Direction.LEFT;
         else
             return Direction.STAY;
 
@@ -78,17 +101,19 @@ public class TomAvatar2 extends SuperAvatar {
     
     public Direction startMapWalk(ArrayList<SpaceInfo> spacesInRange){
 
-        if(myCoordinate.getY() == 18 & myCoordinate.getX() == 38){
-            nextDirection = true;
-        }
-
-        if(nextDirection == true){
+        if(returnToStart == true){
             return goToStart();
+        }
+        if(returnToStart == false){
+            createMentalMap(spacesInRange);
         }
         
         switch(directionCounter){
             case 0:
-                if(myCoordinate.getX() == 38){
+                if(18 - myCoordinate.getY() <= storePerceptionRange && myCoordinate.getX() == 39 - storePerceptionRange){
+                    returnToStart = true;
+                    break;
+                }else if(myCoordinate.getX() == 39 - storePerceptionRange){
                     directionCounter = 1;
                     return Direction.DOWN;
                 }
@@ -102,10 +127,16 @@ public class TomAvatar2 extends SuperAvatar {
                 }
                 return Direction.DOWN;
             case 2:
-                if(myCoordinate.getX() == 1){
+                
+                if(18 - myCoordinate.getY() <= storePerceptionRange && myCoordinate.getX() == storePerceptionRange){
+                    returnToStart = true;
+                    break;
+
+                }else if(myCoordinate.getX() == storePerceptionRange){
                     directionCounter = 3;
                     return Direction.DOWN;
                 }
+
                 return Direction.LEFT;
             case 3:
                 stepCounter++;
@@ -119,7 +150,7 @@ public class TomAvatar2 extends SuperAvatar {
             default:
                 return Direction.STAY;               
         }
-      
+      return Direction.STAY;
     }
 
 
@@ -129,21 +160,31 @@ public class TomAvatar2 extends SuperAvatar {
         // createMentalMap(spacesInRange);
         Direction dir = Direction.STAY;
 
-        if(myCoordinate.getX() == 1 && myCoordinate.getY() == 1){
+        /*if(myCoordinate.getX() == 1 && myCoordinate.getY() == storePerceptionRange && returnToStart == false){
             phase = 1;
-            nextDirection = false;
+        }else if(myCoordinate.getX() == 1 && myCoordinate.getY() == storePerceptionRange && returnToStart == true){
+            phase = 2;
+        }*/
+
+        if(myCoordinate.getX() == 17 && myCoordinate.getY() == 8 && returnToStart == false){
+            phase = 1;
+        }else if(myCoordinate.getX() == 1 && myCoordinate.getY() == storePerceptionRange && returnToStart == true){
+            phase = 2;
         }
 
 
         switch (phase) {
             case 0:
-            getMyPosition(spacesInRange);
-            dir = goToStart();
+                getMyPosition(spacesInRange);
+                //dir = goToStart();
+                dir = goToStartTest();
             break;
             case 1: 
-            getMyPosition(spacesInRange);
-            dir = startMapWalk(spacesInRange);
+                getMyPosition(spacesInRange);
+                dir = startMapWalk(spacesInRange);
             break;
+            case 2:
+                return Direction.STAY;
             default:
                 break;
         }
