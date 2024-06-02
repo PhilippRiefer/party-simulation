@@ -2,18 +2,20 @@ package PersonalAvatars;
 
 /********************************************
  * Author: Ole
- * Version: v.1
+ * Version: v.4
  * Date:   20240511
  * ------------------------------------------
  * Description: personal avatar of Ole 
  ********************************************/
 
- import java.awt.Color;
+import java.awt.Color;
 import Environment.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import AvatarInterface.SuperAvatar;
@@ -22,14 +24,12 @@ public class OleAvatar extends SuperAvatar {
     public OleAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
     }
-    // create a border for the avatar
-    private static final int MIN_BORDER_X = 0;
-    private static final int MIN_BORDER_Y = 0;
-    private static final int MAX_BORDER_X = 39;
-    private static final int MAX_BORDER_Y = 19;
+
+    // Set to store visited spaces
+    private final Set<String> visitedSpaces = new HashSet<>();
     // HashMap for all spacetypes
     private static final Map<String, Integer> TYPE = new HashMap<>();
-    // spacetypes with each ranking 
+    // spacetypes with each ranking
     static {
         TYPE.put("BAR", 0);
         TYPE.put("DANCEFLOOR", 1);
@@ -39,6 +39,7 @@ public class OleAvatar extends SuperAvatar {
         TYPE.put("AVATAR", 5);
         TYPE.put("TOILET", 6);
     }
+
     // My avatar is the next to move.
     // ----------------------------------
     @Override
@@ -47,8 +48,14 @@ public class OleAvatar extends SuperAvatar {
         int[] above = checkSpace(spacesInRange, 3); // check cell above
         int[] bottom = checkSpace(spacesInRange, 4); // check cell down
         int[] right = checkSpace(spacesInRange, 6); // check cell to the right
+        // save the space of the avatr as visited
+        visitedSpace(spacesInRange);
+
         // merge the arrays
         int[][] directions = { left, above, bottom, right };
+
+        // TODO: check if the place was visited before. If yes -> return stay
+
         // take cell as minimum
         int minValue = left[0];
         // return the target
@@ -64,55 +71,39 @@ public class OleAvatar extends SuperAvatar {
     private int[] checkSpace(ArrayList<SpaceInfo> spacesInRange, int spaceNumber) {
         SpaceType type; // store the type of space
         String typeAsString; // hold the type of space as a string
-        int coordX; // store x coordinate
-        int coordY; // store y coordinate
-        int[] obstacle = new int[3]; // integer array to store obstacle data
+        int[] array = new int[3]; // integer array to store object data
         if (spacesInRange.size() >= 8) {
             SpaceInfo space = spacesInRange.get(spaceNumber); // get the space information
             Coordinate coord = space.getRelativeToAvatarCoordinate(); // get the coordinates relative to the avatar
-            coordX = coord.getX(); // get X
-            coordY = coord.getY(); // get Y
             type = space.getType(); // get type
             typeAsString = type.name(); // convert to string
+            System.out.println( typeAsString);
             // determine the obstacle based on the type of space and its coordinates
-            obstacle = determinateObstacle(typeAsString, coordX, coordY);
+            array = determinateObstacle(typeAsString, coord.getX(), coord.getY());
             // return the determined obstacle array
-            return obstacle;
+            return array;
         } else {
-            return obstacle;
+            return array;
         }
     }
 
     // Determinate wich obstacle is in the way
     // ----------------------------------
-    // return array[0] = 0 --> BAR
-    // return array[0] = 1 --> DANCEFLOOR
-    // return array[0] = 2 --> EMPTY
-    // return array[0] = 3 --> DJBOOTH
-    // return array[0] = 4 --> SEATS
-    // return array[0] = 5 --> AVATAR
-    // return array[0] = 6 --> TOILET
-    // return array[0] = 7 --> OBSTACLE
-    // return array[0] = 8 --> Wall
     private int[] determinateObstacle(String typeAsString, int coordX, int coordY) {
         int[] array = new int[3];
         array[1] = coordX;
         array[2] = coordY;
-        // check the obstacles around the avatar and rank them 
+        // check the obstacles around the avatar and rank them
         array[0] = TYPE.getOrDefault(typeAsString, 7);
-        // if the avatar is out of bounds -> give bad ranking
-        if (isOutOfBounds(coordX, coordY)) {
-            array[0] = 8;
-        }
         return array;
     }
-    // check if the avatar is out of bounds
-    // ----------------------------------
-    private boolean isOutOfBounds(int x, int y) {
-        return x <= MIN_BORDER_X || x >= MAX_BORDER_X || y <= MIN_BORDER_Y || y >= MAX_BORDER_Y;
-    }
+
     // Make a desicion based on the obstacles
     // ----------------------------------
+    // left:    directions[0][...]
+    // above:   directions[1][...]
+    // bottom:  directions[2][...]
+    // right:   directions[3][...]
     private Direction makeDesicion(int[][] directions, int minValue) {
         int minIndex = 0;
         List<Integer> minIndices = new ArrayList<>();
@@ -122,28 +113,21 @@ public class OleAvatar extends SuperAvatar {
             if (directions[i][0] < minValue) {
                 minValue = directions[i][0];
                 minIndex = i;
-                minIndices.clear(); // clear the list as we found a new minimum
-                minIndices.add(i); // add the index of the new minimum
+                minIndices.clear(); // new minimum -> clear the list
+                minIndices.add(i);  // add the index of the new minimum
             } else if (directions[i][0] == minValue) {
-                minIndices.add(i); // add index if it matches the current minimum
+                minIndices.add(i);  // add index if it matches the current minimum
             }
         }
         // check if there are multiple arrays with the same minimum value
+        // IMPORTANT: randomly select one of the indices with the minimum value, so the avatar does not walk in one direction
         if (minIndices.size() > 1) {
-            System.out.println("Multiple directions have the same minimum value: " + minValue);
-            for (int index : minIndices) {
-                System.out.println("Direction index: " + index);
-            }
-            // IMPORTANT: randomly select one of the indices with the minimum value
             Random random = new Random();
             minIndex = minIndices.get(random.nextInt(minIndices.size()));
         }
-        // print target
-        String[] arrayNames = { "left", "above", "bottom", "right" };
-        System.out.println("in the direction: " + arrayNames[minIndex]
-                + " has the best ranking: " + minValue);
+
         // choose the target
-        if (minValue == 0) {
+        if (minValue == 0) {        // BAR
             return Direction.STAY;
         } else {
             if (minIndex == 0) {
@@ -156,52 +140,52 @@ public class OleAvatar extends SuperAvatar {
                 return Direction.RIGHT;
             }
         }
+
+        // if (minIndex == 0) {
+        //     return Direction.LEFT;
+        // } else if (minIndex == 1) {
+        //     return Direction.UP;
+        // } else if (minIndex == 2) {
+        //     return Direction.DOWN;
+        // } else {
+        //     return Direction.RIGHT;
+        // }
     }
 
-    // NOT USED
-    // --------------------------------------------------------------------------
-    // generate a random desicion
-    // ==================================
-    // private Direction randomDesicion() {
-    // int random = (int) (Math.random() * 4);
-    // switch (random) {
-    // case 0:
-    // System.out.println("(ID: " + getAvatarID() + ") Ole -> left");
-    // return Direction.LEFT;
-    // case 1:
-    // System.out.println("(ID: " + getAvatarID() + ") Ole -> right");
-    // return Direction.RIGHT;
-    // case 2:
-    // System.out.println("(ID: " + getAvatarID() + ") Ole -> up");
-    // return Direction.UP;
-    // case 3:
-    // System.out.println("(ID: " + getAvatarID() + ") Ole -> down");
-    // return Direction.DOWN;
-    // default:
-    // System.out.println("(ID: " + getAvatarID() + ") Ole -> stay");
-    // return Direction.STAY;
-    // }
-    // }
+    // Store visited space information
+    // ----------------------------------
+    private void visitedSpace(ArrayList<SpaceInfo> spacesInRange) {
+        SpaceType type; 
+        int myX; // x coordinate of the avatar
+        int myY; // y coordinate of the avatar
+        SpaceInfo space = spacesInRange.get(1); // get spaceInfo from the left cell
+        Coordinate coord = space.getRelativeToAvatarCoordinate();
+        myX = coord.getX() + 1;     // add +1 to the left cell to calculate my x coordinate
+        myY = coord.getY();         // my y = left y
+        // TODO für space wit myX and myY
+        type = space.getType();
+        String coordinateKey = myX + "," + myY;
+        if (visitedSpaces.add(coordinateKey)) { // add to set and check if it was added for the first time
+            System.out.println("Visited space at (" + myX + ", " + myY + ")");
+        }
+    }
 
-    // // check wich coordinates are mine
-    // // ==================================
-    // private int[] determineMyCoordinates(ArrayList<SpaceInfo> spacesInRange) {
-    // int[] knownX = new int[8];
-    // int[] knownY = new int[8];
-    // int[] myCoordinates = new int[2];
-    // int i = 0;
-    // for (SpaceInfo space : spacesInRange) {
-    // Coordinate relativeCoord = space.getRelativeToAvatarCoordinate();
-    // knownX[i] = relativeCoord.getX();
-    // knownY[i] = relativeCoord.getY();
-    // ++i;
-    // }
-    // int avatarX = knownX[1] + 1;
-    // int avatarY = knownY[1];
-    // myCoordinates[0] = avatarX;
-    // myCoordinates[1] = avatarY;
-    // return myCoordinates;
-    // }
+    // Check if the space has already been visited
+    // Not used for now
+    // ----------------------------------
+    private boolean isVisited(int x, int y) {
+        String coordinateKey = x + "," + y;
+        for (String visitedSpace : visitedSpaces) {
+            // compare the coordinateKey with the visited spaces
+            if (visitedSpace.startsWith(coordinateKey)) {
+                System.out.println("Space at (" + x + ", " + y + ") has already been visited");
+                return true; // coordinate has already been visited
+            }
+        }
+        return false; // coordinate has not been visited
+    }
+
+
 
     /**
      * Gets the perception range of the avatar.
@@ -223,3 +207,36 @@ public class OleAvatar extends SuperAvatar {
         super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
     }
 }
+
+// TODO ??
+// // filter out visited directions
+// List<int[]> unvisitedDirections = new ArrayList<>();
+// for (int[] direction : directions) {
+// if (!isVisited(direction[1], direction[2])) {
+// unvisitedDirections.add(direction);
+// }
+// }
+// // if all directions are visited, stay in place
+// if (unvisitedDirections.isEmpty()) {
+// System.out.println("All spaces have been visited");
+// return Direction.STAY;
+// }
+// // find the minimum value among unvisited directions
+// int minValue = unvisitedDirections.get(0)[0];
+// return makeDesicion(unvisitedDirections.toArray(new int[0][0]), minValue);
+
+// private Direction chooseDirection(int[] left, int[] above, int[] bottom, int[] right){
+//     if (left[0] == 0){
+//         if (above[0] == 0){
+//             if (bottom[0] == 0){
+//                 if (right[0] == 0){
+//                     return Direction.DOWN;
+//                 }
+//                 return Direction.DOWN;
+//             }
+//             return Direction.UP;
+//         }
+//         return Direction.LEFT;
+//     }
+//     return Direction.STAY;
+// }
