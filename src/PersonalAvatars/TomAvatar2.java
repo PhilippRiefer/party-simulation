@@ -161,7 +161,7 @@ public class TomAvatar2 extends SuperAvatar {
         
         // createMentalMap(spacesInRange);
         Direction dir = Direction.STAY;
-
+        getMyPosition(spacesInRange);
         /* 
         if(myCoordinate.getX() == 1 && myCoordinate.getY() == storePerceptionRange && returnToStart == false){
             phase = 1;
@@ -179,12 +179,10 @@ public class TomAvatar2 extends SuperAvatar {
 
         switch (phase) {
             case 0:
-                getMyPosition(spacesInRange);
                 //dir = goToStart();
                 dir = goToStartTest();
             break;
             case 1: 
-                getMyPosition(spacesInRange);
                 dir = startMapWalk(spacesInRange);
             break;
             case 2:
