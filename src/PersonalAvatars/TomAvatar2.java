@@ -86,13 +86,13 @@ public class TomAvatar2 extends SuperAvatar {
 
     public Direction goToStartTest() {
 
-        if (myCoordinate.getX() < 1)
+        if (myCoordinate.getX() < 17)
             return Direction.RIGHT;
-        else if (myCoordinate.getY() > 9)
+        else if (myCoordinate.getY() > 8)
             return Direction.UP;      
-        else if (myCoordinate.getY() < 9)
+        else if (myCoordinate.getY() < 8)
             return Direction.DOWN;
-        else if(myCoordinate.getX() > 1)
+        else if(myCoordinate.getX() > 17)
             return Direction.LEFT;
         else
             return Direction.STAY;
@@ -170,7 +170,7 @@ public class TomAvatar2 extends SuperAvatar {
         }*/
 
         
-        if(myCoordinate.getX() == 1 && myCoordinate.getY() == 9 && returnToStart == false){
+        if(myCoordinate.getX() == 17 && myCoordinate.getY() == 8 && returnToStart == false){
             phase = 1;
         }else if(myCoordinate.getX() == 1 && myCoordinate.getY() == storePerceptionRange && returnToStart == true){
             phase = 2;
