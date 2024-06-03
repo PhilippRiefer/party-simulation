@@ -51,10 +51,9 @@ public class SimulationControl {
 
         Color color = Color.orange;
 
-        SuperAvatar Tom = new TomAvatar(nextAvatarID++, perceptionRange, color);
-        SuperAvatar Tom2 = new TomAvatar2(nextAvatarID++, perceptionRange, color);
+        SuperAvatar Tim = new TimAvatar(nextAvatarID++, perceptionRange, color);
 
-        avatars.add(Tom2);
+        avatars.add(Tim);
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
