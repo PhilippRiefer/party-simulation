@@ -2,11 +2,13 @@ package PersonalAvatars;
 
 import Environment.*;
 import java.util.ArrayList;
-
-import org.reflections.vfs.Vfs.Dir;
-
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Collections;
+import java.util.Comparator;
 import AvatarInterface.*;
 import java.awt.Color;
+import java.util.Random;
 
 //find my position and set to (0,0)
 //spacesInRange
@@ -17,138 +19,155 @@ import java.awt.Color;
 
 public class TomAvatar extends SuperAvatar {
 
-    private static final int mapSizeX = 40;
-    private static final int mapSizeY = 20;
-    private SpaceType[][] mentalMap;
+  
+    private ArrayList<SpaceInfo> mentalMapList = new ArrayList<>();
     private int storePerceptionRange = 0;
-    private int phase = 0, stepCounter = 0, directionCounter = 0, circleCounter = 0;
-    private Coordinate myCoordinate;
-    boolean nextDirection = false;
+    private int phase = 0, stepCounter = 0, directionCounter = 0;
+    private Direction myDirection = Direction.STAY;
+    private static final Random random = new Random();
+
 
     public TomAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
         storePerceptionRange = perceptionRange;
-        this.mentalMap = new SpaceType[mapSizeX][mapSizeY];
-        this.myCoordinate = new Coordinate(0, 0);
 
     }
 
     public void createMentalMap(ArrayList<SpaceInfo> spacesInRange) {
-        for (int i = 0; i < spacesInRange.size(); i++) {
-            if (i < 3) {
-                mentalMap[spacesInRange.get(0).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i)
-                        .getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
-            } else if (i < 5) {
-                mentalMap[spacesInRange.get(3).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i)
-                        .getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
-            } else {
-                mentalMap[spacesInRange.get(5).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i)
-                        .getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
-            }
+        for (SpaceInfo infoForMentalMap : spacesInRange) {
+            if (infoForMentalMap.getType() != SpaceType.EMPTY && infoForMentalMap.getType() != SpaceType.OBSTACLE)
+                mentalMapList.add(infoForMentalMap);
         }
     }
 
-    public void getMyPosition(ArrayList<SpaceInfo> spacesInRange) {
+    private void removeDuplicateCoordinates() {
+        Set<Coordinate> seenCoordinates = new HashSet<>();
+        ArrayList<SpaceInfo> uniqueMentalMapList = new ArrayList<>();
 
-        for (int i = 0; i < spacesInRange.size(); i++) {
-            if ((spacesInRange.get(i).getRelativeToAvatarCoordinate().getX() == spacesInRange.get(i + 1)
-                    .getRelativeToAvatarCoordinate().getX()) &
-                    (spacesInRange.get(i).getRelativeToAvatarCoordinate().getY() -
-                            spacesInRange.get(i + 1).getRelativeToAvatarCoordinate().getY()) == -2) {
-
-                myCoordinate.setX(spacesInRange.get(i).getRelativeToAvatarCoordinate().getX());
-                myCoordinate.setY(spacesInRange.get(i).getRelativeToAvatarCoordinate().getY() + 1);
-                System.out.println("X" + myCoordinate.getX() + "Y" + myCoordinate.getY());
-                break;
+        for (SpaceInfo spaceInfo : mentalMapList) {
+            if (seenCoordinates.add(spaceInfo.getRelativeToAvatarCoordinate())) {
+                uniqueMentalMapList.add(spaceInfo);
             }
         }
+
+        mentalMapList = uniqueMentalMapList;
     }
 
-    public Direction goToStart() {
+    private void sortMentalMapListByType() {
+        Collections.sort(mentalMapList, new Comparator<SpaceInfo>() {
+            @Override
+            public int compare(SpaceInfo o1, SpaceInfo o2) {
+                return o1.getType().name().compareTo(o2.getType().name());
+            }
+        });
+    }
 
-        if (myCoordinate.getX() > 19)
+    public Direction goToStart(ArrayList<SpaceInfo> spacesInRange) {
+
+        if (spacesInRange.get(3).getType() == SpaceType.OBSTACLE) {
+            if (spacesInRange.get(1).getType() == SpaceType.OBSTACLE) {
+                phase = 1;
+                return Direction.STAY;
+            }
             return Direction.LEFT;
-        else if (myCoordinate.getX() < 19)
-            return Direction.RIGHT;
-        else if (myCoordinate.getY() > 9)
+
+        } else {
             return Direction.UP;
-        else if (myCoordinate.getY() < 9)
-            return Direction.DOWN;
-        else
-            return Direction.STAY;
+        }
 
     }
 
-    
-    public Direction startSpiral(ArrayList<SpaceInfo> spacesInRange){
-        
-        
+    public Direction startMapWalk(ArrayList<SpaceInfo> spacesInRange) {
 
-        while(myCoordinate.getX() > 1){
-            stepCounter++;
+        if (spacesInRange.get(4).getType() == SpaceType.OBSTACLE &&
+                spacesInRange.get(6).getType() == SpaceType.OBSTACLE) {
+            phase = 2;
+        }
 
-
-            if(directionCounter == 0 & stepCounter <= (2*storePerceptionRange + 1)*(2*circleCounter + 1)){
-                if((stepCounter == (2*storePerceptionRange + 1)*(2*circleCounter + 1)) || (myCoordinate.getX() == 38)){
-                    stepCounter = 0;
+        switch (directionCounter) {
+            case 0:
+                if (spacesInRange.get(6).getType() == SpaceType.OBSTACLE) {
                     directionCounter = 1;
-                    return Direction.UP;
-                }        
+                    return Direction.DOWN;
+                }
                 return Direction.RIGHT;
-            } else if(directionCounter == 1 & stepCounter <= (2*storePerceptionRange + 1)*(2*circleCounter + 1)){
-                System.out.println("Y" + myCoordinate.getY());
-                if((stepCounter == (2*storePerceptionRange + 1)*(2*circleCounter + 1)) || (myCoordinate.getY() == 1)){
+            case 1:
+                stepCounter++;
+                if (stepCounter == (storePerceptionRange * 2) + 1
+                        || spacesInRange.get(4).getType() == SpaceType.OBSTACLE) {
                     stepCounter = 0;
                     directionCounter = 2;
                     return Direction.LEFT;
                 }
-                return Direction.UP;
-            } else if(directionCounter == 2 & stepCounter <= ((2*storePerceptionRange + 1)*2) * (circleCounter+1)){
-                if((stepCounter == ((2*storePerceptionRange + 1)*2) * (circleCounter + 1)) || (myCoordinate.getX() == 1)){
-                    stepCounter = 0;
+                return Direction.DOWN;
+            case 2:
+                if (spacesInRange.get(1).getType() == SpaceType.OBSTACLE) {
                     directionCounter = 3;
                     return Direction.DOWN;
                 }
                 return Direction.LEFT;
-            }else if(directionCounter == 3 & stepCounter <= ((2*storePerceptionRange + 1)*2) * (circleCounter + 1)){
-                if((stepCounter == ((2*storePerceptionRange + 1)*2) * (circleCounter + 1)) || (myCoordinate.getY() == 18)){
+            case 3:
+                stepCounter++;
+                if (stepCounter == (storePerceptionRange * 2) + 1
+                        || spacesInRange.get(4).getType() == SpaceType.OBSTACLE) {
                     stepCounter = 0;
                     directionCounter = 0;
-                    circleCounter++;
                     return Direction.RIGHT;
                 }
                 return Direction.DOWN;
-            }
         }
-        
+
         return Direction.STAY;
     }
 
+    public Direction takingDicision(ArrayList<SpaceInfo> spacesInRange){
+        int decision = (int) (random.nextDouble() * 100);
+ 
+        if(decision > 0){
+            myDirection = goToBar(spacesInRange);
+        }
+        return myDirection;
+    }
+
+    public Direction goToBar(ArrayList<SpaceInfo> spacesInRange){
+
+        int minDiff = 0;
+        int diff = 0;
+
+        for(int i = 0; i < mentalMapList.size(); i++){
+            if(mentalMapList.get(i).getType() == SpaceType.BAR){
+                diff = Math.abs(spacesInRange.get(3).getRelativeToAvatarCoordinate().getX()
+                - mentalMapList.get(i).getRelativeToAvatarCoordinate().getX());
+                if(diff < minDiff){
+                    minDiff = diff;
+                }
+            }
+        }
+        return Direction.DOWN;
+    }
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-        
-        // createMentalMap(spacesInRange);
-        Direction dir = Direction.STAY;
-
-        if(myCoordinate.getX() == 19 & myCoordinate.getY() == 9){
-            phase = 1;
-        }
-
-
         switch (phase) {
             case 0:
-            getMyPosition(spacesInRange);
-            dir = goToStart();
-            break;
-            case 1: 
-            getMyPosition(spacesInRange);
-            dir = startSpiral(spacesInRange);
+                myDirection = goToStart(spacesInRange);
+                break;
+            case 1:
+                createMentalMap(spacesInRange);
+                myDirection = startMapWalk(spacesInRange);
+                break;
+            case 2:
+                removeDuplicateCoordinates();
+                sortMentalMapListByType();
+                phase = 3;
+                break;
+            case 3:
+                takingDicision(spacesInRange);
             break;
             default:
                 break;
         }
-        return dir;
+        return myDirection;
 
     }
 
