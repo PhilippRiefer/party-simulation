@@ -18,11 +18,22 @@ public class NasserAvatar extends SuperAvatar {
     private int count3 = 0;
     private int count4 = 0;
     private int count5 = 0;
+    private int count6 = 0;
+    private int count7 = 3;
+    private int count8 = 0;
+    private int count9 = 0;
+    private int count10 = 0;
+    int secondmiddleY;
     private int excludedNumber = 6;
     private String prio = null;
     private SpaceInfo left;
+    private SpaceInfo leftTop;
+    private SpaceInfo leftBottom;
     private SpaceInfo right;
+    private SpaceInfo rightTop;
+    private SpaceInfo rightBottom;
     private SpaceInfo top;
+    private SpaceInfo bottom;
     private int middleX;
     private int middleY;
     private ArrayList<SpaceInfo> allSpaceInfos;
@@ -168,7 +179,7 @@ public class NasserAvatar extends SuperAvatar {
 
         // Bekomme damit die ganzen Koordinaten aus allen Richtungen und kann damit
         // arbeiten
-        SpaceInfo leftTop = spacesInRange.get(0);
+        leftTop = spacesInRange.get(0);
         Coordinate leftTopCoordinate = leftTop.getRelativeToAvatarCoordinate();
         // System.out.println("x-Koordinate: " + leftTopCoordinate.getX() + "
         // y-Koordinate: " + leftTopCoordinate.getY()+" Spacetyp: " +
@@ -183,7 +194,7 @@ public class NasserAvatar extends SuperAvatar {
 
         // System.out.println();
 
-        SpaceInfo leftBottom = spacesInRange.get(2);
+        leftBottom = spacesInRange.get(2);
         Coordinate leftBottomCoordinate = leftBottom.getRelativeToAvatarCoordinate();
         // System.out.println("x-Koordinate: " + leftBottomCoordinate.getX() + "
         // y-Koordinate: " + leftBottomCoordinate.getY()+" Spacetyp: " +
@@ -198,14 +209,14 @@ public class NasserAvatar extends SuperAvatar {
 
         // System.out.println();
 
-        SpaceInfo bottom = spacesInRange.get(4);
+        bottom = spacesInRange.get(4);
         Coordinate bottomCoordinate = bottom.getRelativeToAvatarCoordinate();
         // System.out.println("x-Koordinate: " + bottomCoordinate.getX() + "
         // y-Koordinate: " + bottomCoordinate.getY()+" Spacetyp: " + bottom.getType());
 
         // System.out.println();
 
-        SpaceInfo rightTop = spacesInRange.get(5);
+         rightTop = spacesInRange.get(5);
         Coordinate rightTopCoordinate = rightTop.getRelativeToAvatarCoordinate();
         // System.out.println("x-Koordinate: " + rightTopCoordinate.getX() + "
         // y-Koordinate: " + rightTopCoordinate.getY()+" Spacetyp: " +
@@ -220,7 +231,7 @@ public class NasserAvatar extends SuperAvatar {
 
         // System.out.println();
 
-        SpaceInfo rightBottom = spacesInRange.get(7);
+         rightBottom = spacesInRange.get(7);
         Coordinate rightBottomCoordinate = rightBottom.getRelativeToAvatarCoordinate();
         // System.out.println("x-Koordinate: " + rightBottomCoordinate.getX() + "
         // y-Koordinate: " + rightBottomCoordinate.getY()+" Spacetyp: " +
@@ -237,7 +248,71 @@ public class NasserAvatar extends SuperAvatar {
         return avatarDirection();
     }
 
-    private Direction avatarDirection() {
+    public Direction avatarDirection() {
+
+        Random random = new Random();
+
+    
+    
+        if ((("AVATAR".equals(String.valueOf(left.getType()))) ||
+                ("AVATAR".equals(String.valueOf(right.getType()))))) {
+            int nextmove = random.nextInt(2);
+            count7 = nextmove;
+            switch (nextmove) {
+                case 0:
+                    return Direction.UP;
+                case 1:
+                    return Direction.DOWN;
+
+            }
+        }
+    
+        /*if(count7==0&&!"AVATAR".equals(String.valueOf(bottom.getType()))){
+            count7=3;
+            count8=1;
+            return Direction.DOWN;
+        }else if(count7==1&&!"AVATAR".equals(String.valueOf(top.getType()))){
+            count7=3;
+            count8=1;
+            return Direction.UP;
+        }else if(count7==0||count7==1){
+            count8=1;
+            return Direction.STAY;
+        }*/
+
+       /* if(count6 ==1){
+            if(count7==0&&count8==3){
+                count6=0;
+                return Direction.DOWN;
+            }else if(count7==1&&count8==3){
+                count6=0;
+                return Direction.UP;
+            }
+            count8++;
+            return Direction.STAY;
+        }*/
+
+        /*  if ((count7 == 0 && !"AVATAR".equals(String.valueOf(left.getType()))
+                && !"AVATAR".equals(String.valueOf(right.getType())))
+                || (count7 == 1 && !"AVATAR".equals(String.valueOf(left.getType()))
+                        && !"AVATAR".equals(String.valueOf(right.getType())))) {
+                            
+                            if("AVATAR".equals(String.valueOf(rightTop.getType()))||"AVATAR".equals(String.valueOf(leftBottom.getType()))){
+                                count7=4;
+                                    return Direction.RIGHT;
+                            }else if("AVATAR".equals(String.valueOf(leftTop.getType()))||"AVATAR".equals(String.valueOf(leftBottom.getType()))){
+                                count7=4;
+                                return Direction.LEFT;
+                            }
+                        }*/
+                   
+        
+
+
+
+
+
+
         int currentPhase = 0; // Richtung ist geradeaus
         // wenn plan1 = 0 ist dann findet erstmal die Rekonstruktion der Karte statt
         if (plan1 == 0) {
@@ -282,7 +357,7 @@ public class NasserAvatar extends SuperAvatar {
 
             // Geht drei Schritte nach unten
             if (count == 2) {
-                if (middleX == 1 && middleY == 17) {//Auf den Koordinaten geht er dann nur zwei Schritte nach unten
+                if (middleX == 1 && middleY == 17) {// Auf den Koordinaten geht er dann nur zwei Schritte nach unten
                     count1++;
                     count2++;
                 }
@@ -299,7 +374,7 @@ public class NasserAvatar extends SuperAvatar {
 
         // Priorität startet, da Rekonstruktion abgeschlossen ist mit plan1=0
         else if (plan1 == 1) {
-            SimulationControl.wait(100); // Geschwindigkeit des Avatars wird langsamer gemacht
+            SimulationControl.wait(20); // Geschwindigkeit des Avatars wird langsamer gemacht
             // Gehe in Richtung der nächsten Koordinaten zu prio
             if (middleX < closestCoordinate.getX()) {
                 // middleX++;
@@ -316,13 +391,13 @@ public class NasserAvatar extends SuperAvatar {
             } else {
                 // Bleibe stehen, wenn die Koordinaten erreicht sind
                 if ("BAR".equals(prio)) {
-                    SimulationControl.wait(4000);
+                    SimulationControl.wait(20);
                 } else if ("SEATS".equals(prio)) {
-                    SimulationControl.wait(3000);
+                    SimulationControl.wait(20);
                 } else if ("TOILETS".equals(prio)) {
-                    SimulationControl.wait(2000);
+                    SimulationControl.wait(20);
                 } else if ("DJBOOTH".equals(prio)) {
-                    SimulationControl.wait(1000);
+                    SimulationControl.wait(20);
                 } else if ("DANCEFLOOR".equals(prio)) {
                     // Gehe zur Mitte der Tanzfläche
                     closestCoordinate = new Coordinate(17, 8);
@@ -337,7 +412,7 @@ public class NasserAvatar extends SuperAvatar {
 
         // Geht zur Mitte der Tanzfläche
         if (plan1 == 2) {
-            SimulationControl.wait(500);
+           // SimulationControl.wait(500);
             if (middleX < 17) {
                 return Direction.RIGHT;
             } else if (middleX > 17) {
@@ -354,18 +429,19 @@ public class NasserAvatar extends SuperAvatar {
             }
         }
 
-        //Hier tanzt der Avatar jetzt verrückt und zufällig und bleibt aber dabei in dem Dancefloor
+        // Hier tanzt der Avatar jetzt verrückt und zufällig und bleibt aber dabei in
+        // dem Dancefloor
         if (plan1 == 3) {
-            Random random = new Random();
-            SimulationControl.wait(50);
+            // Random random = new Random();
+           // SimulationControl.wait(50);
             int direction = random.nextInt(4);
             count5++;
-            if (count5 == 60) { //60 Tanzschritte führt
+            if (count5 == 60) { // 60 Tanzschritte führt
                 plan1 = 1; // Setzt plan1 zurück um zur Priorität zurückzukehren
                 count5 = 0;
             }
-            //If Bedingung sorgen dafür, dass Avatar in dem Dancefloor bleibt
-            switch (direction) {
+            // If Bedingung sorgen dafür, dass Avatar in dem Dancefloor bleibt
+             switch (direction) {
                 case 0:
                     if (middleY == 4) {
                         return Direction.DOWN;

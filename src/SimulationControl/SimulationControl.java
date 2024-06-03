@@ -59,10 +59,18 @@ public class SimulationControl {
         SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange,Color.orange);
         SuperAvatar Nasser1 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.black);
         SuperAvatar Nasser2 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.BLUE);
+        SuperAvatar Nasser3 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.gray);
+        SuperAvatar Nasser4 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.green);
+        SuperAvatar Nasser5 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.cyan);
 
         avatars.add(Nasser);
         avatars.add(Nasser1);
         avatars.add(Nasser2);
+        avatars.add(Nasser3);
+        avatars.add(Nasser4);
+        avatars.add(Nasser5);
+
+
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
@@ -91,7 +99,7 @@ public class SimulationControl {
                 boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
                 avatar.setHasMoved(hasMoved);
                 System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
-                wait(50);
+                wait(20);
             } catch (Exception e) {
                 System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
                 e.printStackTrace();
