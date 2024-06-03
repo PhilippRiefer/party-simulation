@@ -52,10 +52,12 @@ public class RobinAvatarComplex extends SuperAvatar {
     private Direction lastDirection;
     private Direction lastWall;
     private Coordinate destination;
+    private boolean destValid;
     private Direction startDirection;
     private Coordinate extPosition;
     private boolean extPositionValid;
     private PersonalFieldType[] PFTValues = PersonalFieldType.values();
+    private int uncheckedSpaces;
 
     public RobinAvatarComplex(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
@@ -64,9 +66,11 @@ public class RobinAvatarComplex extends SuperAvatar {
         state = State.FIND_WALL;
         lastDirection = Direction.UP;
         destination = new Coordinate(0, 0);
+        destValid = false;
         startDirection = Direction.UP;
         extPosition = new Coordinate(0, 0);
         extPositionValid = false;
+        uncheckedSpaces = 0;
         initializeEnvironment();
     }
 
@@ -153,11 +157,11 @@ public class RobinAvatarComplex extends SuperAvatar {
         return getFromEnvironment(addCoordinates(position, directionToCoordinate(dir)), entry);
     }
 
-    private void setInEnvironment(Coordinate pos, int entry, Enum value) {
-        environment[pos.getX()][pos.getY()][entry] = value.ordinal();
+    private void setInEnvironment(Coordinate pos, int entry, int value) {
+        environment[pos.getX()][pos.getY()][entry] = value;
     }
 
-    private void setInEnvironment(Direction dir, int entry, Enum value) {
+    private void setInEnvironment(Direction dir, int entry, int value) {
         setInEnvironment(addCoordinates(position, directionToCoordinate(dir)), entry, value);
     }
 
@@ -210,7 +214,7 @@ public class RobinAvatarComplex extends SuperAvatar {
         for (Direction dir : Direction.values()) {
             Coordinate spaceAbsPos = addCoordinates(pos, directionToCoordinate(dir));
             if (PFTValues[getFromEnvironment(spaceAbsPos, 1)].isUnknown()) {
-                setInEnvironment(spaceAbsPos, 1, PersonalFieldType.REACHABLE);
+                setInEnvironment(spaceAbsPos, 1, PersonalFieldType.REACHABLE.ordinal());
             }
         }
     }
@@ -222,11 +226,11 @@ public class RobinAvatarComplex extends SuperAvatar {
             Coordinate spaceRelPos = absToRelPos(spaceInfo.getRelativeToAvatarCoordinate());
             Coordinate spaceAbsPos = addCoordinates(position, spaceRelPos);
             if (PFTValues[getFromEnvironment(spaceAbsPos, 1)].isUnknown()) {
-                setInEnvironment(spaceAbsPos, 0, spaceInfo.getType());
+                setInEnvironment(spaceAbsPos, 0, spaceInfo.getType().ordinal());
                 if (spaceInfo.getType() != SpaceType.OBSTACLE) {
-                    setInEnvironment(spaceAbsPos, 1, PersonalFieldType.EMPTY);
+                    setInEnvironment(spaceAbsPos, 1, PersonalFieldType.EMPTY.ordinal());
                 } else {
-                    setInEnvironment(spaceAbsPos, 1, PersonalFieldType.WALL);
+                    setInEnvironment(spaceAbsPos, 1, PersonalFieldType.WALL.ordinal());
                 }
                 updateReachable(spaceAbsPos);
             }
@@ -252,7 +256,7 @@ public class RobinAvatarComplex extends SuperAvatar {
     }
 
     private Direction followWall() {
-        setInEnvironment(position, 1, PersonalFieldType.WALKED);
+        setInEnvironment(position, 1, PersonalFieldType.WALKED.ordinal());
         for (int i = 0; i < 4; i++) {
             if (getFromEnvironment(rotate90Clkw(lastWall, i), 1) == PersonalFieldType.EMPTY.ordinal()) {
                 lastDirection = rotate90Clkw(lastWall, i);
@@ -282,6 +286,48 @@ public class RobinAvatarComplex extends SuperAvatar {
     private Direction moveToEmpty() {
         System.out.println("move to empty");
         return Direction.STAY;
+    }
+
+    private void findPath(int goal, int goalType){
+        destValid = false;
+        for (int row = 0; row < environment[0].length; row++) {
+            for (int col = 0; col < environment.length; col++) {
+                environment[col][row][2] = 0;
+            }
+        }
+        setInEnvironment(position, 2, 1);
+        if(fillAround(position, 2, goal, goalType)){
+            for (int i = 0; i <= environmentHeight * environmentWidth; i++) {
+                if(destValid)
+                    break;
+                boolean keepGoing = false;
+                for (int row = 0; row < environment[0].length; row++) {
+                    for (int col = 0; col < environment.length; col++) {
+                        if(environment[col][row][2] == i)
+                            if(fillAround(new Coordinate(col, row), i+1, goal, goalType))
+                                keepGoing = true;
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    private boolean fillAround(Coordinate center, int value, int goal, int goalType){
+        boolean retVal = false;
+        for (int i = 0; i < 4; i++) {
+            Coordinate space = addCoordinates(center, directionToCoordinate(rotate90Clkw(Direction.UP, i)));
+            if(getFromEnvironment(space, goalType) == goal){
+                destination = space;
+                return true;
+            }
+            if(getFromEnvironment(space, 2) == 0 &&  PFTValues[getFromEnvironment(space, 1)].walkable){
+                setInEnvironment(space, 2, value);
+                retVal = true;
+            }
+        }
+        return retVal;
     }
 
     @Override
