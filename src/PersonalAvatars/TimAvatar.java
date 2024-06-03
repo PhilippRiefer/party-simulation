@@ -1,5 +1,6 @@
 package PersonalAvatars;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,137 +14,9 @@ import AvatarInterface.*;
 
 public class TimAvatar extends SuperAvatar { // implements AvatarInterface
 
-    this.id = id;
-        this.perceptionRange = perceptionRange;
-        this.random = new Random();
-        this.knownSpace = new HashMap<>();
-        this.currentCoordinate = new Coordinate(0, 0); // Initiale Position des Avatars
-
-	private final Map<String, Integer> characterTraits;
-	HashMap<String, Integer> needs = new HashMap<>();
-	Random random = new Random();
-	String currentSpaceType;
-	Coordinate currentCoordinate;
-	SpaceType[][] knownSpace = new SpaceType[40][20];
-	int NumberOfStepsDown = 0;
-	int NumberOfStepsUp = 0;
-	int NumberOfStepsRight = 0;
-	int NumberOfStepsLeft = 0;
-
-        needs = new HashMap<>();
-        needs.put("thirst", 60);
-        needs.put("hunger", 30);
-        needs.put("bladder", 20);
-        needs.put("physical energy", 20);
-        needs.put("fun", 20);
-        needs.put("social energy", 20);
+	public TimAvatar(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, color); // leverage the super class to handle ID and perceptionRange
     }
-
-    public void updateNeeds() {
-        // Zeitbasierte Änderungen unter Berücksichtigung der Charaktereigenschaften
-        updateNeedsOverTime();
-
-        // Zufällige Ereignisse
-        applyRandomEvents();
-
-		characterTraits = Collections.unmodifiableMap(tempCharacterTraits);
-
-        // Anpassung basierend auf Charaktereigenschaften
-        thirstChange *= 1.0 - (characterTraits.get("good drinker") / 100.0);
-        hungerChange *= 1.0 - (characterTraits.get("good eater") / 100.0);
-        bladderChange *= 1.0 - (characterTraits.get("strong bladder") / 100.0);
-        physicalEnergyChange *= 1.0 + (characterTraits.get("active") / 100.0);
-        socialEnergyChange *= 1.0 + (characterTraits.get("social") / 100.0);
-
-        // Aktualisieren der Bedürfnisse
-        needs.put("thirst", adjustNeed(needs.get("thirst"), thirstChange));
-        needs.put("hunger", adjustNeed(needs.get("hunger"), hungerChange));
-        needs.put("bladder", adjustNeed(needs.get("bladder"), bladderChange));
-        needs.put("physical energy", adjustNeed(needs.get("physical energy"), physicalEnergyChange));
-        needs.put("fun", adjustNeed(needs.get("fun"), funChange));
-        needs.put("social energy", adjustNeed(needs.get("social energy"), socialEnergyChange));
-    }
-
-    public void updateNeeds() {
-
-        updateNeedsOverTime();
-        applyRandomEvents();
-        updateNeedsAfterAction(currentSpaceType);
-
-    }
-
-    private void updateNeedsOverTime() {
-        // Grundlegende Änderungen pro Schleifendurchlauf
-        int thirstChange = 1;
-        int hungerChange = 1;
-        int bladderChange = 1;
-        int physicalEnergyChange = -1;
-        int funChange = -1;
-        int socialEnergyChange = -1;
-
-        // Anpassung basierend auf Charaktereigenschaften
-        thirstChange *= 1.0  - (characterTraits.get("good drinker") / 100.0);
-        hungerChange *= 1.0 - (characterTraits.get("good eater") / 100.0);
-        bladderChange *= 1.0 - (characterTraits.get("strong bladder") / 100.0);
-        physicalEnergyChange *= 1.0 + (characterTraits.get("active") / 100.0);
-        socialEnergyChange *= 1.0 + (characterTraits.get("social") / 100.0);
-
-        // Aktualisieren der Bedürfnisse
-        needs.put("thirst", adjustNeed(needs.get("thirst"), thirstChange));
-        needs.put("hunger", adjustNeed(needs.get("hunger"), hungerChange));
-        needs.put("bladder", adjustNeed(needs.get("bladder"), bladderChange));
-        needs.put("physical energy", adjustNeed(needs.get("physical energy"), physicalEnergyChange));
-        needs.put("fun", adjustNeed(needs.get("fun"), funChange));
-        needs.put("social energy", adjustNeed(needs.get("social energy"), socialEnergyChange));
-    }
-
-    private void applyRandomEvents() {
-        if (random.nextDouble() < 0.1) { // 10% Wahrscheinlichkeit für ein zufälliges Ereignis
-            int randomThirstIncrease = random.nextInt(10);
-            needs.put("thirst", increaseNeed(needs.get("thirst"), randomThirstIncrease));
-            System.out.println("Zufälliges Ereignis: Durst erhöht um " + randomThirstIncrease);
-        }
-    }
-
-    private int adjustNeed(int currentValue, double change) {
-        int newValue = (int) (currentValue + change);
-        return Math.max(0, Math.min(newValue, 100));
-    }
-
-    private int increaseNeed(int currentValue, int amount) {
-        return Math.min(currentValue + amount, 100);
-    }
-
-    private int decreaseNeed(int currentValue, int amount) {
-        return Math.max(currentValue - amount, 0);
-    }
-
-    // Update Needs Methoden bei Interaktionen
-    public void drink() {
-        needs.put("thirst", decreaseNeed(needs.get("thirst"), 30));
-        needs.put("bladder", increaseNeed(needs.get("bladder"), 10));
-        System.out.println("Der Avatar hat getrunken. Durst gesenkt, Blase erhöht.");
-    }
-
-    public void eat() {
-        needs.put("hunger", decreaseNeed(needs.get("hunger"), 30));
-        needs.put("physical energy", increaseNeed(needs.get("physical energy"), 10));
-        System.out.println("Der Avatar hat gegessen. Hunger gesenkt, physische Energie erhöht.");
-    }
-
-    public void dance() {
-        needs.put("fun", increaseNeed(needs.get("fun"), 30));
-        needs.put("physical energy", decreaseNeed(needs.get("physical energy"), 10));
-        needs.put("social energy", increaseNeed(needs.get("social energy"), 10));
-        System.out.println("Der Avatar hat getanzt. Spaß und soziale Energie erhöht, physische Energie gesenkt.");
-    }
-
-
-	public void socialize() {
-   		needs.put("social energy", decreaseNeed(needs.get("social energy"), 30));
-   	 	needs.put("fun", increaseNeed(needs.get("fun"), 20));
-    	System.out.println("Der Avatar hate Soziale interaktion. Soziale Energie gesenkt, Spaß erhöht.");
-	}
 
 	//NICHT FERTIG
 	public void playMusic() {
@@ -408,8 +281,13 @@ ArrayList<Coordinate> DJBooth = new ArrayList<Coordinate>();
 
 }
 
-
-
-
-
-
+/*
+ * EMPTY,
+ * OBSTACLE,
+ * AVATAR,
+ * DANCEFLOOR,
+ * DJBOOTH,
+ * TOILET,
+ * BAR,
+ * SEATS
+ */
