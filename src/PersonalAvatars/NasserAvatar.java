@@ -18,11 +18,7 @@ public class NasserAvatar extends SuperAvatar {
     private int count3 = 0;
     private int count4 = 0;
     private int count5 = 0;
-    private int count6 = 0;
     private int count7 = 3;
-    private int count8 = 0;
-    private int count9 = 0;
-    private int count10 = 0;
     int secondmiddleY;
     private int excludedNumber = 6;
     private String prio = null;
@@ -55,53 +51,53 @@ public class NasserAvatar extends SuperAvatar {
     }
 
     public void changeToRelativeToCoordinate(ArrayList<SpaceInfo> spacesInRange) {
-        if (plan1 == 0) {
-            // Iteriert durch jede SpaceInfo in der Liste spacesInRange
-            for (SpaceInfo candidate : spacesInRange) {
-                boolean isUnique = true;
-                // Bekommt die Koordinaten des aktuellen SpaceInfo'-Objekts
-                Coordinate candidateCoordinate = candidate.getRelativeToAvatarCoordinate();
 
-                // Iteriert durch die bereits in allSpaceInfos gespeicherten SpaceInfo-Objekte
-                // um gleiche Objekte zu finden
-                for (SpaceInfo existing : allSpaceInfos) {
-                    // Bekommt die Koordinaten des aktuellen SpaceInfo'-Objekts in allSpaceInfos
-                    Coordinate existingCoordinate = existing.getRelativeToAvatarCoordinate();
-                    // Prüft ob die X- und Y-Koordinaten des Elements mit einem schon existierenden
-                    // Objekt übereinstimmen
-                    if (candidateCoordinate.getX() == existingCoordinate.getX() &&
-                            candidateCoordinate.getY() == existingCoordinate.getY()) {
-                        // Setzt isUnique auf false, wenn ein Duplikat gefunden wird
-                        isUnique = false;
-                        // Verlässt die innere Schleife da bereits ein Duplikat gefunden worden ist
-                        break;
-                    }
-                }
+        // Iteriert durch jede SpaceInfo in der Liste spacesInRange
+        for (SpaceInfo candidate : spacesInRange) {
+            boolean isUnique = true;
+            // Bekommt die Koordinaten des aktuellen SpaceInfo'-Objekts
+            Coordinate candidateCoordinate = candidate.getRelativeToAvatarCoordinate();
 
-                // Fügt das Objekt zu allSpaceInfos hinzu wenn kein Duplikat gefunden worden ist
-                if (isUnique) {
-                    allSpaceInfos.add(candidate);
+            // Iteriert durch die bereits in allSpaceInfos gespeicherten SpaceInfo-Objekte
+            // um gleiche Objekte zu finden
+            for (SpaceInfo existing : allSpaceInfos) {
+                // Bekommt die Koordinaten des aktuellen SpaceInfo'-Objekts in allSpaceInfos
+                Coordinate existingCoordinate = existing.getRelativeToAvatarCoordinate();
+                // Prüft ob die X- und Y-Koordinaten des Elements mit einem schon existierenden
+                // Objekt übereinstimmen
+                if (candidateCoordinate.getX() == existingCoordinate.getX() &&
+                        candidateCoordinate.getY() == existingCoordinate.getY()) {
+                    // Setzt isUnique auf false, wenn ein Duplikat gefunden wird
+                    isUnique = false;
+                    // Verlässt die innere Schleife da bereits ein Duplikat gefunden worden ist
+                    break;
                 }
             }
 
-            // Sortiert die Liste allSpaceInfos aufsteigend nach den X-Koordinaten der
-            // SpaceInfo-Objekte
-            // Beginnt mit 0,0 endet mit 39,19
-            Collections.sort(allSpaceInfos, new Comparator<SpaceInfo>() {
-                @Override
-                public int compare(SpaceInfo o1, SpaceInfo o2) {
-                    // Vergleicht die X-Koordinaten von zwei SpaceInfo-Objekten für die Sortierung
-                    // mithilfe der compare Funktion
-                    return Integer.compare(o1.getRelativeToAvatarCoordinate().getX(),
-                            o2.getRelativeToAvatarCoordinate().getX());
-                }
-            });
+            // Fügt das Objekt zu allSpaceInfos hinzu wenn kein Duplikat gefunden worden ist
+            if (isUnique) {
+                allSpaceInfos.add(candidate);
+            }
+        }
 
-            // wenn plan1 = 1 ist dann heißt ist es das die Karte komplett rekonstruiert
-            // worden ist
-            // sorgt dafür das kein weiteres Element mehr in der Liste gespeichert werden
-            // (unnötige Speicherung)
-        } else if (plan1 == 1) {
+        // Sortiert die Liste allSpaceInfos aufsteigend nach den X-Koordinaten der
+        // SpaceInfo-Objekte
+        // Beginnt mit 0,0 endet mit 39,19
+        Collections.sort(allSpaceInfos, new Comparator<SpaceInfo>() {
+            @Override
+            public int compare(SpaceInfo o1, SpaceInfo o2) {
+                // Vergleicht die X-Koordinaten von zwei SpaceInfo-Objekten für die Sortierung
+                // mithilfe der compare Funktion
+                return Integer.compare(o1.getRelativeToAvatarCoordinate().getX(),
+                        o2.getRelativeToAvatarCoordinate().getX());
+            }
+        });
+
+        // wenn plan1 = 1 ist dann heißt ist es das die Karte komplett rekonstruiert
+        // worden ist
+        // sorgt dafür das kein weiteres Element mehr in der Liste gespeichert werden
+        // (unnötige Speicherung)
+        if (plan1 == 1) {
             if (count4 == 0) {
                 Random random = new Random();
                 // Generiert eine Zufallszahl um eine Entscheidung für den nächsten Schritt zu
@@ -216,7 +212,7 @@ public class NasserAvatar extends SuperAvatar {
 
         // System.out.println();
 
-         rightTop = spacesInRange.get(5);
+        rightTop = spacesInRange.get(5);
         Coordinate rightTopCoordinate = rightTop.getRelativeToAvatarCoordinate();
         // System.out.println("x-Koordinate: " + rightTopCoordinate.getX() + "
         // y-Koordinate: " + rightTopCoordinate.getY()+" Spacetyp: " +
@@ -231,7 +227,7 @@ public class NasserAvatar extends SuperAvatar {
 
         // System.out.println();
 
-         rightBottom = spacesInRange.get(7);
+        rightBottom = spacesInRange.get(7);
         Coordinate rightBottomCoordinate = rightBottom.getRelativeToAvatarCoordinate();
         // System.out.println("x-Koordinate: " + rightBottomCoordinate.getX() + "
         // y-Koordinate: " + rightBottomCoordinate.getY()+" Spacetyp: " +
@@ -251,67 +247,7 @@ public class NasserAvatar extends SuperAvatar {
     public Direction avatarDirection() {
 
         Random random = new Random();
-
-    
-    
-        if ((("AVATAR".equals(String.valueOf(left.getType()))) ||
-                ("AVATAR".equals(String.valueOf(right.getType()))))) {
-            int nextmove = random.nextInt(2);
-            count7 = nextmove;
-            switch (nextmove) {
-                case 0:
-                    return Direction.UP;
-                case 1:
-                    return Direction.DOWN;
-
-            }
-        }
-    
-        /*if(count7==0&&!"AVATAR".equals(String.valueOf(bottom.getType()))){
-            count7=3;
-            count8=1;
-            return Direction.DOWN;
-        }else if(count7==1&&!"AVATAR".equals(String.valueOf(top.getType()))){
-            count7=3;
-            count8=1;
-            return Direction.UP;
-        }else if(count7==0||count7==1){
-            count8=1;
-            return Direction.STAY;
-        }*/
-
-       /* if(count6 ==1){
-            if(count7==0&&count8==3){
-                count6=0;
-                return Direction.DOWN;
-            }else if(count7==1&&count8==3){
-                count6=0;
-                return Direction.UP;
-            }
-            count8++;
-            return Direction.STAY;
-        }*/
-
-        /*  if ((count7 == 0 && !"AVATAR".equals(String.valueOf(left.getType()))
-                && !"AVATAR".equals(String.valueOf(right.getType())))
-                || (count7 == 1 && !"AVATAR".equals(String.valueOf(left.getType()))
-                        && !"AVATAR".equals(String.valueOf(right.getType())))) {
-                            
-                            if("AVATAR".equals(String.valueOf(rightTop.getType()))||"AVATAR".equals(String.valueOf(leftBottom.getType()))){
-                                count7=4;
-                                    return Direction.RIGHT;
-                            }else if("AVATAR".equals(String.valueOf(leftTop.getType()))||"AVATAR".equals(String.valueOf(leftBottom.getType()))){
-                                count7=4;
-                                return Direction.LEFT;
-                            }
-                        }*/
-                   
-        
-
-
-
-
-
+        int nextmove;
 
         int currentPhase = 0; // Richtung ist geradeaus
         // wenn plan1 = 0 ist dann findet erstmal die Rekonstruktion der Karte statt
@@ -377,16 +313,58 @@ public class NasserAvatar extends SuperAvatar {
             SimulationControl.wait(20); // Geschwindigkeit des Avatars wird langsamer gemacht
             // Gehe in Richtung der nächsten Koordinaten zu prio
             if (middleX < closestCoordinate.getX()) {
-                // middleX++;
+
+                if (("AVATAR".equals(String.valueOf(right.getType())))) {
+                    nextmove = random.nextInt(2);
+                    count7 = nextmove;
+                    switch (nextmove) {
+                        case 0:
+                            return Direction.UP;
+                        case 1:
+                            return Direction.DOWN;
+
+                    }
+                }
                 return Direction.RIGHT;
             } else if (middleX > closestCoordinate.getX()) {
-                // middleX--;
+                if (("AVATAR".equals(String.valueOf(left.getType())))) {
+                    nextmove = random.nextInt(2);
+                    count7 = nextmove;
+                    switch (nextmove) {
+                        case 0:
+                            return Direction.UP;
+                        case 1:
+                            return Direction.DOWN;
+
+                    }
+                }
                 return Direction.LEFT;
             } else if (middleY < closestCoordinate.getY()) {
-                // middleY++;
+                if (("AVATAR".equals(String.valueOf(bottom.getType())))) {
+                    nextmove = random.nextInt(2);
+                    count7 = nextmove;
+                    switch (nextmove) {
+                        case 0:
+                            return Direction.RIGHT;
+                        case 1:
+                            return Direction.LEFT;
+
+                    }
+                }
+
                 return Direction.DOWN;
             } else if (middleY > closestCoordinate.getY()) {
-                // middleY--;
+                if (("AVATAR".equals(String.valueOf(top.getType())))) {
+                    nextmove = random.nextInt(2);
+                    count7 = nextmove;
+                    switch (nextmove) {
+                        case 0:
+                            return Direction.RIGHT;
+                        case 1:
+                            return Direction.LEFT;
+
+                    }
+                }
                 return Direction.UP;
             } else {
                 // Bleibe stehen, wenn die Koordinaten erreicht sind
@@ -412,14 +390,58 @@ public class NasserAvatar extends SuperAvatar {
 
         // Geht zur Mitte der Tanzfläche
         if (plan1 == 2) {
-           // SimulationControl.wait(500);
+            // SimulationControl.wait(500);
             if (middleX < 17) {
+                if (("AVATAR".equals(String.valueOf(right.getType())))) {
+                    nextmove = random.nextInt(2);
+                    count7 = nextmove;
+                    switch (nextmove) {
+                        case 0:
+                            return Direction.UP;
+                        case 1:
+                            return Direction.DOWN;
+
+                    }
+                }
                 return Direction.RIGHT;
             } else if (middleX > 17) {
+                if (("AVATAR".equals(String.valueOf(left.getType())))) {
+                    nextmove = random.nextInt(2);
+                    count7 = nextmove;
+                    switch (nextmove) {
+                        case 0:
+                            return Direction.UP;
+                        case 1:
+                            return Direction.DOWN;
+
+                    }
+                }
                 return Direction.LEFT;
             } else if (middleY < 8) {
+                if (("AVATAR".equals(String.valueOf(bottom.getType())))) {
+                    nextmove = random.nextInt(2);
+                    count7 = nextmove;
+                    switch (nextmove) {
+                        case 0:
+                            return Direction.RIGHT;
+                        case 1:
+                            return Direction.LEFT;
+
+                    }
+                }
                 return Direction.DOWN;
             } else if (middleY > 8) {
+                if (("AVATAR".equals(String.valueOf(top.getType())))) {
+                    nextmove = random.nextInt(2);
+                    count7 = nextmove;
+                    switch (nextmove) {
+                        case 0:
+                            return Direction.RIGHT;
+                        case 1:
+                            return Direction.LEFT;
+
+                    }
+                }
                 return Direction.UP;
             } else {
                 // Sobald der Avatar die Mitte der Tanzfläche erreicht hat setzt plan1 zurück
@@ -433,7 +455,7 @@ public class NasserAvatar extends SuperAvatar {
         // dem Dancefloor
         if (plan1 == 3) {
             // Random random = new Random();
-           // SimulationControl.wait(50);
+            // SimulationControl.wait(50);
             int direction = random.nextInt(4);
             count5++;
             if (count5 == 60) { // 60 Tanzschritte führt
@@ -441,26 +463,114 @@ public class NasserAvatar extends SuperAvatar {
                 count5 = 0;
             }
             // If Bedingung sorgen dafür, dass Avatar in dem Dancefloor bleibt
-             switch (direction) {
+            switch (direction) {
                 case 0:
                     if (middleY == 4) {
+                        if (("AVATAR".equals(String.valueOf(bottom.getType())))) {
+                            nextmove = random.nextInt(2);
+                            count7 = nextmove;
+                            switch (nextmove) {
+                                case 0:
+                                    return Direction.RIGHT;
+                                case 1:
+                                    return Direction.LEFT;
+
+                            }
+                        }
                         return Direction.DOWN;
                     } else {
+                        if (("AVATAR".equals(String.valueOf(top.getType())))) {
+                            nextmove = random.nextInt(2);
+                            count7 = nextmove;
+                            switch (nextmove) {
+                                case 0:
+                                    return Direction.RIGHT;
+                                case 1:
+                                    return Direction.LEFT;
+
+                            }
+                        }
                         return Direction.UP;
                     }
                 case 1:
                     if (middleX == 21) {
+                        if (("AVATAR".equals(String.valueOf(left.getType())))) {
+                            nextmove = random.nextInt(2);
+                            count7 = nextmove;
+                            switch (nextmove) {
+                                case 0:
+                                    return Direction.UP;
+                                case 1:
+                                    return Direction.DOWN;
+
+                            }
+                        }
                         return Direction.LEFT;
+                    }
+                    if (("AVATAR".equals(String.valueOf(right.getType())))) {
+                        nextmove = random.nextInt(2);
+                        count7 = nextmove;
+                        switch (nextmove) {
+                            case 0:
+                                return Direction.UP;
+                            case 1:
+                                return Direction.DOWN;
+
+                        }
                     }
                     return Direction.RIGHT;
                 case 2:
                     if (middleY == 12) {
+                        if (("AVATAR".equals(String.valueOf(top.getType())))) {
+                            nextmove = random.nextInt(2);
+                            count7 = nextmove;
+                            switch (nextmove) {
+                                case 0:
+                                    return Direction.RIGHT;
+                                case 1:
+                                    return Direction.LEFT;
+
+                            }
+                        }
                         return Direction.UP;
+                    }
+                    if (("AVATAR".equals(String.valueOf(bottom.getType())))) {
+                        nextmove = random.nextInt(2);
+                        count7 = nextmove;
+                        switch (nextmove) {
+                            case 0:
+                                return Direction.RIGHT;
+                            case 1:
+                                return Direction.LEFT;
+
+                        }
                     }
                     return Direction.DOWN;
                 case 3:
                     if (middleX == 13) {
+                        if (("AVATAR".equals(String.valueOf(right.getType())))) {
+                            nextmove = random.nextInt(2);
+                            count7 = nextmove;
+                            switch (nextmove) {
+                                case 0:
+                                    return Direction.UP;
+                                case 1:
+                                    return Direction.DOWN;
+
+                            }
+                        }
                         return Direction.RIGHT;
+                    }
+                    if (("AVATAR".equals(String.valueOf(left.getType())))) {
+                        nextmove = random.nextInt(2);
+                        count7 = nextmove;
+                        switch (nextmove) {
+                            case 0:
+                                return Direction.UP;
+                            case 1:
+                                return Direction.DOWN;
+
+                        }
                     }
                     return Direction.LEFT;
             }
@@ -470,15 +580,59 @@ public class NasserAvatar extends SuperAvatar {
 
         switch (currentPhase) { // Wechselt die Richtung
             case 0:
+                if (("AVATAR".equals(String.valueOf(top.getType())))) {
+                    nextmove = random.nextInt(2);
+                    count7 = nextmove;
+                    switch (nextmove) {
+                        case 0:
+                            return Direction.RIGHT;
+                        case 1:
+                            return Direction.LEFT;
+
+                    }
+                }
                 direction = Direction.UP;
                 break;
             case 1:
+                if (("AVATAR".equals(String.valueOf(right.getType())))) {
+                    nextmove = random.nextInt(2);
+                    count7 = nextmove;
+                    switch (nextmove) {
+                        case 0:
+                            return Direction.UP;
+                        case 1:
+                            return Direction.DOWN;
+
+                    }
+                }
                 direction = Direction.RIGHT;
                 break;
             case 2:
+                if (("AVATAR".equals(String.valueOf(bottom.getType())))) {
+                    nextmove = random.nextInt(2);
+                    count7 = nextmove;
+                    switch (nextmove) {
+                        case 0:
+                            return Direction.RIGHT;
+                        case 1:
+                            return Direction.LEFT;
+
+                    }
+                }
                 direction = Direction.DOWN;
                 break;
             case 3:
+                if (("AVATAR".equals(String.valueOf(left.getType())))) {
+                    nextmove = random.nextInt(2);
+                    count7 = nextmove;
+                    switch (nextmove) {
+                        case 0:
+                            return Direction.UP;
+                        case 1:
+                            return Direction.DOWN;
+
+                    }
+                }
                 direction = Direction.LEFT;
                 break;
             default:
