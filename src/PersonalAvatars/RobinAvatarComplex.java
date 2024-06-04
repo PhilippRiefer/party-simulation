@@ -105,10 +105,10 @@ public class RobinAvatarComplex extends SuperAvatar {
         }
     }
 
-    private void printEnv() {
+    private void printEnv(int entry) {
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
-                System.out.print(environment[col][row][1]);
+                System.out.print(environment[col][row][entry]);
             }
             System.out.print("\n");
         }
@@ -270,11 +270,12 @@ public class RobinAvatarComplex extends SuperAvatar {
     }
 
     private Direction findEmpty() {
-        printEnv();
+        printEnv(1);
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
                 if (environment[col][row][1] == PersonalFieldType.REACHABLE.ordinal()) {
                     state = State.MOVE_TO_EMPTY;
+                    findPath(PersonalFieldType.REACHABLE.ordinal(), 1);
                     return moveToEmpty();
                 }
             }
@@ -308,7 +309,14 @@ public class RobinAvatarComplex extends SuperAvatar {
                                 keepGoing = true;
                     }
                 }
+                if(!keepGoing || destValid)
+                    break;
             }
+            printEnv(2);
+            if(!destValid){
+                return;
+            }
+            //save Path
         }
 
 
@@ -320,6 +328,7 @@ public class RobinAvatarComplex extends SuperAvatar {
             Coordinate space = addCoordinates(center, directionToCoordinate(rotate90Clkw(Direction.UP, i)));
             if(getFromEnvironment(space, goalType) == goal){
                 destination = space;
+                destValid = true;
                 return true;
             }
             if(getFromEnvironment(space, 2) == 0 &&  PFTValues[getFromEnvironment(space, 1)].walkable){
