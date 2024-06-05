@@ -1,6 +1,7 @@
 package PersonalAvatars;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import AvatarInterface.SuperAvatar;
 import Environment.Coordinate;
@@ -58,6 +59,7 @@ public class RobinAvatarComplex extends SuperAvatar {
     private boolean extPositionValid;
     private PersonalFieldType[] PFTValues = PersonalFieldType.values();
     private int uncheckedSpaces;
+    private Vector<Direction> path;
 
     public RobinAvatarComplex(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
@@ -71,6 +73,7 @@ public class RobinAvatarComplex extends SuperAvatar {
         extPosition = new Coordinate(0, 0);
         extPositionValid = false;
         uncheckedSpaces = 0;
+        path = new Vector<Direction>();
         initializeEnvironment();
     }
 
@@ -78,7 +81,7 @@ public class RobinAvatarComplex extends SuperAvatar {
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         updatePosition();
         updateEnvironment(spacesInRange);
-        // printEnv();
+        printEnv(1);
         switch (state) {
             case FIND_WALL:
                 return findWall();
@@ -106,12 +109,15 @@ public class RobinAvatarComplex extends SuperAvatar {
     }
 
     private void printEnv(int entry) {
+        System.out.println("Entry: " + entry);
+        System.out.println("--------------------------------------------------------");
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
                 System.out.print(environment[col][row][entry]);
             }
             System.out.print("\n");
         }
+        System.out.println("--------------------------------------------------------");
     }
 
     private Direction coordinateToDirection(Coordinate coordinate) {
@@ -227,7 +233,7 @@ public class RobinAvatarComplex extends SuperAvatar {
             Coordinate spaceAbsPos = addCoordinates(position, spaceRelPos);
             if (PFTValues[getFromEnvironment(spaceAbsPos, 1)].isUnknown()) {
                 setInEnvironment(spaceAbsPos, 0, spaceInfo.getType().ordinal());
-                if (spaceInfo.getType() != SpaceType.OBSTACLE) {
+                if (spaceInfo.getType() == SpaceType.EMPTY) {
                     setInEnvironment(spaceAbsPos, 1, PersonalFieldType.EMPTY.ordinal());
                 } else {
                     setInEnvironment(spaceAbsPos, 1, PersonalFieldType.WALL.ordinal());
@@ -296,27 +302,42 @@ public class RobinAvatarComplex extends SuperAvatar {
                 environment[col][row][2] = 0;
             }
         }
+        printEnv(2);
         setInEnvironment(position, 2, 1);
         if(fillAround(position, 2, goal, goalType)){
-            for (int i = 0; i <= environmentHeight * environmentWidth; i++) {
-                if(destValid)
-                    break;
+            int i = 2;
+            for (i = 2; i <= environmentHeight * environmentWidth && !destValid; i++) {
                 boolean keepGoing = false;
-                for (int row = 0; row < environment[0].length; row++) {
-                    for (int col = 0; col < environment.length; col++) {
+                for (int row = 0; row < environment[0].length && !destValid; row++) {
+                    for (int col = 0; col < environment.length && !destValid; col++) {
                         if(environment[col][row][2] == i)
                             if(fillAround(new Coordinate(col, row), i+1, goal, goalType))
                                 keepGoing = true;
                     }
                 }
-                if(!keepGoing || destValid)
-                    break;
+                if(!keepGoing){
+                    destination = position; //No path found
+                    destValid = true;
+                }
             }
             printEnv(2);
             if(!destValid){
-                return;
+                destination = position; //No path found
+                destValid = true;
             }
-            //save Path
+            System.out.println("Save Path"); //save Path
+            path.clear();
+            for(i--; i > 0; i--){
+                for (int j = 0; j < 4; j++) {
+                    Coordinate space = addCoordinates(destination, directionToCoordinate(rotate90Clkw(Direction.UP, j)));
+                    if(getFromEnvironment(space, 2)==i){
+                        path.add(rotate90Clkw(Direction.UP, j+2));
+                        destination = space;
+                        break;
+                    }
+                }
+            }
+            System.out.println(path);
         }
 
 
@@ -327,8 +348,11 @@ public class RobinAvatarComplex extends SuperAvatar {
         for (int i = 0; i < 4; i++) {
             Coordinate space = addCoordinates(center, directionToCoordinate(rotate90Clkw(Direction.UP, i)));
             if(getFromEnvironment(space, goalType) == goal){
-                destination = space;
-                destValid = true;
+                if(!destValid){
+                    destination = space;
+                    destValid = true;
+                }               
+                printEnv(2);
                 return true;
             }
             if(getFromEnvironment(space, 2) == 0 &&  PFTValues[getFromEnvironment(space, 1)].walkable){
@@ -336,6 +360,7 @@ public class RobinAvatarComplex extends SuperAvatar {
                 retVal = true;
             }
         }
+        printEnv(2);
         return retVal;
     }
 
