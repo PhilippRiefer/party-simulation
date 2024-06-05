@@ -251,6 +251,7 @@ public class RobinAvatarComplex extends SuperAvatar {
     }
 
     private Direction findWall() {
+        setInEnvironment(position, 1, PersonalFieldType.WALKED.ordinal());
         if (getFromEnvironment(startDirection, 1) == PersonalFieldType.WALL.ordinal()) {
             lastWall = startDirection;
             state = State.FOLLOW_WALL;
@@ -292,7 +293,15 @@ public class RobinAvatarComplex extends SuperAvatar {
 
     private Direction moveToEmpty() {
         System.out.println("move to empty");
-        return Direction.STAY;
+        setInEnvironment(position, 1, PersonalFieldType.WALKED.ordinal());
+        if(path.size()==0){
+            lastWall = rotate90Clkw(lastDirection, 2);
+            state = State.FOLLOW_WALL;
+            return followWall();
+        }
+        lastDirection = path.elementAt(0);
+        path.removeElementAt(0);
+        return lastDirection;
     }
 
     private void findPath(int goal, int goalType){
@@ -331,15 +340,20 @@ public class RobinAvatarComplex extends SuperAvatar {
                 for (int j = 0; j < 4; j++) {
                     Coordinate space = addCoordinates(destination, directionToCoordinate(rotate90Clkw(Direction.UP, j)));
                     if(getFromEnvironment(space, 2)==i){
-                        path.add(rotate90Clkw(Direction.UP, j+2));
+                        path.add(0,rotate90Clkw(Direction.UP, j+2));
                         destination = space;
                         break;
                     }
                 }
             }
             System.out.println(path);
+            return;
         }
-
+        else {
+            path.clear();
+            return;
+        }
+        
 
     }
 
