@@ -154,7 +154,7 @@ public class RobinAvatarComplex extends SuperAvatar {
                     needs[i][1]++;
                 }
             } else {
-                if (rng.nextInt(100) < 1 && needs[i][1] > 0) {
+                if (rng.nextInt(100) < 15 && needs[i][1] > 0) {
                     needs[i][1]--;
                 }
             }
@@ -181,7 +181,7 @@ public class RobinAvatarComplex extends SuperAvatar {
                 }
             }
         }
-        if (currentNeed < 0) {
+        if (currentNeed >= 0) {
             if (needs[currentNeed][1] >= 100) {
                 state = State.FIND_EMPTY;
             }
