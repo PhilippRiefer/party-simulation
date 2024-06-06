@@ -32,7 +32,7 @@ public class SimulationControl {
         System.out.println("gonna create environment");
         environment = new Environment();
         System.out.println("environment created");
-
+        /* 
         Reflections reflections = new Reflections("PersonalAvatars");
 
         for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
@@ -47,7 +47,7 @@ public class SimulationControl {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
         Color color = Color.orange;
         Color color2 = Color.BLUE;

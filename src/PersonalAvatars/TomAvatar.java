@@ -38,6 +38,7 @@ public class TomAvatar extends SuperAvatar {
     private int someOneAround = 0;
     private int merkerStay = 0;
     private SpaceInfo infoOfSpace;
+    private int iterateThrowLoop = 0;
 
     public TomAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
@@ -278,29 +279,28 @@ public class TomAvatar extends SuperAvatar {
     }
 
     public Direction goToSeats(ArrayList<SpaceInfo> spacesInRange) {
-        int i;
-        for (i = 0; i < mentalMapList.size(); i++) {
-            if (mentalMapList.get(i).getType() == SpaceType.SEATS) {
-                infoOfSpace = mentalMapList.get(i);
-                break;
+        if (iterateThrowLoop == 0) {
+            for (iterateThrowLoop = 0; iterateThrowLoop < mentalMapList.size(); iterateThrowLoop++) {
+                if (mentalMapList.get(iterateThrowLoop).getType() == SpaceType.SEATS) {
+                    infoOfSpace = mentalMapList.get(iterateThrowLoop);
+                    break;
+                }
             }
         }
 
+        for (SpaceInfo infos : spacesInRange) {
 
-        for(SpaceInfo infos : spacesInRange){            
-
-            if(infos.getRelativeToAvatarCoordinate().getX() == infoOfSpace.getRelativeToAvatarCoordinate().getX() &&
-                infos.getRelativeToAvatarCoordinate().getY() == infoOfSpace.getRelativeToAvatarCoordinate().getY() &&
-                infos.getType() != infoOfSpace.getType()){
-                    infoOfSpace = mentalMapList.get(i++);
-                }
+            if (infos.getRelativeToAvatarCoordinate().getX() == infoOfSpace.getRelativeToAvatarCoordinate().getX() &&
+                    infos.getRelativeToAvatarCoordinate().getY() == infoOfSpace.getRelativeToAvatarCoordinate().getY()
+                    && infos.getType() != infoOfSpace.getType()) {
+                iterateThrowLoop++;
+                
             }
-
+        }
+        infoOfSpace = mentalMapList.get(iterateThrowLoop);
         myCoordinate = infoOfSpace.getRelativeToAvatarCoordinate();
         return goToMyCoordinate(spacesInRange);
     }
-
-
 
     public Direction goToMyCoordinate(ArrayList<SpaceInfo> spacesInRange) {
 
@@ -344,7 +344,7 @@ public class TomAvatar extends SuperAvatar {
                 myDirection = takingDicision(spacesInRange);
                 break;
             case 5:
-       
+
             default:
                 break;
         }
