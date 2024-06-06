@@ -56,10 +56,21 @@ public class SimulationControl {
         SuperAvatar Tom = new TomAvatar(nextAvatarID++, perceptionRange, color);
         SuperAvatar Tom2 = new TomAvatar(nextAvatarID++, perceptionRange, color2);
         SuperAvatar Tom3 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        SuperAvatar Tom4 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        SuperAvatar Tom5 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        //SuperAvatar Tom6 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        //SuperAvatar Tom7 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        //SuperAvatar Tom8 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
 
         avatars.add(Tom);
         avatars.add(Tom2);
         avatars.add(Tom3);
+        //avatars.add(Tom4);
+        //avatars.add(Tom5);
+        //avatars.add(Tom6);
+        //avatars.add(Tom7);
+        //avatars.add(Tom8);
+
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
