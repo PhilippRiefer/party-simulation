@@ -8,9 +8,9 @@ import Environment.Direction;
 import Environment.SpaceInfo;
 import Environment.SpaceType;
 import java.awt.Color;
-import java.awt.List;
 
 public class MaximSpockAvatar extends SuperAvatar {
+    // wohin auslagern? 
     final private int MAXSTAT = 200;
     final private int MINSTAT = 0;
     final private int THRESHOLD = 30;
@@ -38,18 +38,17 @@ public class MaximSpockAvatar extends SuperAvatar {
         super(id, perceptionRange, color);
     }
 
-    /**
-     * Determines the direction for the avatar's next turn based on the spaces
+    
+    /**Determines the direction for the avatar's next turn based on the spaces
      * within its perception range.
-     *
-     * @return the direction for the avatar's next turn
-     */
+     * @return the direction for the avatar's next turn */
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
+        // TODO Warum?
         Coordinate personalCoordinates = spacesInRange.get(1 + (int)Math.pow(2, this.getPerceptionRange())).getRelativeToAvatarCoordinate();
 
         saveSpacesInRange(spacesInRange);                   // 1. step is to save Environment in memory
-        if(countedTurns > 99 && notMovingToObjective){                              // 2. if counted Turns > 99 -> scouting not as default
+        if(countedTurns > 99 && notMovingToObjective){      // 2. if counted Turns > 99 -> scouting not as default
             currentObjective = decideNextMovement();
         } 
         updateStats();                                      // stats are updated each turn (getting thirstier for e.g.)
@@ -58,7 +57,7 @@ public class MaximSpockAvatar extends SuperAvatar {
     }
 
     public Direction moveTo(SpaceType[][] clubMemory, SpaceType currentObjective, Coordinate personalCoordinates){
-        if(!hasPreComputed || hasWaitedOneTurnForOtherAvatarToLeave == true) { // definitely preComputing path to Objective
+        if(!hasPreComputed || hasWaitedOneTurnForOtherAvatarToLeave) { // definitely preComputing path to Objective
             listOfDirections = preComputeDirection(clubMemory, currentObjective, personalCoordinates);
             hasPreComputed = true;
         }   
@@ -67,20 +66,18 @@ public class MaximSpockAvatar extends SuperAvatar {
 
     ArrayList<Direction> preComputeDirection(SpaceType[][] clubMemory, SpaceType currentObjective, Coordinate personalCoordinates) {
         ArrayList<Direction> listOfDirectionsToObjective = new ArrayList<Direction>();
-        Coordinate objectiveCoordinates;
-
         // find cell that is objective in Memory
-        objectiveCoordinates = findObjectiveInMemory(clubMemory, currentObjective, personalCoordinates);
+        Coordinate objectiveCoordinates = findObjectiveInMemory(currentObjective, personalCoordinates);
 
         if (objectiveCoordinates == personalCoordinates) { // found nothing in Memory -> scout Empty Spaces
-            objectiveCoordinates = findObjectiveInMemory(clubMemory, SpaceType.EMPTY , personalCoordinates);
+            objectiveCoordinates = findObjectiveInMemory(SpaceType.EMPTY , personalCoordinates);
         }
         // compute Route
 
         return listOfDirectionsToObjective;
     }
 
-    Coordinate findObjectiveInMemory(SpaceType[][] clubMemory, SpaceType currentObjective, Coordinate personalCoordinates) {
+    Coordinate findObjectiveInMemory(SpaceType currentObjective, Coordinate personalCoordinates) {
          // 1. while(SpaceType[x][y] != currentObjective) -> keep looking
         // 2. start with avatar as center
         // 3. start checking for OBjective right from avatar
@@ -92,7 +89,7 @@ public class MaximSpockAvatar extends SuperAvatar {
         int x = 0;
         int y = 1;
         while (clubMemory[personalCoordinates.getX() + x][personalCoordinates.getY() + y] != currentObjective) {
-            if(x != XCOORDINATEMAX && ()){
+            if(x != XCOORDINATEMAX){
                 
             }
             if(y != YCOORDINATEMAX){
@@ -106,10 +103,8 @@ public class MaximSpockAvatar extends SuperAvatar {
     public void saveSpacesInRange(ArrayList<SpaceInfo> spacesInRange){
         int i = 0;
         while(i < spacesInRange.size()){
-            int clubMemoryCoordinateX = 0;
-            int clubMemoryCoordinateY = 0;
-            clubMemoryCoordinateX = spacesInRange.get(i).getRelativeToAvatarCoordinate().getX();
-            clubMemoryCoordinateY = spacesInRange.get(i).getRelativeToAvatarCoordinate().getY();
+            int clubMemoryCoordinateX = spacesInRange.get(i).getRelativeToAvatarCoordinate().getX();
+            int clubMemoryCoordinateY = spacesInRange.get(i).getRelativeToAvatarCoordinate().getY();
             clubMemory[clubMemoryCoordinateX][clubMemoryCoordinateY] = spacesInRange.get(i).getType();  
         }
         return;
@@ -123,7 +118,7 @@ public class MaximSpockAvatar extends SuperAvatar {
         } else if (energy < THRESHOLD) {
             return currentObjective = SpaceType.SEATS;
         }
-        else{
+        else{ // else Scouting
             isScouting = true;
             return currentObjective = SpaceType.EMPTY;
         }
@@ -144,22 +139,22 @@ public class MaximSpockAvatar extends SuperAvatar {
      *
      * @return a random direction
      */
-    private Direction randomDirection() {
-        int directionNumber = (int) (Math.random() * 4);
+    // private Direction randomDirection() {
+    //     int directionNumber = (int) (Math.random() * 4);
 
-        switch (directionNumber) {
-            case 0:
-                return Direction.LEFT;
-            case 1:
-                return Direction.RIGHT;
-            case 2:
-                return Direction.UP;
-            case 3:
-                return Direction.DOWN;
-            default:
-                return Direction.STAY; // Safety net, though unnecessary as directionNumber is bound by 0-3
-        }
-    }
+    //     switch (directionNumber) {
+    //         case 0:
+    //             return Direction.LEFT;
+    //         case 1:
+    //             return Direction.RIGHT;
+    //         case 2:
+    //             return Direction.UP;
+    //         case 3:
+    //             return Direction.DOWN;
+    //         default:
+    //             return Direction.STAY; // Safety net, though unnecessary as directionNumber is bound by 0-3
+    //     }
+    // }
 
     /**
      * Returns the perception range of the avatar.
