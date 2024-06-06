@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import Environment.*;
 import PersonalAvatars.*;
-import PersonalAvatars.TomAvatar;
+import PersonalAvatars.NasserAvatar;
 import AvatarInterface.*;
 import java.util.Random;
 import org.reflections.Reflections;
@@ -32,13 +32,10 @@ public class SimulationControl {
         System.out.println("gonna create environment");
         environment = new Environment();
         System.out.println("environment created");
-<<<<<<< HEAD
-=======
 
 
         /*Reflections reflections = new Reflections("PersonalAvatars");
 =======
->>>>>>> NasserAvatar
         /* 
         Reflections reflections = new Reflections("PersonalAvatars");
 
@@ -62,15 +59,6 @@ public class SimulationControl {
         Color color2 = Color.BLUE;
         Color color3 = Color.RED;
 
-<<<<<<< HEAD
-        SuperAvatar Tom = new TomAvatar(nextAvatarID++, perceptionRange, color);
-        SuperAvatar Tom2 = new TomAvatar(nextAvatarID++, perceptionRange, color2);
-        SuperAvatar Tom3 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-
-        avatars.add(Tom);
-        avatars.add(Tom2);
-        avatars.add(Tom3);
-=======
         SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange,Color.orange);
         SuperAvatar Nasser1 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.black);
         SuperAvatar Nasser2 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.BLUE);
@@ -94,7 +82,6 @@ public class SimulationControl {
         avatars.add(Nasser9);
 
 
->>>>>>> NasserAvatar
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
@@ -123,11 +110,7 @@ public class SimulationControl {
                 boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
                 avatar.setHasMoved(hasMoved);
                 System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
-<<<<<<< HEAD
-                wait(10);
-=======
                 wait(5);
->>>>>>> NasserAvatar
             } catch (Exception e) {
                 System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
                 e.printStackTrace();
