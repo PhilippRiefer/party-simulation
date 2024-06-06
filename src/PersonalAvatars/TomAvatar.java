@@ -4,6 +4,9 @@ import Environment.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.lang.model.element.ModuleElement.DirectiveKind;
+
 import java.util.Collections;
 import java.util.Comparator;
 import AvatarInterface.*;
@@ -25,7 +28,7 @@ public class TomAvatar extends SuperAvatar {
     private Direction myDirection = Direction.STAY;
     private Direction myDirectionMoveBack = Direction.STAY;
     private static final Random random = new Random();
-    private Coordinate minCoordinate = new Coordinate(0, 0);
+    private Coordinate myCoordinate = new Coordinate(0, 0);
     private int minDiffX = 40, minX = 0, minY = 0, minDiffY = 20;
     private int stayCounter = 0;
     private int decision = (int) (random.nextDouble() * 100);
@@ -34,6 +37,7 @@ public class TomAvatar extends SuperAvatar {
     private int merker = 0;
     private int someOneAround = 0;
     private int merkerStay = 0;
+    private SpaceInfo infoOfSpace;
 
     public TomAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
@@ -184,9 +188,12 @@ public class TomAvatar extends SuperAvatar {
     }
 
     public Direction takingDicision(ArrayList<SpaceInfo> spacesInRange) {
-
-        if (decision < 100) {
+        System.out.println(decision);
+        decision = 30;
+        if (decision <= 25) {
             myDirection = goToBar(spacesInRange);
+        } else if (decision > 25 && decision <= 50) {
+            myDirection = goToSeats(spacesInRange);
         }
         return myDirection;
     }
@@ -211,15 +218,14 @@ public class TomAvatar extends SuperAvatar {
                     }
                 }
             }
-            if(minX == 38)
+            if (minX == 38)
                 minX--;
-            else if(minX == 1)
+            else if (minX == 1)
                 minX++;
         }
 
         System.out.println("minY: " + minY);
         System.out.println("minX: " + minX);
-
 
         if (minX >= 20) {
             if (minX - 1 < spacesInRange.get(3).getRelativeToAvatarCoordinate().getX()) {
@@ -245,8 +251,14 @@ public class TomAvatar extends SuperAvatar {
             }
         }
 
+        if (stayCounter == 100) {
+            stayCounter = 0;
+            decision = (int) (random.nextDouble() * 100);
+        }
+
         if (merkerStay == 1) {
             stayCounter++;
+            System.out.println(stayCounter);
             return Direction.STAY;
         }
 
@@ -265,15 +277,40 @@ public class TomAvatar extends SuperAvatar {
         return Direction.STAY;
     }
 
-    public Direction goToTest(ArrayList<SpaceInfo> spacesInRange) {
+    public Direction goToSeats(ArrayList<SpaceInfo> spacesInRange) {
+        int i;
+        for (i = 0; i < mentalMapList.size(); i++) {
+            if (mentalMapList.get(i).getType() == SpaceType.SEATS) {
+                infoOfSpace = mentalMapList.get(i);
+                break;
+            }
+        }
 
-        if (spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() < 22)
+
+        for(SpaceInfo infos : spacesInRange){            
+
+            if(infos.getRelativeToAvatarCoordinate().getX() == infoOfSpace.getRelativeToAvatarCoordinate().getX() &&
+                infos.getRelativeToAvatarCoordinate().getY() == infoOfSpace.getRelativeToAvatarCoordinate().getY() &&
+                infos.getType() != infoOfSpace.getType()){
+                    infoOfSpace = mentalMapList.get(i++);
+                }
+            }
+
+        myCoordinate = infoOfSpace.getRelativeToAvatarCoordinate();
+        return goToMyCoordinate(spacesInRange);
+    }
+
+
+
+    public Direction goToMyCoordinate(ArrayList<SpaceInfo> spacesInRange) {
+
+        if (spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() < myCoordinate.getX())
             return Direction.RIGHT;
-        else if (spacesInRange.get(1).getRelativeToAvatarCoordinate().getY() > 1)
+        else if (spacesInRange.get(1).getRelativeToAvatarCoordinate().getY() > myCoordinate.getY())
             return Direction.UP;
-        else if (spacesInRange.get(1).getRelativeToAvatarCoordinate().getY() < 1)
+        else if (spacesInRange.get(1).getRelativeToAvatarCoordinate().getY() < myCoordinate.getY())
             return Direction.DOWN;
-        else if (spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() > 22)
+        else if (spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() > myCoordinate.getX())
             return Direction.LEFT;
         else {
             phase = 4;
@@ -299,12 +336,15 @@ public class TomAvatar extends SuperAvatar {
                 phase = 3;
                 break;
             case 3:
-                myDirection = goToTest(spacesInRange);
+                myCoordinate = new Coordinate(10, 10);
+                myDirection = goToMyCoordinate(spacesInRange);
 
                 break;
             case 4:
                 myDirection = takingDicision(spacesInRange);
                 break;
+            case 5:
+       
             default:
                 break;
         }
