@@ -1,6 +1,7 @@
 package PersonalAvatars;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Vector;
 
 import AvatarInterface.SuperAvatar;
@@ -18,7 +19,9 @@ public class RobinAvatarComplex extends SuperAvatar {
         FOLLOW_WALL,
         FIND_EMPTY,
         MOVE_TO_EMPTY,
-        FULLY_EXPLORED
+        FULLY_EXPLORED,
+        MOVE_TO_NEEDED,
+        FILL_NEED
     }
 
     enum PersonalFieldType {
@@ -63,6 +66,9 @@ public class RobinAvatarComplex extends SuperAvatar {
     private Vector<Direction> path;
     private int cycle;
     private int[][] needs;
+    private Random rng;
+    private int currentNeed;
+    private boolean newPath;
 
     public RobinAvatarComplex(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
@@ -78,16 +84,22 @@ public class RobinAvatarComplex extends SuperAvatar {
         uncheckedSpaces = 0;
         path = new Vector<Direction>();
         cycle = 0;
-        initializeNeeds()
+        currentNeed = -1;
+        rng = new Random();
+        newPath = false;
+        initializeNeeds();
         initializeEnvironment();
     }
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         cycle++;
-        if(!getCouldMove())
-            return lastDirection;
         updatePosition();
+        updateNeeds();
+        checkNeeds();
+        if(!(getCouldMove()||newPath))
+            return lastDirection;
+        newPath = false;        
         updateEnvironment(spacesInRange);
         //printEnv(1);
         switch (state) {
@@ -99,7 +111,11 @@ public class RobinAvatarComplex extends SuperAvatar {
                 return findEmpty();
             case MOVE_TO_EMPTY:
                 return moveToEmpty();
-
+            case MOVE_TO_NEEDED:
+                return moveToNeeded();
+            case FULLY_EXPLORED:
+            case FILL_NEED:
+                return Direction.STAY;
             default:
                 System.out.println("done");
                 printEnv(0);
@@ -128,6 +144,67 @@ public class RobinAvatarComplex extends SuperAvatar {
         for (int index = 0; index < needs.length; index++) {
             needs[index][1] = 100;
         }
+    }
+
+    private void updateNeeds(){
+        for (int i = 0; i < needs.length; i++) {
+            if(getFromEnvironment(position, 0) == needs[i][0] && needs[i][1] < 100){
+                if(rng.nextBoolean()){
+                    needs[i][1]++;
+                }
+            }
+            else{
+                if(rng.nextInt(100) < 15 && needs[i][1] > 0){
+                    needs[i][1]--;
+                }
+            }
+        }
+    }
+
+    private void checkNeeds(){
+        int minNeed = 0;
+        int minAmmount = 101;
+        for (int i = 0; i < needs.length; i++) {
+            if(needs[i][1] < minAmmount){
+                minAmmount = needs[i][1];
+                minNeed = i;
+            }
+        }
+        if(minAmmount < 20 || state == State.FULLY_EXPLORED){
+            if(minNeed != currentNeed){
+                if(currentNeed < 0){
+                    changeNeed(minNeed);
+                }
+                else{
+                    if(!(state == State.FILL_NEED && needs[currentNeed][1] < 50)){
+                        changeNeed(minNeed);
+                    }
+                }
+            }
+        }
+    }
+
+    private void changeNeed(int need){
+        currentNeed = need;
+        newPath = true;
+        if(getFromEnvironment(position, 0) == needs[need][0]){
+            state = State.FILL_NEED;
+        }
+        else if(exists(need)){
+            state = State.MOVE_TO_NEEDED;
+            findPath(need, 0);
+        }
+    }
+
+    private boolean exists(int spaceType){
+        for (int row = 0; row < environment[0].length; row++) {
+            for (int col = 0; col < environment.length; col++) {
+                if(environment[col][row][0] == spaceType){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void printEnv(int entry) {
@@ -320,6 +397,18 @@ public class RobinAvatarComplex extends SuperAvatar {
             lastWall = rotate90Clkw(lastDirection, 2);
             state = State.FOLLOW_WALL;
             return followWall();
+        }
+        lastDirection = path.elementAt(0);
+        path.removeElementAt(0);
+        return lastDirection;
+    }
+
+    private Direction moveToNeeded() {
+        //System.out.println("move to empty");
+        setInEnvironment(position, 1, PersonalFieldType.WALKED.ordinal());
+        if(path.size()==0){
+            state = State.FILL_NEED;
+            return Direction.STAY;
         }
         lastDirection = path.elementAt(0);
         path.removeElementAt(0);
