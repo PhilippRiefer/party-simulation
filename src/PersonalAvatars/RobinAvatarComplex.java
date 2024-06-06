@@ -13,7 +13,6 @@ import java.awt.Color;
 
 public class RobinAvatarComplex extends SuperAvatar {
 
-
     enum State {
         FIND_WALL,
         FOLLOW_WALL,
@@ -97,11 +96,11 @@ public class RobinAvatarComplex extends SuperAvatar {
         updatePosition();
         updateNeeds();
         checkNeeds();
-        if(!(getCouldMove()||newPath))
+        if (!(getCouldMove() || newPath))
             return lastDirection;
-        newPath = false;        
+        newPath = false;
         updateEnvironment(spacesInRange);
-        //printEnv(1);
+        // printEnv(1);
         switch (state) {
             case FIND_WALL:
                 return findWall();
@@ -115,12 +114,14 @@ public class RobinAvatarComplex extends SuperAvatar {
                 return moveToNeeded();
             case FULLY_EXPLORED:
             case FILL_NEED:
+                lastDirection = Direction.STAY;
                 return Direction.STAY;
             default:
                 System.out.println("done");
                 printEnv(0);
                 printEnv(1);
                 System.out.println(cycle);
+                lastDirection = Direction.STAY;
                 return Direction.STAY;
         }
     }
@@ -146,60 +147,63 @@ public class RobinAvatarComplex extends SuperAvatar {
         }
     }
 
-    private void updateNeeds(){
+    private void updateNeeds() {
         for (int i = 0; i < needs.length; i++) {
-            if(getFromEnvironment(position, 0) == needs[i][0] && needs[i][1] < 100){
-                if(rng.nextBoolean()){
+            if (getFromEnvironment(position, 0) == needs[i][0] && needs[i][1] < 100) {
+                if (rng.nextBoolean()) {
                     needs[i][1]++;
                 }
-            }
-            else{
-                if(rng.nextInt(100) < 15 && needs[i][1] > 0){
+            } else {
+                if (rng.nextInt(100) < 1 && needs[i][1] > 0) {
                     needs[i][1]--;
                 }
             }
         }
     }
 
-    private void checkNeeds(){
+    private void checkNeeds() {
         int minNeed = 0;
         int minAmmount = 101;
         for (int i = 0; i < needs.length; i++) {
-            if(needs[i][1] < minAmmount){
+            if (needs[i][1] < minAmmount) {
                 minAmmount = needs[i][1];
                 minNeed = i;
             }
         }
-        if(minAmmount < 20 || state == State.FULLY_EXPLORED){
-            if(minNeed != currentNeed){
-                if(currentNeed < 0){
+        if (minAmmount < 20 || state == State.FULLY_EXPLORED) {
+            if (minNeed != currentNeed) {
+                if (currentNeed < 0) {
                     changeNeed(minNeed);
-                }
-                else{
-                    if(!(state == State.FILL_NEED && needs[currentNeed][1] < 50)){
+                } else {
+                    if (!(state == State.FILL_NEED && needs[currentNeed][1] < 50)) {
                         changeNeed(minNeed);
                     }
                 }
             }
         }
+        if (currentNeed < 0) {
+            if (needs[currentNeed][1] >= 100) {
+                state = State.FIND_EMPTY;
+            }
+        }
     }
 
-    private void changeNeed(int need){
+    private void changeNeed(int need) {
         currentNeed = need;
+        System.out.println(need);
         newPath = true;
-        if(getFromEnvironment(position, 0) == needs[need][0]){
+        if (getFromEnvironment(position, 0) == needs[need][0]) {
             state = State.FILL_NEED;
-        }
-        else if(exists(need)){
+        } else if (exists(needs[need][0])) {
             state = State.MOVE_TO_NEEDED;
-            findPath(need, 0);
+            findPath(needs[need][0], 0);
         }
     }
 
-    private boolean exists(int spaceType){
+    private boolean exists(int spaceType) {
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
-                if(environment[col][row][0] == spaceType){
+                if (environment[col][row][0] == spaceType) {
                     return true;
                 }
             }
@@ -376,7 +380,7 @@ public class RobinAvatarComplex extends SuperAvatar {
     }
 
     private Direction findEmpty() {
-        //printEnv(1);
+        // printEnv(1);
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
                 if (environment[col][row][1] == PersonalFieldType.REACHABLE.ordinal()) {
@@ -387,13 +391,14 @@ public class RobinAvatarComplex extends SuperAvatar {
             }
         }
         state = State.FULLY_EXPLORED;
+        lastDirection = Direction.STAY;
         return Direction.STAY;
     }
 
     private Direction moveToEmpty() {
-        //System.out.println("move to empty");
+        // System.out.println("move to empty");
         setInEnvironment(position, 1, PersonalFieldType.WALKED.ordinal());
-        if(path.size()==0){
+        if (path.size() == 0) {
             lastWall = rotate90Clkw(lastDirection, 2);
             state = State.FOLLOW_WALL;
             return followWall();
@@ -404,10 +409,11 @@ public class RobinAvatarComplex extends SuperAvatar {
     }
 
     private Direction moveToNeeded() {
-        //System.out.println("move to empty");
+        // System.out.println("move to empty");
         setInEnvironment(position, 1, PersonalFieldType.WALKED.ordinal());
-        if(path.size()==0){
+        if (path.size() == 0) {
             state = State.FILL_NEED;
+            lastDirection = Direction.STAY;
             return Direction.STAY;
         }
         lastDirection = path.elementAt(0);
@@ -415,77 +421,76 @@ public class RobinAvatarComplex extends SuperAvatar {
         return lastDirection;
     }
 
-    private void findPath(int goal, int goalType){
+    private void findPath(int goal, int goalType) {
         destValid = false;
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
                 environment[col][row][2] = 0;
             }
         }
-        //printEnv(2);
+        // printEnv(2);
         setInEnvironment(position, 2, 1);
-        if(fillAround(position, 2, goal, goalType)){
+        if (fillAround(position, 2, goal, goalType)) {
             int i = 2;
             for (i = 2; i <= environmentHeight * environmentWidth && !destValid; i++) {
                 boolean keepGoing = false;
                 for (int row = 0; row < environment[0].length && !destValid; row++) {
                     for (int col = 0; col < environment.length && !destValid; col++) {
-                        if(environment[col][row][2] == i)
-                            if(fillAround(new Coordinate(col, row), i+1, goal, goalType))
+                        if (environment[col][row][2] == i)
+                            if (fillAround(new Coordinate(col, row), i + 1, goal, goalType))
                                 keepGoing = true;
                     }
                 }
-                if(!keepGoing){
-                    destination = position; //No path found
+                if (!keepGoing) {
+                    destination = position; // No path found
                     destValid = true;
                 }
             }
-            //printEnv(2);
-            if(!destValid){
-                destination = position; //No path found
+            // printEnv(2);
+            if (!destValid) {
+                destination = position; // No path found
                 destValid = true;
             }
-            //System.out.println("Save Path"); //save Path
+            // System.out.println("Save Path"); //save Path
             path.clear();
-            for(i--; i > 0; i--){
+            for (i--; i > 0; i--) {
                 for (int j = 0; j < 4; j++) {
-                    Coordinate space = addCoordinates(destination, directionToCoordinate(rotate90Clkw(Direction.UP, j)));
-                    if(getFromEnvironment(space, 2)==i){
-                        path.add(0,rotate90Clkw(Direction.UP, j+2));
+                    Coordinate space = addCoordinates(destination,
+                            directionToCoordinate(rotate90Clkw(Direction.UP, j)));
+                    if (getFromEnvironment(space, 2) == i) {
+                        path.add(0, rotate90Clkw(Direction.UP, j + 2));
                         destination = space;
                         break;
                     }
                 }
             }
-            //System.out.println(path);
+            // System.out.println(path);
             return;
-        }
-        else {
+        } else {
             path.clear();
             return;
         }
-        
 
     }
 
-    private boolean fillAround(Coordinate center, int value, int goal, int goalType){
+    private boolean fillAround(Coordinate center, int value, int goal, int goalType) {
         boolean retVal = false;
         for (int i = 0; i < 4; i++) {
             Coordinate space = addCoordinates(center, directionToCoordinate(rotate90Clkw(Direction.UP, i)));
-            if(getFromEnvironment(space, goalType) == goal){
-                if(!destValid){
+            if (getFromEnvironment(space, goalType) == goal) {
+                if (!destValid) {
                     destination = space;
                     destValid = true;
-                }               
-                //printEnv(2);
+                }
+                // printEnv(2);
                 return true;
             }
-            if(getFromEnvironment(space, 2) == 0 &&  PFTValues[getFromEnvironment(space, 1)].walkable){
+            if (getFromEnvironment(space, 2) == 0 && PFTValues[getFromEnvironment(space, 1)].walkable) {
                 setInEnvironment(space, 2, value);
                 retVal = true;
             }
         }
-        //printEnv(2);
+        // printEnv(2);
         return retVal;
     }
 
