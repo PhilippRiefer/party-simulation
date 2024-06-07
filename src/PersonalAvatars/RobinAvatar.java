@@ -339,13 +339,16 @@ public class RobinAvatar extends SuperAvatar {
         for (SpaceInfo spaceInfo : spacesInRange) {
             Coordinate spaceRelPos = absToRelPos(spaceInfo.getRelativeToAvatarCoordinate());
             Coordinate spaceAbsPos = addCoordinates(position, spaceRelPos);
-            if (PFTValues[getFromEnvironment(spaceAbsPos, 1)].isUnknown()) {
-                setInEnvironment(spaceAbsPos, 0, spaceInfo.getType().ordinal());
-                if (spaceInfo.getType() != SpaceType.OBSTACLE) {
-                    setInEnvironment(spaceAbsPos, 1, PersonalFieldType.EMPTY.ordinal());
-                } else {
-                    setInEnvironment(spaceAbsPos, 1, PersonalFieldType.WALL.ordinal());
-                }
+            if (spaceInfo.getType() == SpaceType.AVATAR) {
+                setInEnvironment(spaceAbsPos, 1, PersonalFieldType.UNKNOWN.ordinal());
+            }
+            else if (PFTValues[getFromEnvironment(spaceAbsPos, 1)].isUnknown()) {
+                    setInEnvironment(spaceAbsPos, 0, spaceInfo.getType().ordinal());
+                    if (spaceInfo.getType() != SpaceType.OBSTACLE) {
+                        setInEnvironment(spaceAbsPos, 1, PersonalFieldType.EMPTY.ordinal());
+                    } else {
+                        setInEnvironment(spaceAbsPos, 1, PersonalFieldType.WALL.ordinal());
+                    }
                 updateReachable(spaceAbsPos);
             }
         }
