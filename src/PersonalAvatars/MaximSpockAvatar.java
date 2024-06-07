@@ -54,46 +54,46 @@ public class MaximSpockAvatar extends SuperAvatar {
         personalCoordinates.setY(personalCoordinates.getY() - 1);
 
         // For Debugging
-        //System.out.println("\t\t\t---------Round " + x + "---------");
+        System.out.println("\t\t\t---------Round " + x + "---------");
         x++;
-        //System.out.println("Current Objective:  " + currentObjective);
+        System.out.println("Current Objective:  " + currentObjective);
 
         for(int i = 0; i < spacesInRange.size();i++){
-            //System.out.println("spaces(i):  " + spacesInRange.get(i).getType());
-            //System.out.println("spaces(i)-x:  "+spacesInRange.get(i).getRelativeToAvatarCoordinate().getX()+" and y: "+ spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()); 
+            System.out.println("spaces(i):  " + spacesInRange.get(i).getType());
+            System.out.println("spaces(i)-x:  "+spacesInRange.get(i).getRelativeToAvatarCoordinate().getX()+" and y: "+ spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()); 
         }
 
-        //System.out.println("Explizit 4: ");
-        //System.out.println("spaces(4):  " + spacesInRange.get(4).getType());
-        //System.out.println("spaces(4)-x:  "+spacesInRange.get(4).getRelativeToAvatarCoordinate().getX()+" and y: "+ spacesInRange.get(4).getRelativeToAvatarCoordinate().getY());
+        System.out.println("Explizit 4: ");
+        System.out.println("spaces(4):  " + spacesInRange.get(4).getType());
+        System.out.println("spaces(4)-x:  "+spacesInRange.get(4).getRelativeToAvatarCoordinate().getX()+" and y: "+ spacesInRange.get(4).getRelativeToAvatarCoordinate().getY());
 
         for(int i = 0; i < spacesInRange.size(); i++){
-            //System.out.println("spacesInRange(" + i +"), x="+spacesInRange.get(i).getRelativeToAvatarCoordinate().getX()+", y=" +spacesInRange.get(i).getRelativeToAvatarCoordinate().getY());
+            System.out.println("spacesInRange(" + i +"), x="+spacesInRange.get(i).getRelativeToAvatarCoordinate().getX()+", y=" +spacesInRange.get(i).getRelativeToAvatarCoordinate().getY());
         }
         
         saveSpacesInRange(spacesInRange, personalCoordinates); // 1. step is to save Environment in memory
         if (countedTurns > 99 && notMovingToObjective) { // 2. if counted Turns > 99 -> scouting not as default
-            //System.out.println("NOT SCOUTING AS DEFAULT ANYMORE");
+            System.out.println("NOT SCOUTING AS DEFAULT ANYMORE");
             currentObjective = decideNextMovement();
         }
         updateStats(); // stats are updated each turn (getting thirstier for e.g.)
-        //System.out.println("\t---STATS Updated---");
+        System.out.println("\t---STATS Updated---");
         // returning next chosen direction to SimulationControl
         return moveTo(clubMemory, currentObjective, personalCoordinates, spacesInRange); 
         //return Direction.UP;
     }
 
     public Direction moveTo(SpaceType[][] clubMemory, SpaceType currentObjective, Coordinate personalCoordinates, ArrayList<SpaceInfo> spacesInRange) {
-        //System.out.println("\t---moveTo Opened!!!---");
-        //System.out.println("hasPreComputed: " + hasPreComputed);
+        System.out.println("\t---moveTo Opened!!!---");
+        System.out.println("hasPreComputed: " + hasPreComputed);
         if (!hasPreComputed || hasWaitedOneTurnForOtherAvatarToLeave) { // definitely preComputing path to Objective
-            //System.out.println("\t---PRECOMPUTING PATH!!!---");
+            System.out.println("\t---PRECOMPUTING PATH!!!---");
             listOfDirections = preComputeDirection(clubMemory, currentObjective, personalCoordinates);
             hasPreComputed = true;
         }
 
         if(listOfDirections.size() == 0){                                   // Liste ist leer!
-            //System.out.println("List Of Directions is Empty!!");
+            System.out.println("List Of Directions is Empty!!");
             notMovingToObjective = true;
             hasPreComputed = false;
             return Direction.STAY;
@@ -104,7 +104,7 @@ public class MaximSpockAvatar extends SuperAvatar {
             return Direction.STAY;
         }
         else{                                                               // Liste folgen!  // FEHLERBEHANDLUNG HIER/ WENN JEMAND IM WEG WARTEN SONST AUTOMATISCH WEGEN OBEN NEU BERECHNEN
-            //System.out.println("stepOfTheGivenDirectionList: " + (stepOfTheGivenDirectionList+1) + " of " + (listOfDirections.size()));
+            System.out.println("stepOfTheGivenDirectionList: " + (stepOfTheGivenDirectionList+1) + " of " + (listOfDirections.size()));
             
             if(checkIfNextStepOkay(listOfDirections.get(stepOfTheGivenDirectionList), personalCoordinates)){
                 return listOfDirections.get(stepOfTheGivenDirectionList++);
@@ -117,26 +117,30 @@ public class MaximSpockAvatar extends SuperAvatar {
 
     Boolean checkIfNextStepOkay(Direction stepOfList, Coordinate personalCoordinates) {
         if (stepOfList == Direction.RIGHT) {
-            if (clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.OBSTACLE)) {
-                //System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
+            if (clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.OBSTACLE)
+                && clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.AVATAR)) {
+                System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
                 return false;
             }
         }
         if (stepOfList == Direction.LEFT) {
-            if (clubMemory[personalCoordinates.getX() - 1][personalCoordinates.getY()] == (SpaceType.OBSTACLE)) {
-                //System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
+            if (clubMemory[personalCoordinates.getX() - 1][personalCoordinates.getY()] == (SpaceType.OBSTACLE)
+                && clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.AVATAR)) {
+                System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
                 return false;
             }
         }
         if (stepOfList == Direction.UP) {
-            if (clubMemory[personalCoordinates.getX()][personalCoordinates.getY() - 1] == (SpaceType.OBSTACLE)) {
-                //System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
+            if (clubMemory[personalCoordinates.getX()][personalCoordinates.getY() - 1] == (SpaceType.OBSTACLE)
+                && clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.AVATAR)) {
+                System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
                 return false;
             }
         }
         if (stepOfList == Direction.DOWN) {
-            if (clubMemory[personalCoordinates.getX()][personalCoordinates.getY() + 1] == (SpaceType.OBSTACLE)) {
-                //System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
+            if (clubMemory[personalCoordinates.getX()][personalCoordinates.getY() + 1] == (SpaceType.OBSTACLE)
+                && clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.AVATAR)) {
+                System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
                 return false;
             }
         }
@@ -151,7 +155,7 @@ public class MaximSpockAvatar extends SuperAvatar {
         Coordinate objectiveCoordinates = findObjectiveInMemory(currentObjective, personalCoordinates);
 
         if (objectiveCoordinates == personalCoordinates) { // found nothing in Memory -> scout Empty Spaces
-            //System.out.println("\t---WHILE PRECOMPUTING FOR OBJECTIVE -> NOTHING FOUND -> DEFAULT: SCOUTING!---");
+            System.out.println("\t---WHILE PRECOMPUTING FOR OBJECTIVE -> NOTHING FOUND -> DEFAULT: SCOUTING!---");
             objectiveCoordinates = findObjectiveInMemory(null, personalCoordinates);
         }
 
@@ -200,18 +204,18 @@ public class MaximSpockAvatar extends SuperAvatar {
     Coordinate findObjectiveInMemory(SpaceType currentObjective, Coordinate personalCoordinates) { 
         Coordinate objectiveCoordinates = new Coordinate(personalCoordinates.getX(), personalCoordinates.getY());
         Boolean ObjectiveFound = false;
-        //System.out.println("\t---SEARCHING IN MEMORY FOR " + currentObjective + "---");
+        System.out.println("\t---SEARCHING IN MEMORY FOR " + currentObjective + "---");
         
         // check vicinity 1/2/3... circle principle
         for (int surrounding = 1; !ObjectiveFound && surrounding < Math.floor(XCOORDINATEMAX / 2) && surrounding < Math.floor(YCOORDINATEMAX / 2); surrounding++) {
-            //System.out.println("Checking surroundings with distance: " + surrounding);
+            System.out.println("Checking surroundings with distance: " + surrounding);
             objectiveCoordinates = checkVicinityForObjective(currentObjective, personalCoordinates, surrounding); 
-            //System.out.println("objectiveCoordinateX: " + objectiveCoordinates.getX() + "\nobjectiveCoordinateY: " + objectiveCoordinates.getY());
+            System.out.println("objectiveCoordinateX: " + objectiveCoordinates.getX() + "\nobjectiveCoordinateY: " + objectiveCoordinates.getY());
             // if objective Coordiantes are showing the current objective
             if (objectiveCoordinates.getX() != personalCoordinates.getX() && objectiveCoordinates.getY() != personalCoordinates.getY()) { 
-                //System.out.println("OBJECTIVE FOUND IN MEMORY \t\t\t---- FOUND COORDINATES! --------");
-                //System.out.println("objective at found Coordinates: " + clubMemory[objectiveCoordinates.getX()][objectiveCoordinates.getY()]);
-                //System.out.println("objectiveCoordinateX in Memory: " + objectiveCoordinates.getX() + "\nobjectiveCoordinateY in Memory: " + objectiveCoordinates.getY());
+                System.out.println("OBJECTIVE FOUND IN MEMORY \t\t\t---- FOUND COORDINATES! --------");
+                System.out.println("objective at found Coordinates: " + clubMemory[objectiveCoordinates.getX()][objectiveCoordinates.getY()]);
+                System.out.println("objectiveCoordinateX in Memory: " + objectiveCoordinates.getX() + "\nobjectiveCoordinateY in Memory: " + objectiveCoordinates.getY());
                 ObjectiveFound = true;
             }
         }
@@ -226,38 +230,38 @@ public class MaximSpockAvatar extends SuperAvatar {
         int xAddition = 0;
         int yAddition = 0;
 
-        //System.out.println("\t---StartOf checkVicinity()--- ");
-        //System.out.println("personalMinusSurroundingX + xAddition: " + (personalMinusSurroundingX + xAddition));
-        //System.out.println("personalMinusSurroundingY + yAddition: " + (personalMinusSurroundingY + yAddition));
+        System.out.println("\t---StartOf checkVicinity()--- ");
+        System.out.println("personalMinusSurroundingX + xAddition: " + (personalMinusSurroundingX + xAddition));
+        System.out.println("personalMinusSurroundingY + yAddition: " + (personalMinusSurroundingY + yAddition));
 
-        //System.out.println("\t\t--start of for i++ -- ");
+        System.out.println("\t\t--start of for i++ -- ");
         for (xAddition = 0; xAddition < (surrounding * 2 + 1); xAddition++) {
 
             if ((personalMinusSurroundingX + xAddition) < XCOORDINATEMAX
                     && (personalMinusSurroundingY + xAddition) >= 0
                     && (personalMinusSurroundingY + yAddition) < YCOORDINATEMAX
                     && (personalMinusSurroundingY + yAddition) >= 0) {
-                //printfCheckVicinity(xAddition, yAddition, personalMinusSurroundingX, personalMinusSurroundingY);
+                printfCheckVicinity(xAddition, yAddition, personalMinusSurroundingX, personalMinusSurroundingY);
                 if (clubMemory[personalMinusSurroundingX + xAddition][personalMinusSurroundingY
                         + yAddition] == currentObjective) {
-                    //System.out.println("Current Objective FOUND IN MEMORY!!!!!!!!!!!!!!!!!!!!!!!");
+                    System.out.println("Current Objective FOUND IN MEMORY!!!!!!!!!!!!!!!!!!!!!!!");
                     objectiveCoordinates.setX(personalMinusSurroundingX + xAddition);
                     objectiveCoordinates.setY(personalMinusSurroundingY + yAddition);
                     return objectiveCoordinates;
                 }
             }
         }
-        //System.out.println("\t\t--start of for j++ -- ");
+        System.out.println("\t\t--start of for j++ -- ");
         xAddition--;
         for (yAddition = 0; yAddition < (surrounding * 2 + 1); yAddition++) {
             if (personalMinusSurroundingX + xAddition < XCOORDINATEMAX
                     && personalMinusSurroundingY + xAddition >= 0
                     && personalMinusSurroundingY + yAddition < YCOORDINATEMAX
                     && personalMinusSurroundingY + yAddition >= 0) {
-                //printfCheckVicinity(xAddition, yAddition, personalMinusSurroundingX, personalMinusSurroundingY);
+                printfCheckVicinity(xAddition, yAddition, personalMinusSurroundingX, personalMinusSurroundingY);
                 if (clubMemory[personalMinusSurroundingX + xAddition][personalMinusSurroundingY
                         + yAddition] == currentObjective) {
-                    //System.out.println("Current Objective FOUND IN MEMORY!!!!!!!!!!!!!!!!!!!!!!!");
+                    System.out.println("Current Objective FOUND IN MEMORY!!!!!!!!!!!!!!!!!!!!!!!");
                     objectiveCoordinates.setX(personalMinusSurroundingX + xAddition);
                     objectiveCoordinates.setY(personalMinusSurroundingY + yAddition);
                     return objectiveCoordinates;
@@ -265,15 +269,15 @@ public class MaximSpockAvatar extends SuperAvatar {
             }
         }
         yAddition--;
-        //System.out.println("\t\t--start of for i-- -- ");
+        System.out.println("\t\t--start of for i-- -- ");
         for (xAddition = (surrounding * 2); xAddition >= 0; xAddition--) {
             if(personalMinusSurroundingX + xAddition < XCOORDINATEMAX 
                 && personalMinusSurroundingY + xAddition >= 0
                 && personalMinusSurroundingY + yAddition < YCOORDINATEMAX
                 && personalMinusSurroundingY + yAddition >= 0){
-                //printfCheckVicinity(xAddition, yAddition, personalMinusSurroundingX, personalMinusSurroundingY);
+                printfCheckVicinity(xAddition, yAddition, personalMinusSurroundingX, personalMinusSurroundingY);
                 if (clubMemory[personalMinusSurroundingX + xAddition][personalMinusSurroundingY + yAddition] == currentObjective) {
-                    //System.out.println("Current Objective FOUND IN MEMORY!!!!!!!!!!!!!!!!!!!!!!!");
+                    System.out.println("Current Objective FOUND IN MEMORY!!!!!!!!!!!!!!!!!!!!!!!");
                     objectiveCoordinates.setX(personalMinusSurroundingX + xAddition);
                     objectiveCoordinates.setY(personalMinusSurroundingY + yAddition);
                     return objectiveCoordinates;
@@ -281,15 +285,15 @@ public class MaximSpockAvatar extends SuperAvatar {
             }
         }
         xAddition++;
-        //System.out.println("\t\t--start of for j-- -- ");
+        System.out.println("\t\t--start of for j-- -- ");
         for (yAddition = (surrounding * 2); yAddition > 0; yAddition--) {
             if(personalMinusSurroundingX + xAddition < XCOORDINATEMAX 
                 && personalMinusSurroundingY + xAddition >= 0
                 && personalMinusSurroundingY + yAddition < YCOORDINATEMAX
                 && personalMinusSurroundingY + yAddition >= 0){
-                //printfCheckVicinity(xAddition, yAddition, personalMinusSurroundingX, personalMinusSurroundingY);
+                printfCheckVicinity(xAddition, yAddition, personalMinusSurroundingX, personalMinusSurroundingY);
                 if (clubMemory[personalMinusSurroundingX + xAddition][personalMinusSurroundingY + yAddition] == currentObjective) {
-                    //System.out.println("Current Objective FOUND IN MEMORY!!!!!!!!!!!!!!!!!!!!!!!");
+                    System.out.println("Current Objective FOUND IN MEMORY!!!!!!!!!!!!!!!!!!!!!!!");
                     objectiveCoordinates.setX(personalMinusSurroundingX + xAddition);
                     objectiveCoordinates.setY(personalMinusSurroundingY + yAddition);
                     return objectiveCoordinates;
@@ -297,7 +301,7 @@ public class MaximSpockAvatar extends SuperAvatar {
             }
         }
         yAddition++;
-        //System.out.println("Finished checking surroundings with distance "+surrounding+"---- FOUND NOTHING ");
+        System.out.println("Finished checking surroundings with distance "+surrounding+"---- FOUND NOTHING ");
         return objectiveCoordinates;
     }
 
@@ -310,7 +314,7 @@ public class MaximSpockAvatar extends SuperAvatar {
     // saves latest Information on Environment
     public void saveSpacesInRange(ArrayList<SpaceInfo> spacesInRange, Coordinate persCoordinate) {
         int i = 0;
-        //System.out.println("\t---Begin updating ClubMemory---");
+        System.out.println("\t---Begin updating ClubMemory---");
         while (i < spacesInRange.size()) {
             int clubMemoryCoordinateX = spacesInRange.get(i).getRelativeToAvatarCoordinate().getX();
             int clubMemoryCoordinateY = spacesInRange.get(i).getRelativeToAvatarCoordinate().getY();
@@ -326,7 +330,7 @@ public class MaximSpockAvatar extends SuperAvatar {
             //System.out.println("clubMemoryY: " + clubMemoryCoordinateY);
             //System.out.println("clubMemory[" + i + "]: " + clubMemory[clubMemoryCoordinateX][clubMemoryCoordinateY] );
         }
-        //System.out.println("\t---ClubMemory updated---");
+        System.out.println("\t---ClubMemory updated---");
     }
 
     public SpaceType decideNextMovement() {
