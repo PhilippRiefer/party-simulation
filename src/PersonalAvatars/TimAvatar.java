@@ -13,10 +13,10 @@ import java.awt.Color;
 
 public class TimAvatar extends SuperAvatar {
 
-    private final Map<String, Integer> characterTraits;
-    HashMap<String, Integer> needs = new HashMap<>();
+    private final Map<String, Double> characterTraits;
+    HashMap<String, Double> needs = new HashMap<>();
     Random random = new Random();
-    String currentSpaceType;
+    SpaceType currentSpaceType = SpaceType.EMPTY;
     Coordinate currentCoordinate = new Coordinate(0, 0); // Initialisiere currentCoordinate
     SpaceType[][] knownSpace = new SpaceType[40][20];
 
@@ -31,22 +31,24 @@ public class TimAvatar extends SuperAvatar {
     public TimAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
 
-        HashMap<String, Integer> tempCharacterTraits = new HashMap<>();
+        HashMap<String, Double> tempCharacterTraits = new HashMap<>();
 
-        tempCharacterTraits.put("active", 100);
-        tempCharacterTraits.put("social", 60);
-        tempCharacterTraits.put("good drinker", 80);
-        tempCharacterTraits.put("good eater", 40);
-        tempCharacterTraits.put("strong bladder", 20);
+        tempCharacterTraits.put("active", 60.0);
+        tempCharacterTraits.put("social", 60.0);
+        tempCharacterTraits.put("good drinker", 80.0);
+        tempCharacterTraits.put("good eater", 40.0);
+        tempCharacterTraits.put("strong bladder", 20.0);
 
         characterTraits = Collections.unmodifiableMap(tempCharacterTraits);
 
-        needs.put("thirst", 60);
-        needs.put("hunger", 30);
-        needs.put("bladder", 20);
-        needs.put("physical energy", 20);
-        needs.put("fun", 20);
-        needs.put("social energy", 20);
+        needs.put("thirst", 0.0);
+        needs.put("hunger", 0.0);
+        needs.put("bladder", 0.0);
+        needs.put("physical energy", 100.0);
+        needs.put("fun", 50.0);
+        needs.put("social energy", 100.0);
+
+        
     }
 
     public void updateNeeds() {
@@ -55,13 +57,20 @@ public class TimAvatar extends SuperAvatar {
         updateNeedsAfterAction(currentSpaceType);
     }
 
+
+    public void calculateCurrentCoordinate(ArrayList<SpaceInfo> spacesInRange) {
+     currentCoordinate.setX(spacesInRange.get(4).getRelativeToAvatarCoordinate().getX());
+     currentCoordinate.setY(spacesInRange.get(4).getRelativeToAvatarCoordinate().getY() - 1);
+
+    }
+
     private void updateNeedsOverTime() {
-        int thirstChange = 1;
-        int hungerChange = 1;
-        int bladderChange = 1;
-        int physicalEnergyChange = -1;
-        int funChange = -1;
-        int socialEnergyChange = -1;
+        double thirstChange = 0.5;
+        double hungerChange = 0.5;
+        double bladderChange = 0.5;
+        double physicalEnergyChange = -0.5;
+        double funChange = -0.5;
+        double socialEnergyChange = -0.5;
 
         thirstChange *= 1.0 - (characterTraits.get("good drinker") / 100.0);
         hungerChange *= 1.0 - (characterTraits.get("good eater") / 100.0);
@@ -75,6 +84,13 @@ public class TimAvatar extends SuperAvatar {
         needs.put("physical energy", adjustNeed(needs.get("physical energy"), physicalEnergyChange));
         needs.put("fun", adjustNeed(needs.get("fun"), funChange));
         needs.put("social energy", adjustNeed(needs.get("social energy"), socialEnergyChange));
+
+        System.out.println("Thirst " + needs.get("thirst"));
+        System.out.println("hunger " + needs.get("hunger"));
+        System.out.println("bladder " + needs.get("bladder"));
+        System.out.println("physical energy " + needs.get("physical energy"));
+        System.out.println("fun " + needs.get("fun"));
+        System.out.println("social energy " + needs.get("social energy"));
     }
 
     private void applyRandomEvents() {
@@ -85,17 +101,17 @@ public class TimAvatar extends SuperAvatar {
         }
     }
 
-    private int adjustNeed(int currentValue, double change) {
-        int newValue = (int) (currentValue + change);
-        return Math.max(0, Math.min(newValue, 100));
+    private double adjustNeed(double currentValue, double change) {
+        double newValue =  currentValue + change;
+        return Math.max(0.0, Math.min(newValue, 100.0));
     }
 
-    private int increaseNeed(int currentValue, int amount) {
-        return Math.min(currentValue + amount, 100);
+    private double increaseNeed(double currentValue, double amount) {
+        return Math.min(currentValue + amount, 100.0);
     }
 
-    private int decreaseNeed(int currentValue, int amount) {
-        return Math.max(currentValue - amount, 0);
+    private double decreaseNeed(double currentValue, double amount) {
+        return Math.max(currentValue - amount, 0.0);
     }
 
     public void drink() {
@@ -140,25 +156,25 @@ public class TimAvatar extends SuperAvatar {
         System.out.println("Der Avatar hat sich entspannt.");
     }
 
-    private void updateNeedsAfterAction(String currentSpaceType) {
+    private void updateNeedsAfterAction(SpaceType currentSpaceType) {
         switch(currentSpaceType) {
-            case "AVATAR":
+            case AVATAR:
                 socialize();
                 break;
-            case "DANCEFLOOR":
+            case DANCEFLOOR:
                 dance();
                 break;
-            case "DJBOOTH":
+            case DJBOOTH:
                 playMusic();
                 break;
-            case "TOILET":
+            case TOILET:
                 pee();
                 break;
-            case "BAR":
+            case BAR:
                 drink();
                 eat();
                 break;
-            case "SEATS":
+            case SEATS:
                 relax();
                 break;
             default:
@@ -173,40 +189,41 @@ public class TimAvatar extends SuperAvatar {
             Steps = pathFinding(makeSpaceTypeDecision());
         }
 
-        return coordianteSteps(Steps);
+        return coordianteSteps(Steps, spacesInRange);
     }
+
 
     private void extendKnownSpace(ArrayList<SpaceInfo> spacesInRange) {
         for(SpaceInfo spaceInfo : spacesInRange) {
-            Coordinate space = new Coordinate(spaceInfo.getRelativeToAvatarCoordinate().getX(), spaceInfo.getRelativeToAvatarCoordinate().getY());
+            Coordinate coordinate = new Coordinate(spaceInfo.getRelativeToAvatarCoordinate().getX(), spaceInfo.getRelativeToAvatarCoordinate().getY());
             SpaceType type = spaceInfo.getType();
 
-            knownSpace[space.getX()][space.getY()] = type;
+            knownSpace[coordinate .getX()][coordinate .getY()] = type;
 
             switch(type) {
                 case DANCEFLOOR:
-                    if(!Dancefloor.contains(space)) {
-                        Dancefloor.add(space);
+                    if(!Dancefloor.contains(coordinate )) {
+                        Dancefloor.add(coordinate );
                     }
                     break;
                 case DJBOOTH:
-                    if(!DJBooth.contains(space)) {
-                        DJBooth.add(space);
+                    if(!DJBooth.contains(coordinate )) {
+                        DJBooth.add(coordinate );
                     }
                     break;
                 case TOILET:
-                    if(!Toilet.contains(space)) {
-                        Toilet.add(space);
+                    if(!Toilet.contains(coordinate )) {
+                        Toilet.add(coordinate );
                     }
                     break;
                 case BAR:
-                    if(!Bar.contains(space)) {
-                        Bar.add(space);
+                    if(!Bar.contains(coordinate )) {
+                        Bar.add(coordinate);
                     }
                     break;
                 case SEATS:
-                    if(!Seats.contains(space)) {
-                        Seats.add(space);
+                    if(!Seats.contains(coordinate )) {
+                        Seats.add(coordinate );
                     }
                     break;
                 default:
@@ -216,89 +233,171 @@ public class TimAvatar extends SuperAvatar {
     }
 
     private SpaceType makeSpaceTypeDecision() {
-        SpaceType decision = SpaceType.BAR;
-        // Hier kann man die Entscheidung basierend auf den Bedürfnissen des Avatars erweitern
-        return decision;
+        String mostUrgentNeed = getMostUrgentNeed(needs);
+
+        switch (mostUrgentNeed) {
+                case "thirst":
+                return SpaceType.BAR;
+
+                case "hunger":
+                return SpaceType.BAR;
+
+
+                case "bladder":
+                return SpaceType.TOILET;
+
+                case "physical energy":
+                return SpaceType.SEATS;
+
+                case "fun":
+                return SpaceType.DJBOOTH;
+
+                case "social energy":
+                return SpaceType.DANCEFLOOR;
+        
+                default:
+                 return SpaceType.EMPTY;
+            }
+        
     }
 
-    private Coordinate pathFinding(SpaceType spacetype) {
-        Coordinate destination = new Coordinate(0, 0);
+    public static String getMostUrgentNeed(Map<String, Double> needs) {
+        String mostUrgentNeed = null;
+        double highestPriority = Double.MIN_VALUE;
 
-        switch(spacetype) {
-            case DANCEFLOOR:
-                if (!Dancefloor.isEmpty()) {
-                    destination = Dancefloor.get(0);
-                }
-                break;
-            case DJBOOTH:
-                if (!DJBooth.isEmpty()) {
-                    destination = DJBooth.get(0);
-                }
-                break;
-            case TOILET:
-                if (!Toilet.isEmpty()) {
-                    destination = Toilet.get(0);
-                }
-                break;
-            case BAR:
-                if (!Bar.isEmpty()) {
-                    destination = Bar.get(0);
-                }
-                break;
-            case SEATS:
-                if (!Seats.isEmpty()) {
-                    destination = Seats.get(0);
-                }
-                break;
-            default:
-                break;
+        for (Map.Entry<String, Double> entry : needs.entrySet()) {
+            String need = entry.getKey();
+            double value = entry.getValue();
+            double priority = calculatePriority(need, value);
+
+            if (priority > highestPriority) {
+                highestPriority = priority;
+                mostUrgentNeed = need;
+            }
         }
 
-        Coordinate steps = new Coordinate(
+        return mostUrgentNeed;
+    }
+
+    public static double calculatePriority(String need, double value) {
+        switch (need) {
+            case "thirst":
+            case "hunger":
+                
+                return value;
+            case "bladder":
+            case "physical energy":
+            case "fun":
+            case "social energy":
+                
+                return 100 - value;
+            default:
+                throw new IllegalArgumentException("Unbekanntes Bedürfnis: " + need);
+        }
+    }
+
+
+
+    private Coordinate pathFinding(SpaceType spacetype) {
+        Coordinate destination = null;
+      if(spacetype != SpaceType.EMPTY && spacetype == currentSpaceType){
+                return new Coordinate(0, 0);
+      }
+      else{
+        switch (spacetype) {
+          case DANCEFLOOR:
+            destination = Dancefloor.isEmpty() ? null : Dancefloor.get(0);
+            break;
+          case DJBOOTH:
+            destination = DJBooth.isEmpty() ? null : DJBooth.get(0);
+            break;
+          case TOILET:
+            destination = Toilet.isEmpty() ? null : Toilet.get(0);
+            break;
+          case BAR:
+            destination = Bar.isEmpty() ? null : Bar.get(0);
+            break;
+          case SEATS:
+            destination = Seats.isEmpty() ? null : Seats.get(0);
+            break;
+          default:
+            break;
+        }
+}
+      
+        if (destination == null) {
+          return new Coordinate(randomCoordinate().getX() - currentCoordinate.getX(),
+                                randomCoordinate().getY() - currentCoordinate.getY());
+        }
+      
+        // Calculate steps only if a destination is found
+        return new Coordinate(
             destination.getX() - currentCoordinate.getX(),
             destination.getY() - currentCoordinate.getY()
         );
+      }
 
-        return steps;
-    }
-
-    private Direction coordianteSteps(Coordinate Steps) {
+      
+    private Direction coordianteSteps(Coordinate Steps, ArrayList<SpaceInfo> spacesInRange) {
+        Coordinate nextCoordinate = new Coordinate(0, 0);
         if (Steps.getY() > 0) {
+
             Steps.setY(Steps.getY() - 1);
+            nextCoordinate.setY(currentCoordinate.getY() + 1);
+            nextCoordinate.setX(currentCoordinate.getX());
+            calculateCurrentSpaceType(spacesInRange, nextCoordinate);
             return Direction.DOWN;
+
         } else if (Steps.getY() < 0) {
             Steps.setY(Steps.getY() + 1);
+            nextCoordinate.setY(currentCoordinate.getY() - 1);
+            nextCoordinate.setX(currentCoordinate.getX());
+            calculateCurrentSpaceType(spacesInRange, nextCoordinate);
             return Direction.UP;
+
         } else if (Steps.getX() < 0) {
             Steps.setX(Steps.getX() + 1);
+            nextCoordinate.setX(currentCoordinate.getX() - 1);
+            nextCoordinate.setY(currentCoordinate.getY());
+            calculateCurrentSpaceType(spacesInRange, nextCoordinate);
             return Direction.LEFT;
+
         } else if (Steps.getX() > 0) {
             Steps.setX(Steps.getX() - 1);
+            nextCoordinate.setX(currentCoordinate.getX() + 1);
+            nextCoordinate.setY(currentCoordinate.getY());
+            calculateCurrentSpaceType(spacesInRange, nextCoordinate);
             return Direction.RIGHT;
         } else {
             return Direction.STAY;
         }
     }
 
-    private Direction randomDirection() {
-        int directionNumber = (int) (Math.random() * 4);
-
-        switch (directionNumber) {
-            case 0:
-                return Direction.LEFT;
-            case 1:
-                return Direction.RIGHT;
-            case 2:
-                return Direction.UP;
-            case 3:
-                return Direction.DOWN;
-            default:
-                return Direction.STAY;
+    public void calculateCurrentSpaceType(ArrayList<SpaceInfo> spacesInRange, Coordinate nextCoordinate) {
+        for (SpaceInfo space : spacesInRange) {
+            if (nextCoordinate.equals(space.getRelativeToAvatarCoordinate())) {
+                currentSpaceType = space.getType();
+                break;
+            }
         }
+
     }
+                
+       
+
+    private Coordinate randomCoordinate() {
+        int randomX = 0;
+        int randomY = 0;
+      
+          randomX = (int) (Math.random() * 40);
+          randomY = (int) (Math.random() * 20);
+        
+        return new Coordinate(randomX, randomY);
+      }
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
+        calculateCurrentCoordinate(spacesInRange);
         updateNeeds();
         return doAction(spacesInRange);
     }
