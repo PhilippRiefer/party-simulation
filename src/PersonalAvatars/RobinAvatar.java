@@ -113,6 +113,8 @@ public class RobinAvatar extends SuperAvatar {
             case MOVE_TO_NEEDED:
                 return moveToNeeded();
             case FULLY_EXPLORED:
+                lastDirection = Direction.STAY;
+                return Direction.STAY;
             case FILL_NEED:
                 lastDirection = Direction.STAY;
                 return Direction.STAY;
@@ -494,8 +496,9 @@ public class RobinAvatar extends SuperAvatar {
         return retVal;
     }
 
-    private void findPathReachable(){
+    private Direction dance(){
         
+        return Direction.STAY;
     }
 
     @Override
