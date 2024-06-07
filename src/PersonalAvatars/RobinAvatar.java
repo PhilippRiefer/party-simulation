@@ -68,6 +68,7 @@ public class RobinAvatar extends SuperAvatar {
     private Random rng;
     private int currentNeed;
     private boolean newPath;
+    private int stuckCycles;
 
     public RobinAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
@@ -86,6 +87,7 @@ public class RobinAvatar extends SuperAvatar {
         currentNeed = -1;
         rng = new Random();
         newPath = false;
+        stuckCycles = 0;
         initializeNeeds();
         initializeEnvironment();
     }
@@ -96,8 +98,23 @@ public class RobinAvatar extends SuperAvatar {
         updatePosition();
         updateNeeds();
         checkNeeds();
-        if (!(getCouldMove() || newPath || lastDirection == Direction.STAY))
-            return lastDirection;
+        if (!(getCouldMove() || newPath || lastDirection == Direction.STAY)){
+            if(stuckCycles > 2){
+                stuckCycles = 0;
+                if(state == State.MOVE_TO_EMPTY || state == State.FIND_WALL || state == State.FOLLOW_WALL){
+                    state = State.FIND_EMPTY;
+                }
+                else if(state == State.MOVE_TO_NEEDED){
+                    newPath = true;
+                    findPath(needs[currentNeed][0], 0);
+                }
+            }
+            else{
+                stuckCycles++;
+                return lastDirection;
+            }        
+        }
+        stuckCycles = 0;  
         newPath = false;
         updateEnvironment(spacesInRange);
         // printEnv(1);
@@ -507,7 +524,7 @@ public class RobinAvatar extends SuperAvatar {
             int randNum = rng.nextInt(4);
             for (int i = randNum; i < randNum + 4; i++) {
                 Direction randDir = rotate90Clkw(Direction.UP, i);
-                if(getFromEnvironment(randDir, 0) == SpaceType.DANCEFLOOR.ordinal()){
+                if(getFromEnvironment(randDir, 0) == SpaceType.DANCEFLOOR.ordinal() && PFTValues[getFromEnvironment(randDir, 1)].walkable){
                     lastDirection = randDir;
                     return randDir;
                 }

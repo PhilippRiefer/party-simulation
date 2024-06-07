@@ -72,11 +72,11 @@ public class SimulationControl {
         //SuperAvatar Tom8 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
 
         avatars.add(Robin);
-        //avatars.add(Robin2);
-        //avatars.add(Robin3);
-        //avatars.add(Tom4);
-        //avatars.add(Tom5);
-        //avatars.add(Tom6);
+        avatars.add(Robin2);
+        avatars.add(Robin3);
+        avatars.add(Tom4);
+        avatars.add(Tom5);
+        avatars.add(Tom6);
         //avatars.add(Tom7);
         //avatars.add(Tom8);
 
