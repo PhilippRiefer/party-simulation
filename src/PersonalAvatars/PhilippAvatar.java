@@ -35,7 +35,7 @@ public class PhilippAvatar extends SuperAvatar {
      * @param color           the color of the avatar
      */
     public PhilippAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, color); // leverage the super class to handle ID, perceptionRange and color
+        super(id, perceptionRange, Color.RED); // leverage the super class to handle ID, perceptionRange and color
         this.memory = new HashMap<>();
         this.initialPositionKnown = false; // Initial position is unknown
         this.target = null; // No target initially

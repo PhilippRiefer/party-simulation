@@ -36,6 +36,7 @@ public class SimulationControl {
 
         for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
             try {
+                
                 Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255), 255);
                 SuperAvatar avatar = personalAvatarClass.getDeclaredConstructor(int.class, int.class, Color.class)
                         .newInstance(nextAvatarID++, perceptionRange, color);

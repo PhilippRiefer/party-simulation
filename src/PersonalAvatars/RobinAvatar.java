@@ -70,7 +70,7 @@ public class RobinAvatar extends SuperAvatar {
     private boolean newPath;
 
     public RobinAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, color);
+        super(id, perceptionRange, Color.GREEN);
         environment = new int[2 * environmentWidth + 1][2 * environmentHeight + 1][3];
         position = new Coordinate(environmentWidth, environmentHeight);
         state = State.FIND_WALL;

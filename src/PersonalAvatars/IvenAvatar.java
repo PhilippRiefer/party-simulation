@@ -36,7 +36,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	Coordinate Coord_DownRight = new Coordinate(0, 0);
 
 	public IvenAvatar(int id, int perceptionRange, Color color) {
-		super(id, perceptionRange, color); //
+		super(id, perceptionRange, Color.BLUE); //
 	}
 
 	public void checkBorder(ArrayList<SpaceInfo> spacesInRange) throws BorderException {

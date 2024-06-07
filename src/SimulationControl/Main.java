@@ -39,7 +39,7 @@ public class Main {
             simcontrol.loopThroughAvatars();
             try {
                 // Make the program wait for one second (1000 milliseconds)
-                Thread.sleep(1);
+                Thread.sleep(300);
             } catch (InterruptedException e) {
                 // Handle the exception if the sleep is interrupted
                 e.printStackTrace();

@@ -36,7 +36,7 @@ public class MaximSpockAvatar extends SuperAvatar {
 
     // perception Range should be higher than of a human!
     public MaximSpockAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, color);
+        super(id, perceptionRange, new Color(100, 188, 250));
     }
 
     int x = 1;

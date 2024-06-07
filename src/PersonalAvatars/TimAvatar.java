@@ -30,7 +30,7 @@ public class TimAvatar extends SuperAvatar {
     Coordinate Steps = new Coordinate(0, 0);
 
     public TimAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, color);
+        super(id, perceptionRange, Color.ORANGE);
 
         HashMap<String, Double> tempCharacterTraits = new HashMap<>();
 

@@ -40,7 +40,7 @@ public class NasserAvatar extends SuperAvatar {
     private int maxY = Integer.MIN_VALUE;
 
     public NasserAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, color); // Leverage the super class to handle ID and perceptionRange
+        super(id, perceptionRange, Color.CYAN); // Leverage the super class to handle ID and perceptionRange
         this.allSpaceInfos = new ArrayList<>();
     }
 
