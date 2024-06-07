@@ -19,6 +19,8 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	int[] needsInOrder = { needToDance, needToPee, needToRest, needToTalk, needToMusic, needToDrink };
 	SpaceType ObjectNeeded = null;
 	Coordinate findCoords; 		// the Coords i Try to find
+	int orientate = 0;			// counter if I am Orientated 
+
 	Coordinate myCoords = new Coordinate(0, 0); 		// my Coords
 	Direction nextMove;			// saved direction for the next move
  	SpaceType[][] Mind = new SpaceType[100][100];
@@ -75,7 +77,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 		for (int i = 0; i < lenght; i++) {
 
-			if (ObjectNeeded == spacesInRange.get(i).getType()) {
+/* 			if (ObjectNeeded == spacesInRange.get(i).getType()) {
 				// Wo liegt das?
 				if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Up)) {
 					// SpaceType frontTyp = spacesInRange.get(i).getType();
@@ -111,7 +113,8 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 					return Direction.LEFT;
 				}
 			}
-		}
+*/		
+	}
 		refreshNeeds(null);
 		wayfinding(spacesInRange);
 		return nextMove;
@@ -153,7 +156,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	}
 
 	Direction move() {
-		//System.out.println("--------- I will move random");
+		System.out.println("------------ I will move random");
 		int max = 4;
 		int min = 0;
 		int directionNumber = (int) (Math.random() * ((max - min) + 1) + min); // directionNumber zwischen 0 und 6
@@ -242,13 +245,27 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	}
 
 	public boolean findAim() {
-		for (int i =0; i< 5; i++){
-			if(objectsfound.getTypeOfSpace(i) == ObjectNeeded){
-				findCoords = objectsfound.getCoords(i); 
-				return true;
-			}
+		if (orientate < 5){	//TODO orientate ersellen 
+			switch(orientate) {
+				case 0: findCoords = new Coordinate(2, 2); break;
+				case 1: findCoords = new Coordinate(36,17); break;
+				case 2: findCoords = new Coordinate(3,17); break;
+				case 3: findCoords = new Coordinate(36,2); break;
+				case 4: findCoords = new Coordinate(17,3); break;
+			} 
+			
+			return true;
 		}
-		return false;
+		else {
+			for (int i =0; i< 5; i++){
+				if(objectsfound.getTypeOfSpace(i) == ObjectNeeded){
+					findCoords = objectsfound.getCoords(i); 
+					return true;
+				}
+			}
+			return false;
+		}
+
 	}
 	
 	public void wayfinding(ArrayList<SpaceInfo> spacesInRange){
@@ -270,6 +287,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 				else if(findCoords.getY() == myCoords.getY()){
 					nextMove = Direction.STAY;	//All coords are the same. The object was found
 					refreshNeeds(ObjectNeeded);
+					orientate++;
 					// TODO Make it noticeable that the object has been found
 				}
 			}
@@ -311,7 +329,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 				}
 			}
 			
-			if (numberOfElements < 4) { // 5 because of 5 elements i want to remember
+			if (numberOfElements <= 4) { // 5 because of 5 elements i want to remember
 				this.typeOfSpace[numberOfElements] = typeOfSpace;
 				this.coords[numberOfElements] = new Coordinate(xCoord, yCoord);
 				numberOfElements++;
