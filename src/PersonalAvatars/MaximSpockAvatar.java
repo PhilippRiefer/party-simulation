@@ -58,8 +58,17 @@ public class MaximSpockAvatar extends SuperAvatar {
         x++;
         System.out.println("Current Objective:  " + currentObjective);
 
+        for(int i = 0; i < spacesInRange.size();i++){
+            System.out.println("spaces(i):  " + spacesInRange.get(i).getType());
+            System.out.println("spaces(i)-x:  "+spacesInRange.get(i).getRelativeToAvatarCoordinate().getX()+" and y: "+ spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()); 
+        }
+
+        System.out.println("Explizit 4: ");
+        System.out.println("spaces(4):  " + spacesInRange.get(4).getType());
+        System.out.println("spaces(4)-x:  "+spacesInRange.get(4).getRelativeToAvatarCoordinate().getX()+" and y: "+ spacesInRange.get(4).getRelativeToAvatarCoordinate().getY());
+
         for(int i = 0; i < spacesInRange.size(); i++){
-            System.out.println("spacesInRange(0), x="+spacesInRange.get(i).getRelativeToAvatarCoordinate().getX()+", y=" +spacesInRange.get(i).getRelativeToAvatarCoordinate().getY());
+            System.out.println("spacesInRange(" + i +"), x="+spacesInRange.get(i).getRelativeToAvatarCoordinate().getX()+", y=" +spacesInRange.get(i).getRelativeToAvatarCoordinate().getY());
         }
         
         saveSpacesInRange(spacesInRange, personalCoordinates); // 1. step is to save Environment in memory
@@ -218,15 +227,16 @@ public class MaximSpockAvatar extends SuperAvatar {
         int yAddition = 0;
 
         System.out.println("\t---StartOf checkVicinity()--- ");
-        System.out.println("personalMinusSurroundingX: " + personalMinusSurroundingX);
-        System.out.println("personalMinusSurroundingY: " + personalMinusSurroundingY);
+        System.out.println("personalMinusSurroundingX + xAddition: " + (personalMinusSurroundingX + xAddition));
+        System.out.println("personalMinusSurroundingY + yAddition: " + (personalMinusSurroundingY + yAddition));
 
         System.out.println("\t\t--start of for i++ -- ");
         for (xAddition = 0; xAddition < (surrounding * 2 + 1); xAddition++) {
-            if (personalMinusSurroundingX + xAddition < XCOORDINATEMAX
-                    && personalMinusSurroundingY + yAddition >= 0
-                    && personalMinusSurroundingY + yAddition < YCOORDINATEMAX
-                    && personalMinusSurroundingY + yAddition >= 0) {
+
+            if ((personalMinusSurroundingX + xAddition) < XCOORDINATEMAX
+                    && (personalMinusSurroundingY + xAddition) >= 0
+                    && (personalMinusSurroundingY + yAddition) < YCOORDINATEMAX
+                    && (personalMinusSurroundingY + yAddition) >= 0) {
                 printfCheckVicinity(xAddition, yAddition, personalMinusSurroundingX, personalMinusSurroundingY);
                 if (clubMemory[personalMinusSurroundingX + xAddition][personalMinusSurroundingY
                         + yAddition] == currentObjective) {
@@ -241,7 +251,7 @@ public class MaximSpockAvatar extends SuperAvatar {
         xAddition--;
         for (yAddition = 0; yAddition < (surrounding * 2 + 1); yAddition++) {
             if (personalMinusSurroundingX + xAddition < XCOORDINATEMAX
-                    && personalMinusSurroundingY + yAddition >= 0
+                    && personalMinusSurroundingY + xAddition >= 0
                     && personalMinusSurroundingY + yAddition < YCOORDINATEMAX
                     && personalMinusSurroundingY + yAddition >= 0) {
                 printfCheckVicinity(xAddition, yAddition, personalMinusSurroundingX, personalMinusSurroundingY);
@@ -258,7 +268,7 @@ public class MaximSpockAvatar extends SuperAvatar {
         System.out.println("\t\t--start of for i-- -- ");
         for (xAddition = (surrounding * 2); xAddition >= 0; xAddition--) {
             if(personalMinusSurroundingX + xAddition < XCOORDINATEMAX 
-                && personalMinusSurroundingY + yAddition >= 0
+                && personalMinusSurroundingY + xAddition >= 0
                 && personalMinusSurroundingY + yAddition < YCOORDINATEMAX
                 && personalMinusSurroundingY + yAddition >= 0){
                 printfCheckVicinity(xAddition, yAddition, personalMinusSurroundingX, personalMinusSurroundingY);
@@ -274,7 +284,7 @@ public class MaximSpockAvatar extends SuperAvatar {
         System.out.println("\t\t--start of for j-- -- ");
         for (yAddition = (surrounding * 2); yAddition > 0; yAddition--) {
             if(personalMinusSurroundingX + xAddition < XCOORDINATEMAX 
-                && personalMinusSurroundingY + yAddition >= 0
+                && personalMinusSurroundingY + xAddition >= 0
                 && personalMinusSurroundingY + yAddition < YCOORDINATEMAX
                 && personalMinusSurroundingY + yAddition >= 0){
                 printfCheckVicinity(xAddition, yAddition, personalMinusSurroundingX, personalMinusSurroundingY);
