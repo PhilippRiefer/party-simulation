@@ -77,15 +77,15 @@ public class TomAvatar extends SuperAvatar {
 
     public Direction goToStart(ArrayList<SpaceInfo> spacesInRange) {
 
-        if (spacesInRange.get(3).getType() == SpaceType.OBSTACLE) {
-            if (spacesInRange.get(1).getType() == SpaceType.OBSTACLE) {
+        if (spacesInRange.get(1).getType() == SpaceType.OBSTACLE) {
+            if (spacesInRange.get(3).getType() == SpaceType.OBSTACLE) {
                 phase = 1;
                 return Direction.STAY;
             }
-            return Direction.LEFT;
+            return Direction.UP;
 
         } else {
-            return Direction.UP;
+            return Direction.LEFT;
         }
 
     }
