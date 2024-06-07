@@ -497,7 +497,17 @@ public class RobinAvatar extends SuperAvatar {
     }
 
     private Direction dance(){
-        
+        if(rng.nextInt(100) < 30){
+            int randNum = rng.nextInt(4);
+            for (int i = randNum; i < randNum + 4; i++) {
+                Direction randDir = rotate90Clkw(Direction.UP, i);
+                if(getFromEnvironment(rotate90Clkw(Direction.UP, i), 0) == SpaceType.DANCEFLOOR.ordinal()){
+                    lastDirection = randDir;
+                    return randDir;
+                }
+            }
+        }
+        lastDirection = Direction.STAY;
         return Direction.STAY;
     }
 
