@@ -37,7 +37,7 @@ public class TimAvatar extends SuperAvatar {
 
         tempCharacterTraits.put("active", 60.0);
         tempCharacterTraits.put("social", 60.0);
-        tempCharacterTraits.put("good drinker", 80.0);
+        tempCharacterTraits.put("good drinker", 40.0);
         tempCharacterTraits.put("good eater", 40.0);
         tempCharacterTraits.put("strong bladder", 20.0);
 
@@ -67,12 +67,12 @@ public class TimAvatar extends SuperAvatar {
     }
 
     private void updateNeedsOverTime() {
-        double thirstChange = 0.5;
-        double hungerChange = 0.5;
-        double bladderChange = 0.5;
-        double physicalEnergyChange = -0.5;
-        double funChange = -0.5;
-        double socialEnergyChange = -0.5;
+        double thirstChange = 0.1;
+        double hungerChange = 0.1;
+        double bladderChange = 0.1;
+        double physicalEnergyChange = -0.1;
+        double funChange = -0.1;
+        double socialEnergyChange = -0.1;
 
         thirstChange *= 1.0 - (characterTraits.get("good drinker") / 100.0);
         hungerChange *= 1.0 - (characterTraits.get("good eater") / 100.0);
@@ -87,17 +87,17 @@ public class TimAvatar extends SuperAvatar {
         needs.put("fun", adjustNeed(needs.get("fun"), funChange));
         needs.put("social energy", adjustNeed(needs.get("social energy"), socialEnergyChange));
 
-        //System.out.println("Thirst " + needs.get("thirst"));
-        //System.out.println("hunger " + needs.get("hunger"));
-        //System.out.println("bladder " + needs.get("bladder"));
-        //System.out.println("physical energy " + needs.get("physical energy"));
-        //System.out.println("fun " + needs.get("fun"));
-        //System.out.println("social energy " + needs.get("social energy"));
+        System.out.println("Thirst " + needs.get("thirst"));
+        System.out.println("hunger " + needs.get("hunger"));
+        System.out.println("bladder " + needs.get("bladder"));
+        System.out.println("physical energy " + needs.get("physical energy"));
+        System.out.println("fun " + needs.get("fun"));
+        System.out.println("social energy " + needs.get("social energy"));
     }
 
     private void applyRandomEvents() {
         if (random.nextDouble() < 0.1) {
-            int randomThirstIncrease = random.nextInt(10);
+            int randomThirstIncrease = random.nextInt(80);
             needs.put("thirst", increaseNeed(needs.get("thirst"), randomThirstIncrease));
             //System.out.println("Zufälliges Ereignis: Durst erhöht um " + randomThirstIncrease);
         }
@@ -142,7 +142,7 @@ public class TimAvatar extends SuperAvatar {
     }
 
     public void playMusic() {
-        needs.put("physical energy", decreaseNeed(needs.get("physical energy"), 30));
+        needs.put("physical energy", decreaseNeed(needs.get("physical energy"), 10));
         needs.put("fun", increaseNeed(needs.get("fun"), 20));
       //  System.out.println("Der Avatar hat Musik aufgelegt. Physische Energie gesenkt, Spaß erhöht.");
     }
@@ -187,7 +187,6 @@ public class TimAvatar extends SuperAvatar {
     SpaceType destinationSpaceType;
     public Direction doAction(ArrayList<SpaceInfo> spacesInRange) {
         extendKnownSpace(spacesInRange);
-
         if(Steps.getX() == 0 && Steps.getY() == 0) {
             destinationSpaceType = makeSpaceTypeDecision();
             Steps = pathFinding(destinationSpaceType);
@@ -238,6 +237,7 @@ public class TimAvatar extends SuperAvatar {
 
     private SpaceType makeSpaceTypeDecision() {
         String mostUrgentNeed = getMostUrgentNeed(needs);
+        System.out.println("My need:" + mostUrgentNeed);
 
         switch (mostUrgentNeed) {
                 case "thirst":
@@ -279,7 +279,7 @@ public class TimAvatar extends SuperAvatar {
                 mostUrgentNeed = need;
             }
         }
-
+        System.out.println("My mostUrgentneed:" + mostUrgentNeed);
         return mostUrgentNeed;
     }
 
@@ -287,9 +287,9 @@ public class TimAvatar extends SuperAvatar {
         switch (need) {
             case "thirst":
             case "hunger":
+            case "bladder":
                 
                 return value;
-            case "bladder":
             case "physical energy":
             case "fun":
             case "social energy":
@@ -450,6 +450,16 @@ public class TimAvatar extends SuperAvatar {
       
           randomX = (int) (Math.random() * 40);
           randomY = (int) (Math.random() * 20);
+
+          if(randomX == 0)
+          {
+            randomX++;
+          }
+
+          if(randomY == 0)
+          {
+            randomY++;
+          }
         
         return new Coordinate(randomX, randomY);
       }
@@ -458,7 +468,7 @@ public class TimAvatar extends SuperAvatar {
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         currentSpaceType = nextSpaceType;
         System.out.println("My Spacetype:" + currentSpaceType);
-        System.out.println("My Destination:" +destinationSpaceType);
+        System.out.println("My Destination:" + destinationSpaceType);
         calculateCurrentCoordinate(spacesInRange);
         updateNeeds();
         return doAction(spacesInRange);
