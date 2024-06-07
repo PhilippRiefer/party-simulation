@@ -165,12 +165,6 @@ public class Environment {
     
         // Check if the new position is valid and try to place the avatar there
         if (model.tryToPlaceAvatar(avatarID, currentPos)) {
-            try {
-                model.setSpace(new Coordinate(oldX, oldY), oldSpaceType);
-            } catch (Exception e) {
-                System.out.println("Failed to set space to oldSpaceType at " + oldX + ", " + oldY + ".");
-            }
-
             // Erase the avatar from the old position
             try {
                 if (oldSpaceType == SpaceType.EMPTY) {
