@@ -49,7 +49,7 @@ public class SimulationControl {
         //     }
         // }
 
-        avatars.add(new RobinAvatarComplex(nextAvatarID++,1,Color.red));
+        avatars.add(new RobinAvatar(nextAvatarID++,1,Color.red));
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
