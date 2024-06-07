@@ -116,10 +116,13 @@ public class RobinAvatar extends SuperAvatar {
                 lastDirection = Direction.STAY;
                 return Direction.STAY;
             case FILL_NEED:
+                if(needs[currentNeed][0] == SpaceType.DANCEFLOOR.ordinal()){
+                    return dance();
+                }
                 lastDirection = Direction.STAY;
                 return Direction.STAY;
             default:
-                System.out.println("done");
+                //System.out.println("done");
                 printEnv(0);
                 printEnv(1);
                 System.out.println(cycle);
@@ -192,7 +195,7 @@ public class RobinAvatar extends SuperAvatar {
 
     private void changeNeed(int need) {
         currentNeed = need;
-        System.out.println(need);
+        //System.out.println(need);
         newPath = true;
         if (getFromEnvironment(position, 0) == needs[need][0]) {
             state = State.FILL_NEED;
@@ -497,11 +500,11 @@ public class RobinAvatar extends SuperAvatar {
     }
 
     private Direction dance(){
-        if(rng.nextInt(100) < 30){
+        if(true){
             int randNum = rng.nextInt(4);
             for (int i = randNum; i < randNum + 4; i++) {
                 Direction randDir = rotate90Clkw(Direction.UP, i);
-                if(getFromEnvironment(rotate90Clkw(Direction.UP, i), 0) == SpaceType.DANCEFLOOR.ordinal()){
+                if(getFromEnvironment(randDir, 0) == SpaceType.DANCEFLOOR.ordinal()){
                     lastDirection = randDir;
                     return randDir;
                 }
