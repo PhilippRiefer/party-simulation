@@ -32,21 +32,27 @@ public class SimulationControl {
         environment = new Environment();
         System.out.println("environment created");
 
-        Reflections reflections = new Reflections("PersonalAvatars");
+        // Reflections reflections = new Reflections("PersonalAvatars");
 
-        for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
-            try {
-                Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255), 255);
-                SuperAvatar avatar = personalAvatarClass.getDeclaredConstructor(int.class, int.class, Color.class)
-                        .newInstance(nextAvatarID++, perceptionRange, color);
-                avatars.add(avatar);
-                String avatarName = avatar.getClass().getSimpleName().replace("Avatar", "");
-                System.out.println("Added " + avatarName + ": ID: " + avatar.getAvatarID() + ", Perception Range: "
-                        + avatar.getPerceptionRange() + ", Color: " + avatar.getAvatarColor());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        // for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
+        //     try {
+        //         Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255), 255);
+        //         SuperAvatar avatar = personalAvatarClass.getDeclaredConstructor(int.class, int.class, Color.class)
+        //                 .newInstance(nextAvatarID++, perceptionRange, color);
+        //         avatars.add(avatar);
+        //         String avatarName = avatar.getClass().getSimpleName().replace("Avatar", "");
+        //         System.out.println("Added " + avatarName + ": ID: " + avatar.getAvatarID() + ", Perception Range: "
+        //                 + avatar.getPerceptionRange() + ", Color: " + avatar.getAvatarColor());
+        //     } catch (Exception e) {
+        //         e.printStackTrace();
+        //     }
+        // }
+
+        // Create a new avatar
+        Color color = Color.GREEN;
+
+        SuperAvatar Philipp = new PhilippAvatar(nextAvatarID++, perceptionRange, color);
+        avatars.add(Philipp);
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
@@ -75,7 +81,7 @@ public class SimulationControl {
                 boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
                 avatar.setHasMoved(hasMoved);
                 System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
-                wait(1);
+                wait(200); // wait in ms, 1000 = 1 second
             } catch (Exception e) {
                 System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
                 e.printStackTrace();

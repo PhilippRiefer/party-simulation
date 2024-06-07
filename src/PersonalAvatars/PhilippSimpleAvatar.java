@@ -18,14 +18,6 @@ public class PhilippAvatar extends SuperAvatar {
     private int perceptionRange;
     private boolean initialPositionKnown;
     private int x, y; // Current position of the avatar
-    private Point target; // Target position for navigation
-
-    private int movesCount;
-    private int sobriety;
-    private int bladder;
-    private boolean atBar;
-    private boolean atToilet;
-    private int stayCount;
 
     /**
      * Constructs a PhilippAvatar object with the specified ID and perception range.
@@ -38,14 +30,6 @@ public class PhilippAvatar extends SuperAvatar {
         super(id, perceptionRange, color); // leverage the super class to handle ID, perceptionRange and color
         this.memory = new HashMap<>();
         this.initialPositionKnown = false; // Initial position is unknown
-        this.target = null; // No target initially
-
-        this.movesCount = 0;
-        this.sobriety = 0;
-        this.bladder = 0;
-        this.atBar = false;
-        this.atToilet = false;
-        this.stayCount = 0;
     }
 
     /**
@@ -64,17 +48,9 @@ public class PhilippAvatar extends SuperAvatar {
         // Update the avatar's memory with the new perception data
         updateMemory(spacesInRange);
 
-        // Handle stats and states
-        handleStats();
-
-        // Print stats
-        System.out.println("Perception range: " + perceptionRange);
-        System.out.println("Sobriety: " + sobriety);
-        System.out.println("Bladder: " + bladder);
-
         // Implement a more sophisticated strategy using spacesInRange
-        // For now, let's move towards the target using a simple pathfinding algorithm
-        return decideMove();
+        // For now, let's continue to move randomly as a placeholder
+        return decideMove(spacesInRange);
     }
 
     /**
@@ -133,70 +109,43 @@ public class PhilippAvatar extends SuperAvatar {
     }
 
     /**
-     * Sets a target position based on the memory. For example, navigate towards a BAR.
-     */
-    private void setTarget() {
-        if (bladder >= 20) {
-            for (Map.Entry<Point, SpaceInfo> entry : memory.entrySet()) {
-                if (entry.getValue().getType() == SpaceType.TOILET) {
-                    target = entry.getKey();
-                    System.out.println("Target set to toilet: (" + target.x + ", " + target.y + ")");
-                    break;
-                }
-            }
-        } else {
-            for (Map.Entry<Point, SpaceInfo> entry : memory.entrySet()) {
-                if (entry.getValue().getType() == SpaceType.BAR) {
-                    target = entry.getKey();
-                    System.out.println("Target set to bar: (" + target.x + ", " + target.y + ")");
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
      * Decides the next move for the avatar.
      *
+     * @param spacesInRange the list of spaces within the perception range
      * @return the direction for the avatar's turn
      */
-    private Direction decideMove() {
+    private Direction decideMove(ArrayList<SpaceInfo> spacesInRange) {
         System.out.println("Philipp (" + getAvatarID() + ") is deciding move");
 
-        if (atBar || atToilet) {
+        setPerceptionRange(2);
+        System.out.println("Philipp (" + getAvatarID() + ") has perception range: " + getPerceptionRange());
+        System.out.println("Philipp (" + getAvatarID() + ") sees this many spaces: " + spacesInRange.size());
+
+        int expectedSpaces = (getPerceptionRange() * 2 + 1) * (getPerceptionRange() * 2 + 1) - 1;
+        if (spacesInRange.size() == expectedSpaces) {
+            System.out.println("That is correct, perception range is: " + getPerceptionRange());
+        } else {
+            System.out.println("\n\nWrong, perception range is: " + getPerceptionRange() + ", array size is: " + spacesInRange.size() + "\n\n"); // this means I'm probably at a wall or corner
+        }
+
+        // For now, let's continue to move randomly as a placeholder
+        Direction move = randomDirection();
+        if (attemptMove(move, spacesInRange)) {
+            return move;
+        } else {
+            // If the move was not successful, try a different move or stay
             return stay();
         }
-
-        if (target == null) {
-            setTarget();
-        }
-
-        if (target == null) {
-            System.out.println("No target set. Moving randomly.");
-            return randomDirection();
-        }
-
-        int dx = target.x - x;
-        int dy = target.y - y;
-
-        if (Math.abs(dx) > Math.abs(dy)) {
-            if (dx > 0 && canMove(x + 1, y)) return moveRight();
-            if (dx < 0 && canMove(x - 1, y)) return moveLeft();
-        } else {
-            if (dy > 0 && canMove(x, y + 1)) return moveDown();
-            if (dy < 0 && canMove(x, y - 1)) return moveUp();
-        }
-
-        return randomDirection();
     }
 
     /**
      * Attempts to move in the given direction and verifies if the move was successful.
      *
-     * @param move the direction to move
+     * @param move           the direction to move
+     * @param spacesInRange  the current perception data
      * @return true if the move was successful, false otherwise
      */
-    private boolean attemptMove(Direction move) {
+    private boolean attemptMove(Direction move, ArrayList<SpaceInfo> spacesInRange) {
         int newX = x, newY = y;
 
         switch (move) {
@@ -210,10 +159,6 @@ public class PhilippAvatar extends SuperAvatar {
         }
 
         System.out.println("Attempting move to: (" + newX + ", " + newY + ")");
-
-        if (!canMove(newX, newY)) {
-            return false;
-        }
 
         // Simulate the move and get new perception data
         ArrayList<SpaceInfo> newPerceptionData = lookAround(newX, newY, getPerceptionRange());
@@ -235,12 +180,6 @@ public class PhilippAvatar extends SuperAvatar {
             return true;
         }
         return false;
-    }
-
-    private boolean canMove(int newX, int newY) {
-        Point point = new Point(newX, newY);
-        SpaceInfo spaceInfo = memory.get(point);
-        return spaceInfo != null && (spaceInfo.getType() == SpaceType.EMPTY || spaceInfo.getType() == SpaceType.DANCEFLOOR);
     }
 
     private Direction randomDirection() {
@@ -267,26 +206,22 @@ public class PhilippAvatar extends SuperAvatar {
 
     private Direction moveUp() {
         System.out.println("Philipp (" + getAvatarID() + ") wants to go up");
-        if (attemptMove(Direction.UP)) return Direction.UP;
-        return stay();
+        return Direction.UP;
     }
 
     private Direction moveDown() {
         System.out.println("Philipp (" + getAvatarID() + ") wants to go down");
-        if (attemptMove(Direction.DOWN)) return Direction.DOWN;
-        return stay();
+        return Direction.DOWN;
     }
 
     private Direction moveLeft() {
         System.out.println("Philipp (" + getAvatarID() + ") wants to go left");
-        if (attemptMove(Direction.LEFT)) return Direction.LEFT;
-        return stay();
+        return Direction.LEFT;
     }
 
     private Direction moveRight() {
         System.out.println("Philipp (" + getAvatarID() + ") wants to go right");
-        if (attemptMove(Direction.RIGHT)) return Direction.RIGHT;
-        return stay();
+        return Direction.RIGHT;
     }
 
     private Direction stay() {
@@ -328,66 +263,6 @@ public class PhilippAvatar extends SuperAvatar {
         @Override
         public int hashCode() {
             return Objects.hash(x, y);
-        }
-    }
-
-    /**
-     * Handles the stats and updates the perception range and other behaviors.
-     */
-    private void handleStats() {
-        movesCount++;
-
-        if (movesCount % 10 == 0) {
-            sobriety++;
-            perceptionRange++;
-            setPerceptionRange(perceptionRange);
-        }
-
-        if (movesCount % 20 == 0) {
-            bladder++;
-        }
-
-        if (atBar) {
-            if (stayCount < 10) {
-                stayCount++;
-                sobriety = 0;
-                bladder += 2;
-                System.out.println("At the bar. Sobriety: " + sobriety + ", Bladder: " + bladder);
-            } else {
-                atBar = false;
-                stayCount = 0;
-                perceptionRange = 1;
-                setPerceptionRange(perceptionRange);
-                target = null;
-                setTarget();
-            }
-            return;
-        }
-
-        if (atToilet) {
-            if (stayCount < 5) {
-                stayCount++;
-                System.out.println("At the toilet. Sobriety: " + sobriety + ", Bladder: " + bladder);
-            } else {
-                atToilet = false;
-                stayCount = 0;
-                bladder = 0;
-                perceptionRange = 1;
-                setPerceptionRange(perceptionRange);
-                target = null;
-                setTarget();
-            }
-            return;
-        }
-
-        if (target != null && target.x == x && target.y == y) {
-            if (memory.get(target).getType() == SpaceType.BAR) {
-                atBar = true;
-                System.out.println("Reached the bar. Sobriety: " + sobriety + ", Bladder: " + bladder);
-            } else if (memory.get(target).getType() == SpaceType.TOILET) {
-                atToilet = true;
-                System.out.println("Reached the toilet. Sobriety: " + sobriety + ", Bladder: " + bladder);
-            }
         }
     }
 }

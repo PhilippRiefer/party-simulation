@@ -136,8 +136,8 @@ public class Environment {
      * 
      * @param avatarID the ID of the avatar to be moved
      * @param dir      the direction in which to move the avatar
+     * @param color    the color of the avatar
      * @return true if the avatar was successfully moved, false otherwise
-     * @throws Exception 
      */
     public boolean moveAvatar(int avatarID, Direction dir, Color color) {
         Coordinate currentPos = model.getAvatarLocation(avatarID);
