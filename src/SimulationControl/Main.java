@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
         // Scanner scanner = new Scanner(System.in);
         int perceptionRange = 1;
-        System.out.println("Perception range is set to " + perceptionRange);
+       /// System.out.println("Perception range is set to " + perceptionRange);
         // boolean validInput = false;
 
         // while (!validInput) {

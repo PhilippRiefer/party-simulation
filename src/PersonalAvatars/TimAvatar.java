@@ -20,6 +20,7 @@ public class TimAvatar extends SuperAvatar {
     SpaceType nextSpaceType = SpaceType.EMPTY;
     Coordinate currentCoordinate = new Coordinate(0, 0); // Initialisiere currentCoordinate
     SpaceType[][] knownSpace = new SpaceType[40][20];
+    int obstacleCounter = 0;
 
     ArrayList<Coordinate> Dancefloor = new ArrayList<>();
     ArrayList<Coordinate> Toilet = new ArrayList<>();
@@ -183,11 +184,13 @@ public class TimAvatar extends SuperAvatar {
         }
     }
 
+    SpaceType destinationSpaceType;
     public Direction doAction(ArrayList<SpaceInfo> spacesInRange) {
         extendKnownSpace(spacesInRange);
 
         if(Steps.getX() == 0 && Steps.getY() == 0) {
-            Steps = pathFinding(makeSpaceTypeDecision());
+            destinationSpaceType = makeSpaceTypeDecision();
+            Steps = pathFinding(destinationSpaceType);
         }
 
         return coordianteSteps(Steps, spacesInRange);
@@ -327,6 +330,7 @@ public class TimAvatar extends SuperAvatar {
 }
       
         if (destination == null) {
+            destinationSpaceType = SpaceType.EMPTY;
           return new Coordinate(randomCoordinate().getX() - currentCoordinate.getX(),
                                 randomCoordinate().getY() - currentCoordinate.getY());
         }
@@ -409,19 +413,34 @@ public class TimAvatar extends SuperAvatar {
     
 
     public boolean calculateCurrentSpaceType(ArrayList<SpaceInfo> spacesInRange, Coordinate nextCoordinate) {
-        for (SpaceInfo space : spacesInRange) {
-            if (nextCoordinate.equals(space.getRelativeToAvatarCoordinate())) {
-                nextSpaceType = space.getType();
-                if(nextSpaceType == SpaceType.OBSTACLE){
-                    return false;
+        if(obstacleCounter < 5){
+            for (SpaceInfo space : spacesInRange) {
+                if (nextCoordinate.equals(space.getRelativeToAvatarCoordinate())) {
+                    nextSpaceType = space.getType();
+                
+                    if(nextSpaceType == SpaceType.OBSTACLE){
+                        obstacleCounter++;
+                        return false;
+                    }
+                    else{
+                        return true;
+                   }
                 }
-                return true;
+                
             }
         }
-
+        else{
+            Steps.setX(0);
+            Steps.setY(0);
+            obstacleCounter = 0;
+            return false;
+        }
+       
         return false;
 
     }
+
+    
                 
        
 
@@ -437,6 +456,9 @@ public class TimAvatar extends SuperAvatar {
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
+        currentSpaceType = nextSpaceType;
+        System.out.println("My Spacetype:" + currentSpaceType);
+        System.out.println("My Destination:" +destinationSpaceType);
         calculateCurrentCoordinate(spacesInRange);
         updateNeeds();
         return doAction(spacesInRange);
