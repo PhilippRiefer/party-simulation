@@ -119,10 +119,10 @@ public class RobinAvatar extends SuperAvatar {
                 lastDirection = Direction.STAY;
                 return Direction.STAY;
             default:
-                System.out.println("done");
+                //System.out.println("done");
                 printEnv(0);
                 printEnv(1);
-                System.out.println(cycle);
+                //System.out.println(cycle);
                 lastDirection = Direction.STAY;
                 return Direction.STAY;
         }
@@ -192,7 +192,7 @@ public class RobinAvatar extends SuperAvatar {
 
     private void changeNeed(int need) {
         currentNeed = need;
-        System.out.println(need);
+        //System.out.println(need);
         newPath = true;
         if (getFromEnvironment(position, 0) == needs[need][0]) {
             state = State.FILL_NEED;
@@ -214,15 +214,15 @@ public class RobinAvatar extends SuperAvatar {
     }
 
     private void printEnv(int entry) {
-        System.out.println("Entry: " + entry);
-        System.out.println("--------------------------------------------------------");
+        //em.out.println("Entry: " + entry);
+        //System.out.println("--------------------------------------------------------");
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
-                System.out.print(environment[col][row][entry]);
+                //System.out.print(environment[col][row][entry]);
             }
-            System.out.print("\n");
+            //System.out.print("\n");
         }
-        System.out.println("--------------------------------------------------------");
+        //System.out.println("--------------------------------------------------------");
     }
 
     private Direction coordinateToDirection(Coordinate coordinate) {

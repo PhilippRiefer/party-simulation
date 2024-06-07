@@ -26,12 +26,12 @@ public class SudehAvatar extends SuperAvatar {
         if (stayCounter > 0) {
             stayCounter--;
             if (stayCounter == 0) {
-                System.out.println("Stay duration over. Resuming movement.");
+                //System.out.println("Stay duration over. Resuming movement.");
                 // Reset stayCounter and switch to movement mode
                 stayCounter = 0;
                 return randomDirection();
             } else {
-                System.out.println("Staying in place for " + stayCounter + " turns.");
+                //System.out.println("Staying in place for " + stayCounter + " turns.");
             }
             return Direction.STAY;
         }
@@ -45,7 +45,7 @@ public class SudehAvatar extends SuperAvatar {
                     return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
 
                 case OBSTACLE:
-                    System.out.println("Found an obstacle, skipping.");
+                    //System.out.println("Found an obstacle, skipping.");
                     continue;
 
                 case AVATAR:
@@ -78,13 +78,13 @@ public class SudehAvatar extends SuperAvatar {
                     return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
 
                 default:
-                    System.out.println("Unknown space type, skipping.");
+                    //System.out.println("Unknown space type, skipping.");
                     continue;
             }
         }
         // If no suitable action was found, move randomly
         Direction randomDirection = randomDirection();
-        System.out.println("Moving randomly in direction: " + randomDirection);
+        //System.out.println("Moving randomly in direction: " + randomDirection);
 
         // If no suitable action was found, move randomly
         return randomDirection();

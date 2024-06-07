@@ -148,7 +148,7 @@ public class TimAvatar extends SuperAvatar {
 
     public void pee() {
         needs.put("bladder", decreaseNeed(needs.get("bladder"), 30));
-        System.out.println("Der Avatar war auf Toilette.");
+        //System.out.println("Der Avatar war auf Toilette.");
     }
 
     public void relax() {
