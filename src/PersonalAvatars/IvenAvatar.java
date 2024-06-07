@@ -153,7 +153,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	}
 
 	Direction move() {
-		//System.out.println("----- I will move random");
+		//System.out.println("--------- I will move random");
 		int max = 4;
 		int min = 0;
 		int directionNumber = (int) (Math.random() * ((max - min) + 1) + min); // directionNumber zwischen 0 und 6
@@ -181,19 +181,25 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	}
 
 	void refreshNeeds(SpaceType objectDone) {
+
 		if (objectDone == SpaceType.AVATAR) {
 			needToTalk += 3; // need to talk gets less
-
 			//System.out.println("--------------------- Avatar talked");
 		}
 		if (objectDone == SpaceType.TOILET) {
 			needToPee = 5000; // Reset need
 		}
 		if (objectDone == SpaceType.SEATS) {
-			needToRest += 20; // need to rest gets less
+			needToRest += 60; // need to rest gets less
 		}
 		if (objectDone == SpaceType.DANCEFLOOR) {
-			needToDance += 6; // need to dance gets less
+			needToDance += 10; // need to dance gets less
+		}
+		if (objectDone == SpaceType.BAR) {
+			needToDrink += 90; // need to Drink gets less
+		}
+		if (objectDone == SpaceType.DJBOOTH) {
+			needToMusic += 180; // need to dance gets less
 		}
 
 		if (needToDance < 0) {
