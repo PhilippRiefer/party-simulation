@@ -68,9 +68,9 @@ public class PhilippAvatar extends SuperAvatar {
         handleStats();
 
         // Print stats
-        System.out.println("Perception range: " + perceptionRange);
-        System.out.println("Sobriety: " + sobriety);
-        System.out.println("Bladder: " + bladder);
+        //System.out.println("Perception range: " + perceptionRange);
+        //System.out.println("Sobriety: " + sobriety);
+        //System.out.println("Bladder: " + bladder);
 
         // Implement a more sophisticated strategy using spacesInRange
         // For now, let's move towards the target using a simple pathfinding algorithm
@@ -92,9 +92,9 @@ public class PhilippAvatar extends SuperAvatar {
             this.y = -relativeCoord.getY();
             this.initialPositionKnown = true;
 
-            System.out.println("Initial position determined: (" + x + ", " + y + ")");
+            //System.out.println("Initial position determined: (" + x + ", " + y + ")");
         } else {
-            System.out.println("No spaces in range to determine initial position.");
+            //System.out.println("No spaces in range to determine initial position.");
         }
     }
 
@@ -124,11 +124,11 @@ public class PhilippAvatar extends SuperAvatar {
         }
 
         // Print memory for debugging
-        System.out.println("Updated memory:");
+        //System.out.println("Updated memory:");
         for (Map.Entry<Point, SpaceInfo> entry : memory.entrySet()) {
             Point point = entry.getKey();
             SpaceInfo info = entry.getValue();
-            System.out.println("Point: (" + point.x + ", " + point.y + ") - Type: " + info.getType());
+            //System.out.println("Point: (" + point.x + ", " + point.y + ") - Type: " + info.getType());
         }
     }
 
@@ -140,7 +140,7 @@ public class PhilippAvatar extends SuperAvatar {
             for (Map.Entry<Point, SpaceInfo> entry : memory.entrySet()) {
                 if (entry.getValue().getType() == SpaceType.TOILET) {
                     target = entry.getKey();
-                    System.out.println("Target set to toilet: (" + target.x + ", " + target.y + ")");
+                    //System.out.println("Target set to toilet: (" + target.x + ", " + target.y + ")");
                     break;
                 }
             }
@@ -148,7 +148,7 @@ public class PhilippAvatar extends SuperAvatar {
             for (Map.Entry<Point, SpaceInfo> entry : memory.entrySet()) {
                 if (entry.getValue().getType() == SpaceType.BAR) {
                     target = entry.getKey();
-                    System.out.println("Target set to bar: (" + target.x + ", " + target.y + ")");
+                    //System.out.println("Target set to bar: (" + target.x + ", " + target.y + ")");
                     break;
                 }
             }
@@ -161,7 +161,7 @@ public class PhilippAvatar extends SuperAvatar {
      * @return the direction for the avatar's turn
      */
     private Direction decideMove() {
-        System.out.println("Philipp (" + getAvatarID() + ") is deciding move");
+        //System.out.println("Philipp (" + getAvatarID() + ") is deciding move");
 
         if (atBar || atToilet) {
             return stay();
@@ -172,7 +172,7 @@ public class PhilippAvatar extends SuperAvatar {
         }
 
         if (target == null) {
-            System.out.println("No target set. Moving randomly.");
+            //System.out.println("No target set. Moving randomly.");
             return randomDirection();
         }
 
@@ -209,7 +209,7 @@ public class PhilippAvatar extends SuperAvatar {
             }
         }
 
-        System.out.println("Attempting move to: (" + newX + ", " + newY + ")");
+        //System.out.println("Attempting move to: (" + newX + ", " + newY + ")");
 
         if (!canMove(newX, newY)) {
             return false;
@@ -217,12 +217,12 @@ public class PhilippAvatar extends SuperAvatar {
 
         // Simulate the move and get new perception data
         ArrayList<SpaceInfo> newPerceptionData = lookAround(newX, newY, getPerceptionRange());
-        System.out.println("New perception data size: " + newPerceptionData.size());
+        //System.out.println("New perception data size: " + newPerceptionData.size());
         updateMemory(newPerceptionData);
 
         // Check if the avatar has moved by comparing new perception data
         boolean moved = hasMoved(newX, newY, newPerceptionData);
-        System.out.println("Move " + (moved ? "successful" : "failed") + ": (" + x + ", " + y + ") -> (" + newX + ", " + newY + ")");
+        //System.out.println("Move " + (moved ? "successful" : "failed") + ": (" + x + ", " + y + ") -> (" + newX + ", " + newY + ")");
         return moved;
     }
 
@@ -245,7 +245,7 @@ public class PhilippAvatar extends SuperAvatar {
 
     private Direction randomDirection() {
         int directionNumber = (int) (Math.random() * 4);
-        System.out.println("Philipp (" + getAvatarID() + ") is using a random direction");
+        //System.out.println("Philipp (" + getAvatarID() + ") is using a random direction");
         switch (directionNumber) {
             case 0 -> {
                 return moveUp();
@@ -266,31 +266,31 @@ public class PhilippAvatar extends SuperAvatar {
     }
 
     private Direction moveUp() {
-        System.out.println("Philipp (" + getAvatarID() + ") wants to go up");
+        //System.out.println("Philipp (" + getAvatarID() + ") wants to go up");
         if (attemptMove(Direction.UP)) return Direction.UP;
         return stay();
     }
 
     private Direction moveDown() {
-        System.out.println("Philipp (" + getAvatarID() + ") wants to go down");
+        //System.out.println("Philipp (" + getAvatarID() + ") wants to go down");
         if (attemptMove(Direction.DOWN)) return Direction.DOWN;
         return stay();
     }
 
     private Direction moveLeft() {
-        System.out.println("Philipp (" + getAvatarID() + ") wants to go left");
+        //System.out.println("Philipp (" + getAvatarID() + ") wants to go left");
         if (attemptMove(Direction.LEFT)) return Direction.LEFT;
         return stay();
     }
 
     private Direction moveRight() {
-        System.out.println("Philipp (" + getAvatarID() + ") wants to go right");
+        //System.out.println("Philipp (" + getAvatarID() + ") wants to go right");
         if (attemptMove(Direction.RIGHT)) return Direction.RIGHT;
         return stay();
     }
 
     private Direction stay() {
-        System.out.println("Philipp (" + getAvatarID() + ") wants to stay");
+        //System.out.println("Philipp (" + getAvatarID() + ") wants to stay");
         return Direction.STAY;
     }
 
@@ -352,7 +352,7 @@ public class PhilippAvatar extends SuperAvatar {
                 stayCount++;
                 sobriety = 0;
                 bladder += 2;
-                System.out.println("At the bar. Sobriety: " + sobriety + ", Bladder: " + bladder);
+                //System.out.println("At the bar. Sobriety: " + sobriety + ", Bladder: " + bladder);
             } else {
                 atBar = false;
                 stayCount = 0;
@@ -367,7 +367,7 @@ public class PhilippAvatar extends SuperAvatar {
         if (atToilet) {
             if (stayCount < 5) {
                 stayCount++;
-                System.out.println("At the toilet. Sobriety: " + sobriety + ", Bladder: " + bladder);
+                //System.out.println("At the toilet. Sobriety: " + sobriety + ", Bladder: " + bladder);
             } else {
                 atToilet = false;
                 stayCount = 0;
@@ -383,10 +383,10 @@ public class PhilippAvatar extends SuperAvatar {
         if (target != null && target.x == x && target.y == y) {
             if (memory.get(target).getType() == SpaceType.BAR) {
                 atBar = true;
-                System.out.println("Reached the bar. Sobriety: " + sobriety + ", Bladder: " + bladder);
+                //System.out.println("Reached the bar. Sobriety: " + sobriety + ", Bladder: " + bladder);
             } else if (memory.get(target).getType() == SpaceType.TOILET) {
                 atToilet = true;
-                System.out.println("Reached the toilet. Sobriety: " + sobriety + ", Bladder: " + bladder);
+                //System.out.println("Reached the toilet. Sobriety: " + sobriety + ", Bladder: " + bladder);
             }
         }
     }
