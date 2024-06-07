@@ -246,8 +246,8 @@ public class TomAvatar extends SuperAvatar {
                     
                     myCoordinate = mentalMapList.get(iterateThrowLoop).getRelativeToAvatarCoordinate();
 
-                    diffX = Math.abs(foundCoordinate.getX() - (spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() + 1))
-                        + Math.abs(foundCoordinate.getY() - (spacesInRange.get(3).getRelativeToAvatarCoordinate().getY()+1));
+                    diffX = Math.abs(myCoordinate.getX() - (spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() + 1))
+                        + Math.abs(myCoordinate.getY() - (spacesInRange.get(3).getRelativeToAvatarCoordinate().getY()+1));
                                         
 
                     if (diffX < minDiffX) {
@@ -256,7 +256,7 @@ public class TomAvatar extends SuperAvatar {
                     }                  
                 }
             }
-            System.out.println("X: " + myCoordinate.getX() + "Y: " + myCoordinate.getY());
+            System.out.println("X: " + foundCoordinate.getX() + "Y: " + foundCoordinate.getY());
         }
         stepCounter++;
 
