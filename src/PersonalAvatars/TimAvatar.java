@@ -17,6 +17,7 @@ public class TimAvatar extends SuperAvatar {
     HashMap<String, Double> needs = new HashMap<>();
     Random random = new Random();
     SpaceType currentSpaceType = SpaceType.EMPTY;
+    SpaceType nextSpaceType = SpaceType.EMPTY;
     Coordinate currentCoordinate = new Coordinate(0, 0); // Initialisiere currentCoordinate
     SpaceType[][] knownSpace = new SpaceType[40][20];
 
@@ -85,19 +86,19 @@ public class TimAvatar extends SuperAvatar {
         needs.put("fun", adjustNeed(needs.get("fun"), funChange));
         needs.put("social energy", adjustNeed(needs.get("social energy"), socialEnergyChange));
 
-        System.out.println("Thirst " + needs.get("thirst"));
-        System.out.println("hunger " + needs.get("hunger"));
-        System.out.println("bladder " + needs.get("bladder"));
-        System.out.println("physical energy " + needs.get("physical energy"));
-        System.out.println("fun " + needs.get("fun"));
-        System.out.println("social energy " + needs.get("social energy"));
+        //System.out.println("Thirst " + needs.get("thirst"));
+        //System.out.println("hunger " + needs.get("hunger"));
+        //System.out.println("bladder " + needs.get("bladder"));
+        //System.out.println("physical energy " + needs.get("physical energy"));
+        //System.out.println("fun " + needs.get("fun"));
+        //System.out.println("social energy " + needs.get("social energy"));
     }
 
     private void applyRandomEvents() {
         if (random.nextDouble() < 0.1) {
             int randomThirstIncrease = random.nextInt(10);
             needs.put("thirst", increaseNeed(needs.get("thirst"), randomThirstIncrease));
-            System.out.println("Zufälliges Ereignis: Durst erhöht um " + randomThirstIncrease);
+            //System.out.println("Zufälliges Ereignis: Durst erhöht um " + randomThirstIncrease);
         }
     }
 
@@ -117,32 +118,32 @@ public class TimAvatar extends SuperAvatar {
     public void drink() {
         needs.put("thirst", decreaseNeed(needs.get("thirst"), 30));
         needs.put("bladder", increaseNeed(needs.get("bladder"), 10));
-        System.out.println("Der Avatar hat getrunken. Durst gesenkt, Blase erhöht.");
+       // System.out.println("Der Avatar hat getrunken. Durst gesenkt, Blase erhöht.");
     }
 
     public void eat() {
         needs.put("hunger", decreaseNeed(needs.get("hunger"), 30));
         needs.put("physical energy", increaseNeed(needs.get("physical energy"), 10));
-        System.out.println("Der Avatar hat gegessen. Hunger gesenkt, physische Energie erhöht.");
+       // System.out.println("Der Avatar hat gegessen. Hunger gesenkt, physische Energie erhöht.");
     }
 
     public void dance() {
         needs.put("fun", increaseNeed(needs.get("fun"), 30));
         needs.put("physical energy", decreaseNeed(needs.get("physical energy"), 10));
         needs.put("social energy", increaseNeed(needs.get("social energy"), 10));
-        System.out.println("Der Avatar hat getanzt. Spaß und soziale Energie erhöht, physische Energie gesenkt.");
+     //   System.out.println("Der Avatar hat getanzt. Spaß und soziale Energie erhöht, physische Energie gesenkt.");
     }
 
     public void socialize() {
         needs.put("social energy", increaseNeed(needs.get("social energy"), 30));
         needs.put("fun", increaseNeed(needs.get("fun"), 20));
-        System.out.println("Der Avatar hatte soziale Interaktion. Soziale Energie und Spaß erhöht.");
+       // System.out.println("Der Avatar hatte soziale Interaktion. Soziale Energie und Spaß erhöht.");
     }
 
     public void playMusic() {
         needs.put("physical energy", decreaseNeed(needs.get("physical energy"), 30));
         needs.put("fun", increaseNeed(needs.get("fun"), 20));
-        System.out.println("Der Avatar hat Musik aufgelegt. Physische Energie gesenkt, Spaß erhöht.");
+      //  System.out.println("Der Avatar hat Musik aufgelegt. Physische Energie gesenkt, Spaß erhöht.");
     }
 
     public void pee() {
@@ -153,7 +154,7 @@ public class TimAvatar extends SuperAvatar {
     public void relax() {
         needs.put("physical energy", increaseNeed(needs.get("physical energy"), 30));
         needs.put("social energy", increaseNeed(needs.get("social energy"), 30));
-        System.out.println("Der Avatar hat sich entspannt.");
+       // System.out.println("Der Avatar hat sich entspannt.");
     }
 
     private void updateNeedsAfterAction(SpaceType currentSpaceType) {
@@ -340,46 +341,85 @@ public class TimAvatar extends SuperAvatar {
       
     private Direction coordianteSteps(Coordinate Steps, ArrayList<SpaceInfo> spacesInRange) {
         Coordinate nextCoordinate = new Coordinate(0, 0);
-        if (Steps.getY() > 0) {
 
-            Steps.setY(Steps.getY() - 1);
+        if (Steps.getY() > 0){
+
             nextCoordinate.setY(currentCoordinate.getY() + 1);
             nextCoordinate.setX(currentCoordinate.getX());
-            calculateCurrentSpaceType(spacesInRange, nextCoordinate);
-            return Direction.DOWN;
+
+            if(calculateCurrentSpaceType(spacesInRange, nextCoordinate)){
+                Steps.setY(Steps.getY() - 1);
+                return Direction.DOWN;
+            }
+            else{
+                return Direction.STAY;
+            }
+            
 
         } else if (Steps.getY() < 0) {
-            Steps.setY(Steps.getY() + 1);
+            
+
             nextCoordinate.setY(currentCoordinate.getY() - 1);
             nextCoordinate.setX(currentCoordinate.getX());
-            calculateCurrentSpaceType(spacesInRange, nextCoordinate);
-            return Direction.UP;
+
+            if(calculateCurrentSpaceType(spacesInRange, nextCoordinate)){
+                Steps.setY(Steps.getY() + 1);
+                return Direction.UP;
+            }
+            else{
+                return Direction.STAY;
+            }
+           
 
         } else if (Steps.getX() < 0) {
-            Steps.setX(Steps.getX() + 1);
+            
+
             nextCoordinate.setX(currentCoordinate.getX() - 1);
             nextCoordinate.setY(currentCoordinate.getY());
-            calculateCurrentSpaceType(spacesInRange, nextCoordinate);
-            return Direction.LEFT;
+
+            if(calculateCurrentSpaceType(spacesInRange, nextCoordinate)){
+                Steps.setX(Steps.getX() + 1);
+                return Direction.LEFT;
+            }
+            else{
+                return Direction.STAY;
+            }
+          
 
         } else if (Steps.getX() > 0) {
-            Steps.setX(Steps.getX() - 1);
+            
+
             nextCoordinate.setX(currentCoordinate.getX() + 1);
             nextCoordinate.setY(currentCoordinate.getY());
-            calculateCurrentSpaceType(spacesInRange, nextCoordinate);
-            return Direction.RIGHT;
+
+            if(calculateCurrentSpaceType(spacesInRange, nextCoordinate)){
+                Steps.setX(Steps.getX() - 1);
+                return Direction.RIGHT;
+            }
+            else{
+                return Direction.STAY;
+            }
+         
         } else {
             return Direction.STAY;
         }
     }
 
-    public void calculateCurrentSpaceType(ArrayList<SpaceInfo> spacesInRange, Coordinate nextCoordinate) {
+
+    
+
+    public boolean calculateCurrentSpaceType(ArrayList<SpaceInfo> spacesInRange, Coordinate nextCoordinate) {
         for (SpaceInfo space : spacesInRange) {
             if (nextCoordinate.equals(space.getRelativeToAvatarCoordinate())) {
-                currentSpaceType = space.getType();
-                break;
+                nextSpaceType = space.getType();
+                if(nextSpaceType == SpaceType.OBSTACLE){
+                    return false;
+                }
+                return true;
             }
         }
+
+        return false;
 
     }
                 
