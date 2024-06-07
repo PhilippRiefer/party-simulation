@@ -172,8 +172,8 @@ public class OleAvatar extends SuperAvatar {
             if (minValue == 1) { // BAR
                 // pause at the bar and get a drink
                 drinks++;
-                System.out.println("Found the bar, get a drink!");
-                wait(100);
+                // System.out.println("Found the bar, get a drink!");
+                // wait(100);
                 return Direction.DOWN;
             } else {
                 // Check if the coordinates of the avatar where visited before
@@ -210,10 +210,10 @@ public class OleAvatar extends SuperAvatar {
             if (directions[i][0] == targetValue) {
                 minIndex = i;
                 foundIndices.add(i);
-                System.out.println("Found a suspicious avatar, follow him.");
+                // System.out.println("Found a suspicious avatar, follow him.");
                 // pause at the avatar and interrogate him
                 suspicious++;
-                wait(50);
+                wait(10);
             }
         }
         // no Avatar found -> move random
@@ -249,10 +249,10 @@ public class OleAvatar extends SuperAvatar {
             if (directions[i][0] == targetValue) {
                 minIndex = i;
                 foundIndices.add(i);
-                System.out.println("I need to dance!");
+                // System.out.println("I need to dance!");
                 // pause at the dancefloor
                 danced++;
-                wait(50);
+                // wait(50);
             }
         }
         // no floor found -> move random
