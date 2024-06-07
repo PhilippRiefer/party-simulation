@@ -35,6 +35,15 @@ public class Main {
         // scanner.close();
         
         SimulationControl simcontrol = new SimulationControl(perceptionRange);
-        while(true) simcontrol.loopThroughAvatars();
+        while(true){
+            simcontrol.loopThroughAvatars();
+            try {
+                // Make the program wait for one second (1000 milliseconds)
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // Handle the exception if the sleep is interrupted
+                e.printStackTrace();
+            }
+        }
     }
 }
