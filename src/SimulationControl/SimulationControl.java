@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import Environment.*;
 import PersonalAvatars.*;
-import PersonalAvatars.NasserAvatar;
 import AvatarInterface.*;
 import java.util.Random;
 import org.reflections.Reflections;
@@ -59,46 +58,8 @@ public class SimulationControl {
         Color color2 = Color.BLUE;
         Color color3 = Color.RED;
 
-        SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange,Color.orange);
-        SuperAvatar Nasser1 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.black);
-        SuperAvatar Nasser2 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.BLUE);
-        SuperAvatar Nasser3 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.gray);
-        SuperAvatar Nasser4 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.green);
-        SuperAvatar Nasser5 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.cyan);
-        SuperAvatar Nasser6 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.YELLOW);
-        SuperAvatar Nasser7 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.LIGHT_GRAY);
-        SuperAvatar Nasser8 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.PINK);
-        SuperAvatar Nasser9 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.ORANGE);
-
-        avatars.add(Nasser);
-        avatars.add(Nasser1);
-        avatars.add(Nasser2);
-        avatars.add(Nasser3);
-        avatars.add(Nasser4);
-        avatars.add(Nasser5);
-        avatars.add(Nasser6);
-        avatars.add(Nasser7);
-        avatars.add(Nasser8);
-        avatars.add(Nasser9);
-
-
-        SuperAvatar Tom = new TomAvatar(nextAvatarID++, perceptionRange, color);
-        SuperAvatar Tom2 = new TomAvatar(nextAvatarID++, perceptionRange, color2);
-        SuperAvatar Tom3 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        SuperAvatar Tom4 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        SuperAvatar Tom5 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        //SuperAvatar Tom6 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        //SuperAvatar Tom7 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        //SuperAvatar Tom8 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-
-        avatars.add(Tom);
-        avatars.add(Tom2);
-        avatars.add(Tom3);
-        //avatars.add(Tom4);
-        //avatars.add(Tom5);
-        //avatars.add(Tom6);
-        //avatars.add(Tom7);
-        //avatars.add(Tom8);
+        SuperAvatar Maxim = new MaximSpockAvatar(nextAvatarID++, perceptionRange,Color.orange);
+        avatars.add(Maxim);
 
 
         for (SuperAvatar avatar : avatars) {

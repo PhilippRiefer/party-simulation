@@ -117,25 +117,29 @@ public class MaximSpockAvatar extends SuperAvatar {
 
     Boolean checkIfNextStepOkay(Direction stepOfList, Coordinate personalCoordinates) {
         if (stepOfList == Direction.RIGHT) {
-            if (clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.OBSTACLE)) {
+            if (clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.OBSTACLE)
+                && clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.AVATAR)) {
                 System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
                 return false;
             }
         }
         if (stepOfList == Direction.LEFT) {
-            if (clubMemory[personalCoordinates.getX() - 1][personalCoordinates.getY()] == (SpaceType.OBSTACLE)) {
+            if (clubMemory[personalCoordinates.getX() - 1][personalCoordinates.getY()] == (SpaceType.OBSTACLE)
+                && clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.AVATAR)) {
                 System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
                 return false;
             }
         }
         if (stepOfList == Direction.UP) {
-            if (clubMemory[personalCoordinates.getX()][personalCoordinates.getY() - 1] == (SpaceType.OBSTACLE)) {
+            if (clubMemory[personalCoordinates.getX()][personalCoordinates.getY() - 1] == (SpaceType.OBSTACLE)
+                && clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.AVATAR)) {
                 System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
                 return false;
             }
         }
         if (stepOfList == Direction.DOWN) {
-            if (clubMemory[personalCoordinates.getX()][personalCoordinates.getY() + 1] == (SpaceType.OBSTACLE)) {
+            if (clubMemory[personalCoordinates.getX()][personalCoordinates.getY() + 1] == (SpaceType.OBSTACLE)
+                && clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.AVATAR)) {
                 System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
                 return false;
             }
