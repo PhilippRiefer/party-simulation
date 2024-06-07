@@ -19,6 +19,7 @@ public class NasserAvatar extends SuperAvatar {
     private int count4 = 0;
     private int count5 = 0;
     private int count7 = 3;
+    private int count8 = 0;
     int secondmiddleY;
     private int excludedNumber = 6;
     private String prio = null;
@@ -135,14 +136,15 @@ public class NasserAvatar extends SuperAvatar {
                 int randomValue = getRandomNumberExcluding(random, 0, 5, excludedNumber);
                 // Damit ein Aktionsfeld nicht zweimal hintereinander gewählt wird
                 excludedNumber = randomValue;
-                //System.out.println("wert:" + randomValue);
+                // System.out.println("wert:" + randomValue);
 
                 switch (randomValue) {
                     case 0:
                         // Setze eine zufällige Koordinate
                         closestCoordinate = new Coordinate(random.nextInt(38 - 1 + 1) + 1,
                                 random.nextInt(18 - 1 + 1) + 1);
-                       // System.out.println("X= " + closestCoordinate.getX() + " Y = " + closestCoordinate.getY());
+                        // System.out.println("X= " + closestCoordinate.getX() + " Y = " +
+                        // closestCoordinate.getY());
                         count4 = 3;
                         break;
                     case 1:
@@ -193,12 +195,15 @@ public class NasserAvatar extends SuperAvatar {
                 }
 
                 // Ausgabe der Koordinaten des nächstgelegenen Punktes zur Bar
-                /*if (closestCoordinate != null) {
-                    System.out.println("Nächste Koordinaten zur " + prio + " : x = " + closestCoordinate.getX()
-                            + ", y = " + closestCoordinate.getY());
-                } else {
-                    System.out.println("Keine Bar gefunden.");
-                }*/
+                /*
+                 * if (closestCoordinate != null) {
+                 * System.out.println("Nächste Koordinaten zur " + prio + " : x = " +
+                 * closestCoordinate.getX()
+                 * + ", y = " + closestCoordinate.getY());
+                 * } else {
+                 * System.out.println("Keine Bar gefunden.");
+                 * }
+                 */
                 count4++;
             }
         }
@@ -286,6 +291,7 @@ public class NasserAvatar extends SuperAvatar {
             // Avatar geht zuerst ganz nach oben und dann ganz nach links
             if ("OBSTACLE".equals(String.valueOf(top.getType())) && count == 0) {
                 currentPhase = 3;
+                count8++;
                 if ("OBSTACLE".equals(String.valueOf(left.getType()))) {
                     count++;
                 }
@@ -311,16 +317,36 @@ public class NasserAvatar extends SuperAvatar {
                 }
             }
 
-            // Wenn Avatar am Ende der Rekonstruktion angekommen ist
-            if ("OBSTACLE".equals(String.valueOf(right.getType()))
-                    && "OBSTACLE".equals(String.valueOf(rightBottom.getType()))
-                    && "OBSTACLE".equals(String.valueOf(bottom.getType()))/* middleX == 38 && middleY == 18 */) {
-                if (count3 <= 1) {
-                    count3++;
-                    return Direction.STAY;
-                } else {
-                    plan1++;
-                    // Letzte Durchführung
+            if (count8 != 0) {
+                // Wenn Avatar am Ende der Rekonstruktion angekommen ist
+                if ("OBSTACLE".equals(String.valueOf(right.getType()))
+                        && "OBSTACLE".equals(String.valueOf(rightBottom.getType()))
+                        && "OBSTACLE".equals(String.valueOf(bottom.getType()))/* middleX == 38 && middleY == 18 */) {
+                    if (count3 <= 1) {
+                        count3++;
+                        return Direction.STAY;
+                    } else {
+                        plan1++;
+                        // Letzte Durchführung
+                    }
+                }
+                for (SpaceInfo info : allSpaceInfos) {
+                    if ("TOILET".equals(String.valueOf(info.getType()))&&"OBSTACLE".equals(String.valueOf(left.getType()))) {
+                        
+                        int nextmove1 = random.nextInt(3);
+                        plan1++;
+                    switch (nextmove1) {
+                        case 0:
+                            return Direction.UP;
+                        case 1:
+                            return Direction.LEFT;
+                            case 2:
+                            return Direction.DOWN;
+
+                    }
+       
+                        
+                    }
                 }
             }
 

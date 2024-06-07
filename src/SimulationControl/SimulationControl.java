@@ -76,7 +76,7 @@ public class SimulationControl {
         avatars.add(Nasser6);
         avatars.add(Nasser7);
         avatars.add(Nasser8);
-        avatars.add(Nasser9);
+       avatars.add(Nasser9);
 
 
 
@@ -107,7 +107,7 @@ public class SimulationControl {
                 boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
                 avatar.setHasMoved(hasMoved);
                 System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
-                wait(20);
+                wait(1);
             } catch (Exception e) {
                 System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
                 e.printStackTrace();
