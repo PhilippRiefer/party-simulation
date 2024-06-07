@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import Environment.*;
 import PersonalAvatars.*;
+import PersonalAvatars.NasserAvatar;
 import AvatarInterface.*;
 import java.util.Random;
 import org.reflections.Reflections;
@@ -55,6 +56,8 @@ public class SimulationControl {
         }*/
 
         Color color = Color.orange;
+        Color color2 = Color.BLUE;
+        Color color3 = Color.RED;
 
         SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange,Color.orange);
         SuperAvatar Nasser1 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.black);
@@ -78,6 +81,24 @@ public class SimulationControl {
         avatars.add(Nasser8);
        avatars.add(Nasser9);
 
+
+        SuperAvatar Tom = new TomAvatar(nextAvatarID++, perceptionRange, color);
+        SuperAvatar Tom2 = new TomAvatar(nextAvatarID++, perceptionRange, color2);
+        SuperAvatar Tom3 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        SuperAvatar Tom4 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        SuperAvatar Tom5 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        //SuperAvatar Tom6 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        //SuperAvatar Tom7 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        //SuperAvatar Tom8 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+
+        avatars.add(Tom);
+        avatars.add(Tom2);
+        avatars.add(Tom3);
+        //avatars.add(Tom4);
+        //avatars.add(Tom5);
+        //avatars.add(Tom6);
+        //avatars.add(Tom7);
+        //avatars.add(Tom8);
 
 
         for (SuperAvatar avatar : avatars) {
