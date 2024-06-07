@@ -9,14 +9,14 @@ import java.util.Arrays;
 public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 	// Basic Needs
-	int needToDance = 1200;
-	int needToPee = 500;
-	int needToRest = 1500;
-	int needToTalk = 10000;
-	int needToMusic = 100000; // TODO implement needToMusic
-	int needToDrink = 100000; // TODO implement needToDrink
+	int needToDance =   1200;
+	int needToPee =      500;
+	int needToRest = 	2500;
+	int needToTalk =   10000;
+	int needToMusic =  50000; // implement needToMusic 
+	int needToDrink =  90000; // implement needToDrink 
 
-	int[] needsInOrder = { needToDance, needToPee, needToRest, needToTalk };
+	int[] needsInOrder = { needToDance, needToPee, needToRest, needToTalk, needToMusic, needToDrink };
 	SpaceType ObjectNeeded = null;
 	Coordinate findCoords; 		// the Coords i Try to find
 	Coordinate myCoords = new Coordinate(0, 0); 		// my Coords
@@ -64,7 +64,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		try {
 			checkBorder(spacesInRange);
 		} catch (BorderException e) {
-			System.out.println("RelativeToAvatarCoordinate has not the right size \n I moved randomly");
+			//System.out.println("RelativeToAvatarCoordinate has not the right size \n I moved randomly");
 			return move();
 		}
 		myCoords.setX(spacesInRange.get(3).getRelativeToAvatarCoordinate().getX()); 
@@ -116,7 +116,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		wayfinding(spacesInRange);
 		return nextMove;
 		// if nothing needed that is in range.
-		// return move(); // Just move
+		
 	}
 
 	void ObjectNeeded() {
@@ -124,6 +124,8 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		needsInOrder[1] = needToPee;
 		needsInOrder[2] = needToRest;
 		needsInOrder[3] = needToTalk;
+		needsInOrder[4] = needToDrink;
+		needsInOrder[5] = needToMusic;
 
 		Arrays.sort(needsInOrder);
 		if (needsInOrder[0] == needToDance) {
@@ -134,8 +136,12 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 			ObjectNeeded = SpaceType.SEATS;
 		} else if (needsInOrder[0] == needToTalk) {
 			ObjectNeeded = SpaceType.AVATAR;
+		} else if (needsInOrder[0] == needToDrink) {
+			ObjectNeeded = SpaceType.BAR;
+		} else if (needsInOrder[0] == needToMusic) {
+			ObjectNeeded = SpaceType.DJBOOTH;
 
-			System.out.println("----- Avatar want to talked");
+			//System.out.println("----- Avatar want to talked");
 		}
 		try {
 			if (ObjectNeeded == null) {
@@ -147,7 +153,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	}
 
 	Direction move() {
-		System.out.println("----- I will move random");
+		//System.out.println("----- I will move random");
 		int max = 4;
 		int min = 0;
 		int directionNumber = (int) (Math.random() * ((max - min) + 1) + min); // directionNumber zwischen 0 und 6
@@ -178,7 +184,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		if (objectDone == SpaceType.AVATAR) {
 			needToTalk += 3; // need to talk gets less
 
-			System.out.println("--------------------- Avatar talked");
+			//System.out.println("--------------------- Avatar talked");
 		}
 		if (objectDone == SpaceType.TOILET) {
 			needToPee = 5000; // Reset need
@@ -202,10 +208,18 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		if (needToTalk < 0) {
 			needToTalk = 0;
 		}
+		if (needToDrink < 0) {
+			needToDrink = 0;
+		}
+		if (needToMusic < 0) {
+			needToMusic = 0;
+		}
 		needToDance--;
 		needToPee--;
 		needToRest--;
 		needToTalk--;
+		needToMusic--;
+		needToDrink--;
 	}
 
 	public void memory(ArrayList<SpaceInfo> spacesInRange) {
@@ -254,7 +268,9 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 				}
 			}
 		}
-
+		else{
+			nextMove = move(); // Just move
+		}
 	}
 
 	private class BorderException extends Exception {

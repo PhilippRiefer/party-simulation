@@ -167,7 +167,13 @@ public class Environment {
         if (model.tryToPlaceAvatar(avatarID, currentPos)) {
             // Erase the avatar from the old position
             try {
-                model.setSpace(new Coordinate(oldX, oldY), SpaceType.EMPTY);
+                if (oldSpaceType == SpaceType.EMPTY) {
+                    model.setSpace(new Coordinate(oldX, oldY), SpaceType.EMPTY);
+                }
+                else{
+                    model.setSpace(new Coordinate(oldX, oldY), oldSpaceType);
+                }
+                // model.setSpace(new Coordinate(oldX, oldY), SpaceType.EMPTY);
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
