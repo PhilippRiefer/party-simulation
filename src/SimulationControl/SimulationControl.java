@@ -74,7 +74,7 @@ public class SimulationControl {
                 Direction dir = avatar.yourTurn(si);
                 boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
                 avatar.setHasMoved(hasMoved);
-                System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
+                //System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
                 wait(1);
             } catch (Exception e) {
                 System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
