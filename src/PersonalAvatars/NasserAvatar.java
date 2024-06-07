@@ -20,7 +20,7 @@ public class NasserAvatar extends SuperAvatar {
     private int count5 = 0;
     private int count7 = 3;
     private int count8 = 0;
-    int secondmiddleY;
+    private int secondmiddleY;
     private int excludedNumber = 6;
     private String prio = null;
     private SpaceInfo left;
@@ -34,7 +34,7 @@ public class NasserAvatar extends SuperAvatar {
     private int middleX;
     private int middleY;
     private ArrayList<SpaceInfo> allSpaceInfos;
-    Coordinate closestCoordinate = new Coordinate(0, 0);
+    private Coordinate closestCoordinate = new Coordinate(0, 0);
     private int minX = Integer.MAX_VALUE;
     private int maxX = Integer.MIN_VALUE;
     private int minY = Integer.MAX_VALUE;
@@ -273,6 +273,8 @@ public class NasserAvatar extends SuperAvatar {
         middleY = bottomCoordinate.getY() - 1;
     }
 
+    
+
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         changeToRelativeToCoordinate(spacesInRange);
@@ -330,7 +332,7 @@ public class NasserAvatar extends SuperAvatar {
                         // Letzte Durchführung
                     }
                 }
-                for (SpaceInfo info : allSpaceInfos) {
+               /*  for (SpaceInfo info : allSpaceInfos) {
                     if ("TOILET".equals(String.valueOf(info.getType()))&&"OBSTACLE".equals(String.valueOf(left.getType()))) {
                         
                         int nextmove1 = random.nextInt(3);
@@ -344,10 +346,9 @@ public class NasserAvatar extends SuperAvatar {
                             return Direction.DOWN;
 
                     }
-       
                         
                     }
-                }
+                }*/
             }
 
             // Geht drei Schritte nach unten
