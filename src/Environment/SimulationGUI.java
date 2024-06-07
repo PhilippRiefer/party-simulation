@@ -7,8 +7,6 @@ import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.Spring;
-import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
 
 /**
  * The SimulationGUI class represents the graphical user interface for the
