@@ -101,6 +101,13 @@ public class SimulationControl {
         //avatars.add(Tom8);
 
 
+        // Color color = Color.orange;
+
+        // SuperAvatar Tom = new TomAvatar(nextAvatarID++, perceptionRange, color);
+        // SuperAvatar Tom2 = new TomAvatar2(nextAvatarID++, perceptionRange, color);
+
+        // avatars.add(Tom2);
+
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
         }
