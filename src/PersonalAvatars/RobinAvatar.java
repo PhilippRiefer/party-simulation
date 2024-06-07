@@ -96,7 +96,7 @@ public class RobinAvatar extends SuperAvatar {
         updatePosition();
         updateNeeds();
         checkNeeds();
-        if (!(getCouldMove() || newPath))
+        if (!(getCouldMove() || newPath || lastDirection == Direction.STAY))
             return lastDirection;
         newPath = false;
         updateEnvironment(spacesInRange);
