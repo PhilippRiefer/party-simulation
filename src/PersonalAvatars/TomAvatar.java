@@ -30,7 +30,7 @@ public class TomAvatar extends SuperAvatar {
     private static final Random random = new Random();
     private Coordinate myCoordinate = new Coordinate(0, 0);
     private Coordinate foundCoordinate = new Coordinate(0, 0);
-    private int minDiffX = Integer.MAX_VALUE, minX = 0, minY = 0, minDiffY = 20;
+    private int minDiff = Integer.MAX_VALUE, minX = 0, minY = 0, minDiffY = 20;
     private int stayCounter = 0;
     private int decision = (int) (random.nextDouble() * 100);
     private int howLongStaying = random.nextInt(100);
@@ -235,28 +235,27 @@ public class TomAvatar extends SuperAvatar {
 
         infoOfSpace = mentalMapList.get(iterateThrowLoop);
         myCoordinate = infoOfSpace.getRelativeToAvatarCoordinate();
-        return goToMyCoordinate(spacesInRange);
+        return goToMyCoordinate2(spacesInRange, myCoordinate);
     }
 
     public Direction goToSomething2(ArrayList<SpaceInfo> spacesInRange, SpaceType whereToGo){
-        int diffX = 0, diffY = 0;
+        int diff = 0;
         if (stepCounter == 0) {
             for (iterateThrowLoop = 0; iterateThrowLoop < mentalMapList.size(); iterateThrowLoop++) {
                 if (mentalMapList.get(iterateThrowLoop).getType() == whereToGo) {
                     
-                    myCoordinate = mentalMapList.get(iterateThrowLoop).getRelativeToAvatarCoordinate();
+                    Coordinate minDiffCoordinate = mentalMapList.get(iterateThrowLoop).getRelativeToAvatarCoordinate();
 
-                    diffX = Math.abs(myCoordinate.getX() - (spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() + 1))
-                        + Math.abs(myCoordinate.getY() - (spacesInRange.get(3).getRelativeToAvatarCoordinate().getY()+1));
-                                        
+                    diff = Math.abs(minDiffCoordinate.getX() - spacesInRange.get(3).getRelativeToAvatarCoordinate().getX())
+                        + Math.abs(minDiffCoordinate.getY() - (spacesInRange.get(3).getRelativeToAvatarCoordinate().getY() + 1));
 
-                    if (diffX < minDiffX) {
-                        minDiffX = diffX;
-                        foundCoordinate = myCoordinate;
+                    if (diff < minDiff) {
+                        System.out.println("Diff unten: " + diff);
+                        minDiff = diff;
+                        foundCoordinate = minDiffCoordinate;
                     }                  
                 }
             }
-            System.out.println("X: " + foundCoordinate.getX() + "Y: " + foundCoordinate.getY());
         }
         stepCounter++;
 
@@ -267,9 +266,8 @@ public class TomAvatar extends SuperAvatar {
                 stepCounter = 0;
                 stayCounter = 0;
                 iterateThrowLoop = 0;
-                minDiffX = Integer.MAX_VALUE;
+                minDiff = Integer.MAX_VALUE;
                 decision = (int) (random.nextDouble() * 100);
-                return Direction.STAY;
             }
         }
         /* 
@@ -297,23 +295,6 @@ public class TomAvatar extends SuperAvatar {
 
    
 
-    public Direction goToMyCoordinate(ArrayList<SpaceInfo> spacesInRange) {
-
-        if (spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() < myCoordinate.getX())
-            return Direction.RIGHT;
-        else if (spacesInRange.get(1).getRelativeToAvatarCoordinate().getY() > myCoordinate.getY())
-            return Direction.UP;
-        else if (spacesInRange.get(1).getRelativeToAvatarCoordinate().getY() < myCoordinate.getY())
-            return Direction.DOWN;
-        else if (spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() > myCoordinate.getX())
-            return Direction.LEFT;
-        else {
-            phase = 3;
-            return Direction.STAY;
-        }
-
-    }
-
     public Direction goToMyCoordinate2(ArrayList<SpaceInfo> spacesInRange, Coordinate myCoordinate) {
 
         if (spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() < myCoordinate.getX())
@@ -325,7 +306,6 @@ public class TomAvatar extends SuperAvatar {
         else if (spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() > myCoordinate.getX())
             return Direction.LEFT;
         else {
-            phase = 3;
             return Direction.STAY;
         }
 
