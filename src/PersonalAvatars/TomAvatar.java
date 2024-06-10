@@ -41,6 +41,7 @@ public class TomAvatar extends SuperAvatar {
     private SpaceInfo infoOfSpace;
     private int iterateThrowLoop = 0;
 
+
     public TomAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
         storePerceptionRange = perceptionRange;
@@ -192,54 +193,8 @@ public class TomAvatar extends SuperAvatar {
         return myDirection;
     }
 
-
-    public Direction goToSomething(ArrayList<SpaceInfo> spacesInRange, SpaceType whereToGo){
-        if (iterateThrowLoop == 0) {
-            for (iterateThrowLoop = 0; iterateThrowLoop < mentalMapList.size(); iterateThrowLoop++) {
-                if (mentalMapList.get(iterateThrowLoop).getType() == whereToGo) {
-                    infoOfSpace = mentalMapList.get(iterateThrowLoop);
-                    break;
-                    
-                }
-            }
-        }
-
-        if(spacesInRange.get(3).getRelativeToAvatarCoordinate().getY() + 1 == infoOfSpace.getRelativeToAvatarCoordinate().getY()){
-            stayCounter++;
-
-            if (stayCounter == 20) {
-                stayCounter = 0;
-                iterateThrowLoop = 0;
-                decision = (int) (random.nextDouble() * 100);
-                return Direction.STAY;
-            }
-        }
-
-        if (myDirection == Direction.UP && spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() == infoOfSpace.getRelativeToAvatarCoordinate().getX() &&
-                spacesInRange.get(3).getRelativeToAvatarCoordinate().getY() == infoOfSpace.getRelativeToAvatarCoordinate().getY()
-                && spacesInRange.get(3).getType() != infoOfSpace.getType()) {
-                    iterateThrowLoop++;
-        } else if (myDirection == Direction.RIGHT && spacesInRange.get(6).getRelativeToAvatarCoordinate().getX() == infoOfSpace.getRelativeToAvatarCoordinate().getX() &&
-                spacesInRange.get(6).getRelativeToAvatarCoordinate().getY() == infoOfSpace.getRelativeToAvatarCoordinate().getY()
-                && spacesInRange.get(6).getType() != infoOfSpace.getType()) {
-                    iterateThrowLoop++;
-        } else if (myDirection == Direction.LEFT && spacesInRange.get(1).getRelativeToAvatarCoordinate().getX() == infoOfSpace.getRelativeToAvatarCoordinate().getX() &&
-                spacesInRange.get(1).getRelativeToAvatarCoordinate().getY() == infoOfSpace.getRelativeToAvatarCoordinate().getY()
-                && spacesInRange.get(1).getType() != infoOfSpace.getType()) {
-                    iterateThrowLoop++;
-        } else if (myDirection == Direction.DOWN && spacesInRange.get(4).getRelativeToAvatarCoordinate().getX() == infoOfSpace.getRelativeToAvatarCoordinate().getX() &&
-            spacesInRange.get(4).getRelativeToAvatarCoordinate().getY() == infoOfSpace.getRelativeToAvatarCoordinate().getY()
-            && spacesInRange.get(4).getType() != infoOfSpace.getType()) {
-                iterateThrowLoop++;
-        }
-
-        infoOfSpace = mentalMapList.get(iterateThrowLoop);
-        myCoordinate = infoOfSpace.getRelativeToAvatarCoordinate();
-        return goToMyCoordinate2(spacesInRange, myCoordinate);
-    }
-
     public Direction goToSomething2(ArrayList<SpaceInfo> spacesInRange, SpaceType whereToGo){
-        int diff = 0;
+        int diff = 0, xDancefloor = 0, yDancefloor = 0, xMin = 40, xMax = 0, yMin = 20, yMax = 0;
         if (stepCounter == 0) {
             for (iterateThrowLoop = 0; iterateThrowLoop < mentalMapList.size(); iterateThrowLoop++) {
                 if (mentalMapList.get(iterateThrowLoop).getType() == whereToGo) {
@@ -249,47 +204,79 @@ public class TomAvatar extends SuperAvatar {
                     diff = Math.abs(minDiffCoordinate.getX() - spacesInRange.get(3).getRelativeToAvatarCoordinate().getX())
                         + Math.abs(minDiffCoordinate.getY() - (spacesInRange.get(3).getRelativeToAvatarCoordinate().getY() + 1));
 
-                    if (diff < minDiff) {
-                        System.out.println("Diff unten: " + diff);
+                    if(whereToGo == SpaceType.DANCEFLOOR){
+                        if(minDiffCoordinate.getX() < xMin){
+                            xMin = minDiffCoordinate.getX();
+                        }else if(minDiffCoordinate.getX() > xMax){
+                            xMax = minDiffCoordinate.getX();
+                        }else if(minDiffCoordinate.getY() < yMin){
+                            yMin = minDiffCoordinate.getY();
+                        }else if(minDiffCoordinate.getY() > yMax){
+                            yMax = minDiffCoordinate.getY();
+                        }
+
+                    }if(diff < minDiff) {
                         minDiff = diff;
                         foundCoordinate = minDiffCoordinate;
-                    }                  
-                }
+                    }
+                }       
+            }
+            if(whereToGo == SpaceType.DANCEFLOOR){
+                xDancefloor = (xMax + xMin) / 2 + random.nextInt(7) - 3;
+                yDancefloor = (yMax + yMin) / 2 + random.nextInt(7) - 3;
+                foundCoordinate.setX(xDancefloor);
+                foundCoordinate.setY(yDancefloor);
             }
         }
         stepCounter++;
-
-        if(spacesInRange.get(3).getRelativeToAvatarCoordinate().getY() + 1 == foundCoordinate.getY()){
+        if(spacesInRange.get(3).getRelativeToAvatarCoordinate().getY() + 1 == foundCoordinate.getY() &&
+           spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() == foundCoordinate.getX()){
             stayCounter++;
 
-            if (stayCounter == 20) {
+            if (stayCounter == 50) {
                 stepCounter = 0;
                 stayCounter = 0;
                 iterateThrowLoop = 0;
                 minDiff = Integer.MAX_VALUE;
                 decision = (int) (random.nextDouble() * 100);
             }
+            if(whereToGo == SpaceType.DANCEFLOOR){
+                return goDancing();
+            }
+            return Direction.STAY;
         }
-        /* 
-        if (myDirection == Direction.UP && spacesInRange.get(3).getRelativeToAvatarCoordinate().getX() == infoOfSpace.getRelativeToAvatarCoordinate().getX() &&
-                spacesInRange.get(3).getRelativeToAvatarCoordinate().getY() == infoOfSpace.getRelativeToAvatarCoordinate().getY()
-                && spacesInRange.get(3).getType() != infoOfSpace.getType()) {
-                    iterateThrowLoop++;
-        } else if (myDirection == Direction.RIGHT && spacesInRange.get(6).getRelativeToAvatarCoordinate().getX() == infoOfSpace.getRelativeToAvatarCoordinate().getX() &&
-                spacesInRange.get(6).getRelativeToAvatarCoordinate().getY() == infoOfSpace.getRelativeToAvatarCoordinate().getY()
-                && spacesInRange.get(6).getType() != infoOfSpace.getType()) {
-                    iterateThrowLoop++;
-        } else if (myDirection == Direction.LEFT && spacesInRange.get(1).getRelativeToAvatarCoordinate().getX() == infoOfSpace.getRelativeToAvatarCoordinate().getX() &&
-                spacesInRange.get(1).getRelativeToAvatarCoordinate().getY() == infoOfSpace.getRelativeToAvatarCoordinate().getY()
-                && spacesInRange.get(1).getType() != infoOfSpace.getType()) {
-                    iterateThrowLoop++;
-        } else if (myDirection == Direction.DOWN && spacesInRange.get(4).getRelativeToAvatarCoordinate().getX() == infoOfSpace.getRelativeToAvatarCoordinate().getX() &&
-            spacesInRange.get(4).getRelativeToAvatarCoordinate().getY() == infoOfSpace.getRelativeToAvatarCoordinate().getY()
-            && spacesInRange.get(4).getType() != infoOfSpace.getType()) {
-                iterateThrowLoop++;
-        }*/
 
-        return goToMyCoordinate2(spacesInRange, foundCoordinate);
+        myDirection = goToMyCoordinate2(spacesInRange, foundCoordinate);
+
+        if(myDirection == Direction.UP && spacesInRange.get(3).getRelativeToAvatarCoordinate() == foundCoordinate &&
+         spacesInRange.get(3).getType() != whereToGo ||
+         myDirection == Direction.DOWN && spacesInRange.get(4).getRelativeToAvatarCoordinate() == foundCoordinate &&
+         spacesInRange.get(4).getType() != whereToGo ||
+         myDirection == Direction.RIGHT && spacesInRange.get(6).getRelativeToAvatarCoordinate() == foundCoordinate &&
+         spacesInRange.get(6).getType() != whereToGo ||
+         myDirection == Direction.LEFT && spacesInRange.get(1).getRelativeToAvatarCoordinate() == foundCoordinate &&
+         spacesInRange.get(6).getType() != whereToGo){
+            
+         }
+         
+
+        return myDirection;
+    }
+
+    
+    public Direction goDancing(){
+        int dancingStep = random.nextInt(4);
+        switch (dancingStep) {
+            case 0:
+                return Direction.RIGHT;
+            case 1:
+                return Direction.LEFT;
+            case 2: 
+                return Direction.UP;
+            case 3:
+                return Direction.DOWN;
+        }
+        return Direction.STAY;
     }
 
 
