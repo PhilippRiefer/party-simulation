@@ -176,11 +176,11 @@ public class RobinAvatar extends SuperAvatar {
     private void updateNeeds() {
         for (int i = 0; i < needs.length; i++) {
             if (getFromEnvironment(position, 0) == needs[i][0] && needs[i][1] < 100) {
-                if (rng.nextBoolean()) {
+                if (true) {
                     needs[i][1]++;
                 }
             } else {
-                if (rng.nextInt(100) < 15 && needs[i][1] > 0) {
+                if (rng.nextInt(100) < 20 && needs[i][1] > 0) {
                     needs[i][1]--;
                 }
             }
