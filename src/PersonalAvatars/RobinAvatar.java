@@ -63,6 +63,7 @@ public class RobinAvatar extends SuperAvatar {
     private Coordinate extPosition;
     private boolean extPositionValid;
     private PersonalFieldType[] PFTValues = PersonalFieldType.values();
+    private SpaceType[] STValues = SpaceType.values();
     private int uncheckedSpaces;
     private Vector<Direction> path;
     private int cycle;
@@ -550,8 +551,23 @@ public class RobinAvatar extends SuperAvatar {
 
     private void createTxtFile() {
         try (FileWriter writer = new FileWriter("RobinBrain.txt")) {
-            writer.write("Cycles: " + cycle);
-            writer.write("State: " + state);
+            writer.write("Cycles: " + cycle + "\n");
+            writer.write("State: " + state + "\n");
+            if(lastDirection == Direction.STAY){
+                writer.write("Didn't try to move.\n");
+            }
+            else{
+                writer.write("Tried to move " + lastDirection + "\n");
+            }
+            if (path.isEmpty()) {
+                writer.write("Path unknown.\n");
+            } else {
+                writer.write("Path: " + path + "\n");
+            }
+            writer.write("Needs:\n");
+            for (int[] need : needs) {
+                writer.write("\t" + STValues[need[0]] + ":\t" + need[1] + "\n");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
