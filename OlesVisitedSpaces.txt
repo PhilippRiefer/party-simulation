@@ -2,28 +2,28 @@
 							Map saved in Ole's head:
 -------------------------------------------------------------------------------
  Option 1: Imitate a police officer and interrogate conspicuous avatars.
- The avatar has moved 1249 times and interrogated 92 suspects.
+ The avatar has moved 1233 times and interrogated 28 suspects.
 +=============================================================================+
-. X X X X . . X X X . . . . X X X X X X X X X X X X X X X . . . . . . . X X X . 
-X         A A       A A A   D D D D D D D                     . . . .     S   X 
-.                       A   D D D D D D D                       . . .         X 
-X                                                                   S         X 
-X                         F F F F F F F F F         . . . .   S               . 
-X                         F F F F F F F F F       . . . .                     . 
-X                         F F F F F F F F F       . . . . .                   . 
-X B A                   . . . F F F F F F F       . . . . .               B B X 
-X A A                 . . . . . F F F F F F       . . . .                 B B . 
-X B B                 . . . . . A F F F F F     . . . . . .               B . . 
-X B B               . .   F . . F F F F F F   . . . . . . . .             . . . 
-. B B                     F F . F F F F F F     . . . . .   .         . . . . . 
-. B B                     F F . F F F F F F     . . .                 . . . . . 
-X                             .                                     . . . . . . 
-X S                                                             . . . . . . . . 
-X   S                                                       . . . . . . . . . . 
-.       S                                       .         . . . . . . . . . . . 
-.                                               . . . . . . . . . . . . . . . . 
-. .     S   . .                                 . . . . . . . . . . . . . . . . 
-. . . X X . . . . . . . X X X X X X X X X X X . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . X X X X X X X X X . . X X X X X . 
+. . . . . . . . . . . . . . . . . . . . . .                   S           S   X 
+. . . . . . . . . . . . . . . . . . . . . .                                   X 
+. . . . . . . . . . . . . . . . . . . . .                                 S   X 
+. . . . . . . . . . . . . . . . . . . . . F                   S               X 
+. . . . . . . . . . . . . . . . . . . . F F                       A           X 
+. . . . . . . . . . . . . . . . . . . . F F                                   X 
+. . . . . . . . . . . . . . . . . . . F F F                 A             B B X 
+. . . . . . . . . . . . . . . . . . . . F F                           A   B B X 
+. . . . . . . . . . . . . . . . . . . . F F                       A       B B X 
+. . . . . . . . . . . . . . . . . . . . F F                             A B B X 
+. . . . . . . . . . . . . . . . . . . . . F                               B B X 
+. . . . . . . . . . . . . . . . . . . . . F                               B B X 
+. . . . . . . . . . . . . . . . . . . .                                       X 
+. . . . . . . . . . . . . . . . . . . .     A                                 X 
+. . . . . . . . . . . . . . . . . . . .     A                                 X 
+. . . . . . . . . . . . . . . . . . . . .                                     X 
+. . . . . . . . . . . . . . . . . . . . . . . .                               X 
+. . . . . . . . . . . . . . . . . . . . . . . . . .                   T T T T . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . X X X X X X X X X X X . . 
 +=============================================================================+
 
 	  Legend
