@@ -11,7 +11,7 @@ import Environment.SpaceInfo;
 import Environment.SpaceType;
 import java.awt.Color;
 
-public class RobinAvatarComplex extends SuperAvatar {
+public class RobinAvatar extends SuperAvatar {
 
     enum State {
         FIND_WALL,
@@ -68,8 +68,9 @@ public class RobinAvatarComplex extends SuperAvatar {
     private Random rng;
     private int currentNeed;
     private boolean newPath;
+    private int stuckCycles;
 
-    public RobinAvatarComplex(int id, int perceptionRange, Color color) {
+    public RobinAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
         environment = new int[2 * environmentWidth + 1][2 * environmentHeight + 1][3];
         position = new Coordinate(environmentWidth, environmentHeight);
@@ -86,6 +87,7 @@ public class RobinAvatarComplex extends SuperAvatar {
         currentNeed = -1;
         rng = new Random();
         newPath = false;
+        stuckCycles = 0;
         initializeNeeds();
         initializeEnvironment();
     }
@@ -96,8 +98,23 @@ public class RobinAvatarComplex extends SuperAvatar {
         updatePosition();
         updateNeeds();
         checkNeeds();
-        if (!(getCouldMove() || newPath))
-            return lastDirection;
+        if (!(getCouldMove() || newPath || lastDirection == Direction.STAY)){
+            if(stuckCycles > 2){
+                stuckCycles = 0;
+                if(state == State.MOVE_TO_EMPTY || state == State.FIND_WALL || state == State.FOLLOW_WALL){
+                    state = State.FIND_EMPTY;
+                }
+                else if(state == State.MOVE_TO_NEEDED){
+                    newPath = true;
+                    findPath(needs[currentNeed][0], 0);
+                }
+            }
+            else{
+                stuckCycles++;
+                return lastDirection;
+            }        
+        }
+        stuckCycles = 0;  
         newPath = false;
         updateEnvironment(spacesInRange);
         // printEnv(1);
@@ -113,11 +130,16 @@ public class RobinAvatarComplex extends SuperAvatar {
             case MOVE_TO_NEEDED:
                 return moveToNeeded();
             case FULLY_EXPLORED:
+                lastDirection = Direction.STAY;
+                return Direction.STAY;
             case FILL_NEED:
+                if(needs[currentNeed][0] == SpaceType.DANCEFLOOR.ordinal()){
+                    return dance();
+                }
                 lastDirection = Direction.STAY;
                 return Direction.STAY;
             default:
-                System.out.println("done");
+                //System.out.println("done");
                 printEnv(0);
                 printEnv(1);
                 System.out.println(cycle);
@@ -190,7 +212,7 @@ public class RobinAvatarComplex extends SuperAvatar {
 
     private void changeNeed(int need) {
         currentNeed = need;
-        System.out.println(need);
+        //System.out.println(need);
         newPath = true;
         if (getFromEnvironment(position, 0) == needs[need][0]) {
             state = State.FILL_NEED;
@@ -334,13 +356,16 @@ public class RobinAvatarComplex extends SuperAvatar {
         for (SpaceInfo spaceInfo : spacesInRange) {
             Coordinate spaceRelPos = absToRelPos(spaceInfo.getRelativeToAvatarCoordinate());
             Coordinate spaceAbsPos = addCoordinates(position, spaceRelPos);
-            if (PFTValues[getFromEnvironment(spaceAbsPos, 1)].isUnknown()) {
-                setInEnvironment(spaceAbsPos, 0, spaceInfo.getType().ordinal());
-                if (spaceInfo.getType() != SpaceType.OBSTACLE) {
-                    setInEnvironment(spaceAbsPos, 1, PersonalFieldType.EMPTY.ordinal());
-                } else {
-                    setInEnvironment(spaceAbsPos, 1, PersonalFieldType.WALL.ordinal());
-                }
+            if (spaceInfo.getType() == SpaceType.AVATAR) {
+                setInEnvironment(spaceAbsPos, 1, PersonalFieldType.UNKNOWN.ordinal());
+            }
+            else if (PFTValues[getFromEnvironment(spaceAbsPos, 1)].isUnknown()) {
+                    setInEnvironment(spaceAbsPos, 0, spaceInfo.getType().ordinal());
+                    if (spaceInfo.getType() != SpaceType.OBSTACLE) {
+                        setInEnvironment(spaceAbsPos, 1, PersonalFieldType.EMPTY.ordinal());
+                    } else {
+                        setInEnvironment(spaceAbsPos, 1, PersonalFieldType.WALL.ordinal());
+                    }
                 updateReachable(spaceAbsPos);
             }
         }
@@ -492,6 +517,21 @@ public class RobinAvatarComplex extends SuperAvatar {
         }
         // printEnv(2);
         return retVal;
+    }
+
+    private Direction dance(){
+        if(true){
+            int randNum = rng.nextInt(4);
+            for (int i = randNum; i < randNum + 4; i++) {
+                Direction randDir = rotate90Clkw(Direction.UP, i);
+                if(getFromEnvironment(randDir, 0) == SpaceType.DANCEFLOOR.ordinal() && PFTValues[getFromEnvironment(randDir, 1)].walkable){
+                    lastDirection = randDir;
+                    return randDir;
+                }
+            }
+        }
+        lastDirection = Direction.STAY;
+        return Direction.STAY;
     }
 
     @Override
