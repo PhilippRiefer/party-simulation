@@ -410,6 +410,7 @@ public class RobinAvatar extends SuperAvatar {
             for (int col = 0; col < environment.length; col++) {
                 if (environment[col][row][1] == PersonalFieldType.REACHABLE.ordinal()) {
                     state = State.MOVE_TO_EMPTY;
+                    newPath = true;
                     findPath(PersonalFieldType.REACHABLE.ordinal(), 1);
                     return moveToEmpty();
                 }
@@ -502,7 +503,7 @@ public class RobinAvatar extends SuperAvatar {
         boolean retVal = false;
         for (int i = 0; i < 4; i++) {
             Coordinate space = addCoordinates(center, directionToCoordinate(rotate90Clkw(Direction.UP, i)));
-            if (getFromEnvironment(space, goalType) == goal) {
+            if (getFromEnvironment(space, goalType) == goal && (goalType != 0 || PFTValues[getFromEnvironment(space, 1)].walkable)) {
                 if (!destValid) {
                     destination = space;
                     destValid = true;
