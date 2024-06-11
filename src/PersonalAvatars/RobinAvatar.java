@@ -10,6 +10,8 @@ import Environment.Direction;
 import Environment.SpaceInfo;
 import Environment.SpaceType;
 import java.awt.Color;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class RobinAvatar extends SuperAvatar {
 
@@ -94,6 +96,7 @@ public class RobinAvatar extends SuperAvatar {
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
+        createTxtFile();
         cycle++;
         updatePosition();
         updateNeeds();
@@ -543,6 +546,15 @@ public class RobinAvatar extends SuperAvatar {
     @Override
     public void setPerceptionRange(int perceptionRange) {
         super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
+    }
+
+    private void createTxtFile() {
+        try (FileWriter writer = new FileWriter("RobinBrain.txt")) {
+            writer.write("Cycles: " + cycle);
+            writer.write("State: " + state);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
