@@ -71,7 +71,7 @@ public class RobinAvatar extends SuperAvatar {
     private int stuckCycles;
 
     public RobinAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, color);
+        super(id, perceptionRange, Color.GREEN);
         environment = new int[2 * environmentWidth + 1][2 * environmentHeight + 1][3];
         position = new Coordinate(environmentWidth, environmentHeight);
         state = State.FIND_WALL;
@@ -142,7 +142,7 @@ public class RobinAvatar extends SuperAvatar {
                 //System.out.println("done");
                 printEnv(0);
                 printEnv(1);
-                System.out.println(cycle);
+                //System.out.println(cycle);
                 lastDirection = Direction.STAY;
                 return Direction.STAY;
         }
@@ -234,15 +234,15 @@ public class RobinAvatar extends SuperAvatar {
     }
 
     private void printEnv(int entry) {
-        System.out.println("Entry: " + entry);
-        System.out.println("--------------------------------------------------------");
+        //em.out.println("Entry: " + entry);
+        //System.out.println("--------------------------------------------------------");
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
-                System.out.print(environment[col][row][entry]);
+                //System.out.print(environment[col][row][entry]);
             }
-            System.out.print("\n");
+            //System.out.print("\n");
         }
-        System.out.println("--------------------------------------------------------");
+        //System.out.println("--------------------------------------------------------");
     }
 
     private Direction coordinateToDirection(Coordinate coordinate) {

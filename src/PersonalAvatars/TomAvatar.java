@@ -41,7 +41,7 @@ public class TomAvatar extends SuperAvatar {
     private int iterateThrowLoop = 0;
 
     public TomAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, color);
+        super(id, perceptionRange, Color.GRAY);
         storePerceptionRange = perceptionRange;
 
     }
