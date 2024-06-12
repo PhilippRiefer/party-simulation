@@ -364,6 +364,15 @@ public class RobinAvatar extends SuperAvatar {
             environment[avatarSpaces.elementAt(0)[0]][avatarSpaces.elementAt(0)[1]][1] = avatarSpaces.elementAt(0)[2];
             avatarSpaces.removeElementAt(0);
         }
+        for (int row = 0; row < environment[0].length; row++) {
+            for (int col = 0; col < environment.length; col++) {
+                if(environment[col][row][1] == PersonalFieldType.EMPTY.ordinal()){
+                    environment[col][row][1] = PersonalFieldType.WALKED.ordinal();
+                }
+                
+            }
+        }
+
         for (SpaceInfo spaceInfo : spacesInRange) {
             Coordinate spaceRelPos = absToRelPos(spaceInfo.getRelativeToAvatarCoordinate());
             Coordinate spaceAbsPos = addCoordinates(position, spaceRelPos);
