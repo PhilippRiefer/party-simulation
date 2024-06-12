@@ -30,7 +30,8 @@ public class RobinAvatar extends SuperAvatar {
         WALKED(true, false),
         WALL(false, false),
         UNKNOWN(false, true),
-        REACHABLE(false, true);
+        REACHABLE(false, true),
+        AVATAR(false,false);
 
         private final boolean walkable;
         private final boolean unknown;
@@ -72,6 +73,7 @@ public class RobinAvatar extends SuperAvatar {
     private int currentNeed;
     private boolean newPath;
     private int stuckCycles;
+    private Vector<int[]> avatarSpaces;
 
     public RobinAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, Color.GREEN);
@@ -86,6 +88,7 @@ public class RobinAvatar extends SuperAvatar {
         extPositionValid = false;
         uncheckedSpaces = 0;
         path = new Vector<Direction>();
+        avatarSpaces = new Vector<int[]>();
         cycle = 0;
         currentNeed = -1;
         rng = new Random();
@@ -238,15 +241,15 @@ public class RobinAvatar extends SuperAvatar {
     }
 
     private void printEnv(int entry) {
-        //em.out.println("Entry: " + entry);
-        //System.out.println("--------------------------------------------------------");
+        System.out.println("Entry: " + entry);
+        System.out.println("--------------------------------------------------------");
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
-                //System.out.print(environment[col][row][entry]);
+                System.out.print(environment[col][row][entry]);
             }
-            //System.out.print("\n");
+            System.out.print("\n");
         }
-        //System.out.println("--------------------------------------------------------");
+        System.out.println("--------------------------------------------------------");
     }
 
     private Direction coordinateToDirection(Coordinate coordinate) {
@@ -357,11 +360,16 @@ public class RobinAvatar extends SuperAvatar {
     private void updateEnvironment(ArrayList<SpaceInfo> spacesInRange) {
         if (!extPositionValid)
             findExternalCoordinate(spacesInRange);
+        while (avatarSpaces.size() > 0) {
+            environment[avatarSpaces.elementAt(0)[0]][avatarSpaces.elementAt(0)[1]][1] = avatarSpaces.elementAt(0)[2];
+            avatarSpaces.removeElementAt(0);
+        }
         for (SpaceInfo spaceInfo : spacesInRange) {
             Coordinate spaceRelPos = absToRelPos(spaceInfo.getRelativeToAvatarCoordinate());
             Coordinate spaceAbsPos = addCoordinates(position, spaceRelPos);
             if (spaceInfo.getType() == SpaceType.AVATAR) {
-                setInEnvironment(spaceAbsPos, 1, PersonalFieldType.UNKNOWN.ordinal());
+                avatarSpaces.add(new int[]{spaceAbsPos.getX(), spaceAbsPos.getY(), getFromEnvironment(spaceAbsPos, 1)});
+                setInEnvironment(spaceAbsPos, 1, PersonalFieldType.AVATAR.ordinal());
             }
             else if (PFTValues[getFromEnvironment(spaceAbsPos, 1)].isUnknown()) {
                     setInEnvironment(spaceAbsPos, 0, spaceInfo.getType().ordinal());
@@ -568,8 +576,88 @@ public class RobinAvatar extends SuperAvatar {
             for (int[] need : needs) {
                 writer.write("\t" + STValues[need[0]] + ":\t" + need[1] + "\n");
             }
+            writer.write("Focussing on ");
+            if(state == State.FIND_WALL || state == State.FOLLOW_WALL || state == State.FIND_EMPTY || state == State.MOVE_TO_EMPTY){
+                writer.write("exploring\n");
+            }
+            else{
+                if(currentNeed == -1){
+                    writer.write("no paticular need\n");
+                }
+                else{
+                    writer.write(STValues[needs[currentNeed][0]].toString() + "\n");
+                }
+            }
+            if(stuckCycles == 0){
+                writer.write("Moved as planed.\n");
+            } else {
+                writer.write("Movement blocked for " + stuckCycles + " cycles.\n");
+            }
+
+            writer.write("Space Types:\n");
+            for (int row = 0; row < environment[0].length; row++) {
+                for (int col = 0; col < environment.length; col++) {
+                    writer.write(spaceTypeToChar(STValues[environment[col][row][0]]));
+                }
+                writer.write("\n");
+            }
+
+            writer.write("Personal Field Types:\n");
+            for (int row = 0; row < environment[0].length; row++) {
+                for (int col = 0; col < environment.length; col++) {
+                    writer.write(personalFieldTypeToChar(PFTValues[environment[col][row][1]]));
+                }
+                writer.write("\n");
+            }
+
+            writer.write("Spaces blocked by Avatars: ");
+            for (int[] avatarSpace : avatarSpaces) {
+                writer.write("(" + avatarSpace[0] + "," + avatarSpace[1] + "): " + personalFieldTypeToChar(PFTValues[avatarSpace[2]]));
+            }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private char spaceTypeToChar(SpaceType type) {
+        switch (type) {
+            case EMPTY:
+                return ('E');
+            case OBSTACLE:
+                return ('O');
+            case AVATAR:
+                return ('A');
+            case DANCEFLOOR:
+                return ('D');
+            case DJBOOTH:
+                return ('J');
+            case TOILET:
+                return ('T');
+            case BAR:
+                return ('B');
+            case SEATS:
+                return ('S');
+            default:
+                return ('?');
+        }
+    }
+
+    private char personalFieldTypeToChar(PersonalFieldType type) {
+        switch (type) {
+            case EMPTY:
+                return ('E');
+            case WALKED:
+                return ('W');
+            case WALL:
+                return ('O');
+            case UNKNOWN:
+                return ('U');
+            case REACHABLE:
+                return ('R');
+            case AVATAR:
+                return ('A');
+            default:
+                return ('?');
         }
     }
 
