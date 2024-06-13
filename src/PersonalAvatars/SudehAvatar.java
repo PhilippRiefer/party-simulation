@@ -7,18 +7,36 @@ import Environment.SpaceInfo;
 import Environment.SpaceType;
 
 import java.awt.Color;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class SudehAvatar extends SuperAvatar {
 
     private Random random;
     private int stayCounter;
+    private int moveCounter;
+    private int[][] seenEnvironment = new int[20][40];
+    private static final Map<String, Integer> TYPE = new HashMap<>();
+
+    static {
+        TYPE.put("BAR", 1);
+        TYPE.put("AVATAR", 2);
+        TYPE.put("DANCEFLOOR", 3);
+        TYPE.put("EMPTY", 4);
+        TYPE.put("DJBOOTH", 5);
+        TYPE.put("SEATS", 6);
+        TYPE.put("TOILET", 7);
+    }
 
     public SudehAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color); // leverage the super class to handle ID and perceptionRange
         this.random = new Random();
         this.stayCounter = 0;
+        this.moveCounter = 0;
     }
 
     @Override
@@ -82,12 +100,29 @@ public class SudehAvatar extends SuperAvatar {
                     continue;
             }
         }
+        //save visited spaces and create text file
+         visitedSpaces(spacesInRange);
+         createTxtFile();
+         
+
         // If no suitable action was found, move randomly
-        Direction randomDirection = randomDirection();
+        //Direction randomDirection = randomDirection();
         //System.out.println("Moving randomly in direction: " + randomDirection);
 
         // If no suitable action was found, move randomly
         return randomDirection();
+    }
+
+    private void visitedSpaces(ArrayList<SpaceInfo> spacesInRange) {
+        for (SpaceInfo space : spacesInRange) {
+            int x = space.getRelativeToAvatarCoordinate().getX();
+            int y = space.getRelativeToAvatarCoordinate().getY();
+            String typeAsString = space.getType().name();
+            int type = TYPE.getOrDefault(typeAsString, 8);
+            seenEnvironment[y][x] = type;
+        }
+        // Mark the current position of the avatar
+        seenEnvironment[10][20] = 9;  // Assuming the avatar is in the middle of the map
     }
 
     /**
@@ -146,15 +181,15 @@ public class SudehAvatar extends SuperAvatar {
             case AVATAR:
                 return 2; // Stay for .. turns
             case DANCEFLOOR:
-                return 20; // Stay for .. turns
+                return 2; // Stay for .. turns
             case DJBOOTH:
-                return 50; // Stay for .. turns
+                return 5; // Stay for .. turns
             case TOILET:
-                return 50; // Stay for .. turns
+                return 5; // Stay for .. turns
             case BAR:
-                return 50; // Stay for .. turns
+                return 5; // Stay for .. turns
             case SEATS:
-                return 50; // Stay for .. turns
+                return 5; // Stay for .. turns
             default:
                 return 0;
         }
@@ -168,5 +203,76 @@ public class SudehAvatar extends SuperAvatar {
     @Override
     public void setPerceptionRange(int perceptionRange) {
         super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
+    }
+
+    //to create the map of the vatar's movements in a .txt file
+    private void createTxtFile(){
+        String filePath = "SudehAvatarMap.txt";
+        try(FileWriter writer2 = new FileWriter(filePath)){
+            writer2.write("+=============================================================================+\n");
+            writer2.write("\t\t\t\t\t\t\tMap of SudehAvatar Activiies:\n");
+            writer2.write("-------------------------------------------------------------------------------\n");
+
+            writer2.write(" The avatar has moved " + moveCounter + " times.\n");
+            writer2.write("+=============================================================================+\n");
+
+            for(int i= 0; i< seenEnvironment.length; i++){
+                for(int j = 0; j< seenEnvironment[i].length; j++){
+                    char cellSymbol;
+                    switch (seenEnvironment[i][j]) {
+                        case 0:
+                            cellSymbol = '.';
+                            break;
+                        case 1:
+                            cellSymbol = 'B';
+                            break;
+                        case 2:
+                            cellSymbol = 'A';
+                            break;
+                        case 3:
+                            cellSymbol = 'F';
+                            break;
+                        case 4:
+                            cellSymbol = ' ';
+                            break;
+                        case 5:
+                            cellSymbol = 'D';
+                            break;
+                        case 6:
+                            cellSymbol = 'S';
+                            break;
+                        case 7:
+                            cellSymbol = 'T';
+                            break;
+                        case 8:
+                            cellSymbol = 'X';
+                            break;
+                        case 9:
+                            cellSymbol = 'O';  // Avatar's current position
+                            break;
+                        default:
+                            cellSymbol = '?';
+                            break;
+                    }
+                    writer2.write(cellSymbol + " ");
+                } 
+                writer2.write("\n");             
+            }
+            writer2.write("+=============================================================================+\n");
+            writer2.write("\n\t  Legend\n");
+            writer2.write("------------------\n");
+            writer2.write("1 -> B:\tBAR\n");
+            writer2.write("2 -> A:\tAVATAR\n");
+            writer2.write("3 -> F:\tDANCEFLOOR\n");
+            writer2.write("4 ->  :\tEMPTY\n");
+            writer2.write("5 -> D:\tDJBOOTH\n");
+            writer2.write("6 -> S:\tSEATS\n");
+            writer2.write("7 -> T:\tTOILET\n");
+            writer2.write("8 -> X:\tOBSTACLE\n");
+            
+        }catch (IOException e){
+            System.err.println("Error writing to file: " + filePath);
+            e.printStackTrace();
+        }
     }
 }
