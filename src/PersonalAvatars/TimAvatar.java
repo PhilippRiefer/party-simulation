@@ -1,4 +1,4 @@
-// package PersonalAvatars;
+package PersonalAvatars;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-// package PersonalAvatars;
+package PersonalAvatars;
 
 /********************************************
  * Author:  Ole
@@ -19,6 +19,9 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import AvatarInterface.SuperAvatar;
+
 import java.util.HashMap;
 import java.util.Map;
 

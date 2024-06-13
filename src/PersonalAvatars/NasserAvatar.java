@@ -1,4 +1,4 @@
-// package PersonalAvatars;
+package PersonalAvatars;
 
 import java.awt.Color;
 import java.util.ArrayList;
