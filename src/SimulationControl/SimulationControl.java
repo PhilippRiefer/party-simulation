@@ -47,19 +47,23 @@ public class SimulationControl {
                 e.printStackTrace();
             }
         }
+        // Explicitly instantiate the avatars
+        // SuperAvatar sudeh1 = new SudehAvatar(nextAvatarID++, perceptionRange, (new Color(0, 77, 64)));
+        // //SuperAvatar sudeh2 = new SudehAvatar(nextAvatarID++, perceptionRange, (new Color(10, 77, 64)));
 
-        // Color color = Color.orange;
+        // SuperAvatar paola1 = new PaolaAvatar(nextAvatarID++, perceptionRange, (new Color(255, 0, 0)));
 
-        // SuperAvatar Tom = new TomAvatar(nextAvatarID++, perceptionRange, color);
-        // SuperAvatar Tom2 = new TomAvatar2(nextAvatarID++, perceptionRange, color);
+        // avatars.add(paola1);
 
-        // avatars.add(Tom2);
+        // avatars.add(sudeh1);
+        //avatars.add(sudeh2);
+        
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
         }
     }
-
+    
     public static void wait(int ms) {
         try {
             Thread.sleep(ms);
@@ -82,7 +86,7 @@ public class SimulationControl {
                 boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
                 avatar.setHasMoved(hasMoved);
                 System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
-                wait(1);
+                wait(10);
             } catch (Exception e) {
                 System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
                 e.printStackTrace();
@@ -90,4 +94,3 @@ public class SimulationControl {
         }
     }
 }
-

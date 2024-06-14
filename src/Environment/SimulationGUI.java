@@ -7,10 +7,10 @@ import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.Spring;
-import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
 
 /**
+ *  authors: Paola, Ole, Soodeh
+ * 
  * The SimulationGUI class represents the graphical user interface for the
  * nightclub simulation.
  * It provides a grid-based environment for the simulation and allows the user
@@ -20,12 +20,9 @@ public class SimulationGUI {
 
     // Sizes of the grid
     // --------------------------------------
-    final int LINES_SMALL = 10;// y
-    final int COLUMNS_SMALL = 20;// x
     final int LINES_MEDIUM = 20;// y
     final int COLUMNS_MEDIUM = 40;// x
-    final int LINES_LARGE = 40;// y
-    final int COLUMNS_LARGE = 80;// x
+    
     private JPanel environmentLeft;
     private int numCols;
     private int numRows;
@@ -169,7 +166,6 @@ public class SimulationGUI {
         cellToRepaint.repaint();
     }
 
-    // TODO
     public void paintComponent(int x, int y, Color color) {
         if (color == null) {
             color = Color.BLUE; // Default color is blue
@@ -179,8 +175,6 @@ public class SimulationGUI {
         cellToRepaint.setBackground(color);
         cellToRepaint.repaint();
     }
-
-
 
 
     public void eraseAvatar(Coordinate coordinate, SpaceType spaceType) {
@@ -194,29 +188,26 @@ public class SimulationGUI {
         JPanel cellToRepaint = gridCells[coordinate.getX()][coordinate.getY()];
        
 
-        // Set the cell's background color to the default color (white)
         switch (spaceType) {
             case DANCEFLOOR:
-                cellToRepaint.setBackground(Color.YELLOW);
+                cellToRepaint.setBackground(new Color(209, 242, 235));
                 break;
             case DJBOOTH:
-                cellToRepaint.setBackground(Color.PINK);
+                cellToRepaint.setBackground(new Color(206, 147, 216 ));
                 break;
             case TOILET:
-                cellToRepaint.setBackground(Color.GREEN);
+                cellToRepaint.setBackground(new Color(79, 195, 247));
                 break;
             case BAR:
-                cellToRepaint.setBackground(Color.BLACK);
+                cellToRepaint.setBackground(new Color(161, 136, 127  ));
                 break;
             case SEATS:
-                cellToRepaint.setBackground(Color.CYAN);
+                cellToRepaint.setBackground(new Color(255, 245, 157  ));
                 break;
             default:
                 cellToRepaint.setBackground(Color.WHITE);
                 break;
         }
-        // cellToRepaint.setBackground(Color.WHITE);
-        // cellToRepaint.setBackground(Color.GRAY);
         
         // Set the cell's border to the default border (light gray)
         cellToRepaint.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));

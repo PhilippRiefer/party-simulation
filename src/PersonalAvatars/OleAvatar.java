@@ -19,10 +19,13 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import AvatarInterface.SuperAvatar;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import AvatarInterface.SuperAvatar;
+// import AvatarInterface.SuperAvatar;
 
 public class OleAvatar extends SuperAvatar {
     public OleAvatar(int id, int perceptionRange, Color color) {
@@ -313,7 +316,7 @@ public class OleAvatar extends SuperAvatar {
         }
         // output of the saved map as console output and as txt file
         // printForConsole();
-        createTxtFile();
+         createTxtFile();
     }
 
     // Output of the saved map as
@@ -321,31 +324,31 @@ public class OleAvatar extends SuperAvatar {
     // ----------------------------------
     private void printForConsole() {
         // output of the saved map
-        System.out.println("+=============================================================================+");
-        System.out.println("\t\t\t      Map saved in Ole's head:");
-        System.out.println("-------------------------------------------------------------------------------");
+        //System.out.println("+=============================================================================+");
+        //System.out.println("\t\t\t      Map saved in Ole's head:");
+        //System.out.println("-------------------------------------------------------------------------------");
         // write how the avatar behaves
         if (CHOSEN_BEHAVIOUR == 0) {
             // police
-            System.out.println(" Option 1: Imitate a police officer and interrogate conspicuous avatars.");
-            System.out.println(" The avatar has moved " + run + " times and interrogated " + suspicious
-                    + " suspects.");
+            //System.out.println(" Option 1: Imitate a police officer and interrogate conspicuous avatars.");
+            //System.out.println(" The avatar has moved " + run + " times and interrogated " + suspicious
+            //        + " suspects.");
         } else {
             // destination Bar
-            System.out.println(" Option 2: Search the Bar and get a drink.");
-            System.out
-                    .println(" The avatar has moved " + run + " times and drank " + drinks + " drinks.");
+            //System.out.println(" Option 2: Search the Bar and get a drink.");
+            //System.out
+            //        .println(" The avatar has moved " + run + " times and drank " + drinks + " drinks.");
         }
-        System.out.println("+=============================================================================+");
+        //System.out.println("+=============================================================================+");
         for (int i = 0; i < seenEnvironment.length; i++) {
             for (int j = 0; j < seenEnvironment[i].length; j++) {
                 // give a symbol as default value if the space is not visited yet
                 char cellSymbol = seenEnvironment[i][j] == 0 ? '.' : Character.forDigit(seenEnvironment[i][j], 10);
-                System.out.print(cellSymbol + " ");
+                //System.out.print(cellSymbol + " ");
             }
-            System.out.println();
+            //System.out.println();
         }
-        System.out.println("+=============================================================================+");
+        //System.out.println("+=============================================================================+");
     }
 
     // Create a txt file and save the

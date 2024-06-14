@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
+ * authors: Paola, Ole, Soodeh
+ * 
  * The Environment class represents the environment in which the party
  * simulation takes place.
  * It manages the room, the simulation GUI, and the interactions between them.
@@ -46,12 +48,12 @@ public class Environment {
         for(int i = 0; i < 4; ++i){
             int randomX = random.nextInt(1, 6);
             int randomY = random.nextInt(14, 19);
-            view.paintComponent(randomX, randomY, Color.CYAN);
+            view.paintComponent(randomX, randomY, new Color(255, 245, 157  ));
             setSpaceType(randomX, randomY, SpaceType.SEATS);
 
             randomX = random.nextInt(31, 38);
             randomY = random.nextInt(1, 6);
-            view.paintComponent(randomX, randomY, Color.CYAN);
+            view.paintComponent(randomX, randomY, new Color(255, 245, 157  ));
             
             setSpaceType(randomX, randomY, SpaceType.SEATS);
         }
@@ -60,13 +62,13 @@ public class Environment {
     public void paintBar(){
         for(int x = 1; x <= 2; ++x){
             for( int y = 7; y <= 12; ++y){
-                view.paintComponent(x, y, Color.BLACK);
+                view.paintComponent(x, y, new Color(161, 136, 127 ));
                 setSpaceType(x, y, SpaceType.BAR);
             }
         }
         for(int x = 37; x <= 38; ++x){
             for( int y = 7; y <= 12; ++y){
-                view.paintComponent(x, y, Color.BLACK);
+                view.paintComponent(x, y, new Color(161, 136, 127  ));
                 setSpaceType(x, y, SpaceType.BAR);
             }
         }
@@ -74,7 +76,7 @@ public class Environment {
     public void paintDancefloor(){
         for(int x = 13; x <= 21; ++x){
             for( int y = 4; y <= 12; ++y){
-                view.paintComponent(x, y, Color.YELLOW);
+                view.paintComponent(x, y, new Color(209, 242, 235));
                 setSpaceType(x, y, SpaceType.DANCEFLOOR);
             }
         }
@@ -82,14 +84,14 @@ public class Environment {
     public void paintDJBooth(){
         for(int x = 14; x <= 20; ++x){
             for( int y = 1; y <= 2; ++y){
-                view.paintComponent(x, y, Color.PINK);
+                view.paintComponent(x, y, new Color(206, 147, 216 ));
                 setSpaceType(x, y, SpaceType.DJBOOTH);
             }
         }
     }
     public void paintToilet(){
         for(int x = 35; x <= 38; ++x){
-            view.paintComponent(x, 18, Color.GREEN);
+            view.paintComponent(x, 18, new Color(79, 195, 247));
             setSpaceType(x, 18, SpaceType.TOILET);
         }
     }
@@ -136,8 +138,8 @@ public class Environment {
      * 
      * @param avatarID the ID of the avatar to be moved
      * @param dir      the direction in which to move the avatar
+     * @param color    the color of the avatar
      * @return true if the avatar was successfully moved, false otherwise
-     * @throws Exception 
      */
     public boolean moveAvatar(int avatarID, Direction dir, Color color) {
         Coordinate currentPos = model.getAvatarLocation(avatarID);
@@ -173,9 +175,14 @@ public class Environment {
 
             // Erase the avatar from the old position
             try {
-                model.setSpace(new Coordinate(oldX, oldY), SpaceType.EMPTY);
+                if (oldSpaceType == SpaceType.EMPTY) {
+                    model.setSpace(new Coordinate(oldX, oldY), SpaceType.EMPTY);
+                }
+                else{
+                    model.setSpace(new Coordinate(oldX, oldY), oldSpaceType);
+                }
+                
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             view.eraseAvatar(new Coordinate(oldX, oldY), oldSpaceType);
