@@ -403,6 +403,8 @@ public class RobinAvatar extends SuperAvatar {
         }
     }
 
+    
+
     private Direction findWall() {
         setInEnvironment(position, 1, PersonalFieldType.WALKED.ordinal());
         if (getFromEnvironment(startDirection, 1) == PersonalFieldType.WALL.ordinal()) {
@@ -415,6 +417,8 @@ public class RobinAvatar extends SuperAvatar {
         }
     }
 
+
+    //TODO Vortrag............................................................................................
     private Direction followWall() {
         setInEnvironment(position, 1, PersonalFieldType.WALKED.ordinal());
         for (int i = 0; i < 4; i++) {
@@ -472,6 +476,9 @@ public class RobinAvatar extends SuperAvatar {
         path.removeElementAt(0);
         return lastDirection;
     }
+
+    
+//TODO Vortrag............................................................................................
 
     private boolean findPath(int goal, int goalType) {
         boolean retVal = true;
@@ -639,7 +646,7 @@ public class RobinAvatar extends SuperAvatar {
     private char spaceTypeToChar(SpaceType type) {
         switch (type) {
             case EMPTY:
-                return ('E');
+                return (' ');
             case OBSTACLE:
                 return ('O');
             case AVATAR:
@@ -670,7 +677,7 @@ public class RobinAvatar extends SuperAvatar {
             case WALL:
                 return ('O');
             case UNKNOWN:
-                return ('U');
+                return (' ');
             case REACHABLE:
                 return ('R');
             case AVATAR:
