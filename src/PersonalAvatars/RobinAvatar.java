@@ -27,6 +27,7 @@ public class RobinAvatar extends SuperAvatar {
 
     enum PersonalFieldType {
         EMPTY(true, false),
+        JUST_SEEN(true, false),
         WALKED(true, false),
         WALL(false, false),
         UNKNOWN(false, true),
@@ -366,8 +367,11 @@ public class RobinAvatar extends SuperAvatar {
         }
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
-                if(environment[col][row][1] == PersonalFieldType.EMPTY.ordinal()){
+                if(environment[col][row][1] == PersonalFieldType.JUST_SEEN.ordinal()){
                     environment[col][row][1] = PersonalFieldType.WALKED.ordinal();
+                }
+                if(environment[col][row][1] == PersonalFieldType.EMPTY.ordinal()){
+                    environment[col][row][1] = PersonalFieldType.JUST_SEEN.ordinal();
                 }
                 
             }
@@ -414,7 +418,8 @@ public class RobinAvatar extends SuperAvatar {
     private Direction followWall() {
         setInEnvironment(position, 1, PersonalFieldType.WALKED.ordinal());
         for (int i = 0; i < 4; i++) {
-            if (getFromEnvironment(rotate90Clkw(lastWall, i), 1) == PersonalFieldType.EMPTY.ordinal()) {
+            int entry = getFromEnvironment(rotate90Clkw(lastWall, i), 1);
+            if (entry == PersonalFieldType.EMPTY.ordinal() || entry == PersonalFieldType.JUST_SEEN.ordinal()) {
                 lastDirection = rotate90Clkw(lastWall, i);
                 lastWall = rotate90Clkw(lastWall, 3 + i);
                 return lastDirection;
@@ -658,6 +663,8 @@ public class RobinAvatar extends SuperAvatar {
         switch (type) {
             case EMPTY:
                 return ('E');
+            case JUST_SEEN:
+                return ('J');
             case WALKED:
                 return ('W');
             case WALL:
