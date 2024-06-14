@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.Comparator;
 import AvatarInterface.*;
 import java.awt.Color;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 
 public class TomAvatar extends SuperAvatar {
@@ -16,6 +18,7 @@ public class TomAvatar extends SuperAvatar {
     private ArrayList<SpaceInfo> toiletList = new ArrayList<>();
     private ArrayList<SpaceInfo> barList = new ArrayList<>();
     private ArrayList<SpaceInfo> seatsList = new ArrayList<>();
+    private char [][] mapData = new char[20][40];
     private int storePerceptionRange = 0;
     private int phase = 0, stepCounter = 0, directionCounter = 0;
     private Direction myDirection = Direction.STAY;
@@ -76,7 +79,7 @@ public class TomAvatar extends SuperAvatar {
 
         if (spacesInRange.get(1).getType() == SpaceType.OBSTACLE) {
             if (spacesInRange.get(3).getType() == SpaceType.OBSTACLE) {
-                phase = 1;
+                phase = 2;
                 return Direction.STAY;
             }
             return Direction.UP;
@@ -92,7 +95,7 @@ public class TomAvatar extends SuperAvatar {
         if (spacesInRange.get(4).getType() == SpaceType.OBSTACLE &&
                 spacesInRange.get(6).getType() == SpaceType.OBSTACLE) {
             stepCounter = 0;
-            phase = 2;
+            phase = 3;
         }
 
         switch (directionCounter) {
@@ -361,14 +364,86 @@ public boolean conflictDetected(ArrayList<SpaceInfo> spacesInRange, Direction di
     return false;
 }
 
+public char getFirstLetter(SpaceType locationType) {
+        char firstLetter = 'U';  // Standardwert für undefinierte Typen
+    
+        // Prüfen, ob der übergebene Typ "OBSTACLE" ist
+
+        switch (locationType) {
+            case OBSTACLE:
+                firstLetter = 'O';
+            break;
+            case DANCEFLOOR:
+                firstLetter = 'D';
+            break;
+            case BAR:
+                firstLetter = 'B';
+            break;
+            case SEATS:
+                firstLetter = 'S';
+            break;
+            case DJBOOTH:
+                firstLetter = 'J';
+            break;
+            case TOILET:
+                firstLetter = 'T';
+            break;
+            case EMPTY:
+                firstLetter = ' ';
+            break;
+            case AVATAR:
+                firstLetter = 'A';
+            break;       
+        }
+        return firstLetter;
+    }
+
+	
+ public void initializeMap() {
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 40; j++) {
+                mapData[i][j] = '.';  // Füllt die Map mit 'U' für undefined
+            }
+        }
+    }
+
+
+    public void createMapFile() {
+        try (FileWriter writer = new FileWriter("mentalMap.txt")) {
+            for (int i = 0; i < mapData.length; i++) {
+                for (int j = 0; j < mapData[i].length; j++) {
+                    writer.write(mapData[i][j] + " ");
+                }
+                writer.write("\n");
+            }
+            //System.out.println("Map file created successfully.");
+        } catch (IOException e) {
+            System.err.println("Error while creating the map file: " + e.getMessage());
+        }
+    }
+
+    public void updateMapData(Coordinate sourroundCoordinate, char locationType) {
+        if (sourroundCoordinate.getX() >= 0 && sourroundCoordinate.getX() < 40 && sourroundCoordinate.getY() >= 0 && sourroundCoordinate.getY() < 20) {
+            mapData[sourroundCoordinate.getY()][sourroundCoordinate.getX()] = locationType;
+        }
+        //createMapFile(); // Aktualisiert die map.txt Datei nach jeder Änderung
+    }
+
+
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
 
+
         switch (phase) {
             case 0:
+                initializeMap();
+                createMapFile();
+                phase = 1;
+            break;
+            case 1:
                 myDirection = goToStart(spacesInRange);
                 break;
-            case 1:
+            case 2:
                 createMentalMap(spacesInRange);
                 myDirection = startMapWalk(spacesInRange);       
                 myDirectionMoveBack = hitAvatarMoveAway(spacesInRange);
@@ -376,12 +451,12 @@ public boolean conflictDetected(ArrayList<SpaceInfo> spacesInRange, Direction di
                 if(myDirectionMoveBack != Direction.STAY)
                     return myDirectionMoveBack;
                 break;
-            case 2:
+            case 3:
                 removeDuplicateCoordinates();
                 sortMentalMapListByType(spacesInRange);
-                phase = 3;
+                phase = 4;
                 break;
-            case 3:
+            case 4:
                 myDirection = takingDecision(spacesInRange);
                 if(conflictDetected(spacesInRange, myDirection) == true){         
                     if(merkerDirection == 1){
@@ -390,10 +465,13 @@ public boolean conflictDetected(ArrayList<SpaceInfo> spacesInRange, Direction di
                     myDirection = goDancing();    
                 }
                 break;
-
-            default:
-                break;
         }
+
+        for(int i = 0; i < spacesInRange.size(); i++){
+            updateMapData(spacesInRange.get(i).getRelativeToAvatarCoordinate(), getFirstLetter(spacesInRange.get(i).getType()));
+        }
+        createMapFile();
+
         return myDirection;
     }
 
