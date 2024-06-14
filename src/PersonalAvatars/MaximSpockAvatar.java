@@ -31,6 +31,8 @@ public class MaximSpockAvatar extends SuperAvatar {
     boolean notMovingToObjective = true;
     boolean hasPreComputed = false;
     boolean hasWaitedOneTurnForOtherAvatarToLeave = false;
+    
+    boolean allSpacesScouted = false;
 
     int stepOfTheGivenDirectionList = 0;
     ArrayList<Direction> listOfDirections = new ArrayList<Direction>();
@@ -104,7 +106,10 @@ public class MaximSpockAvatar extends SuperAvatar {
                 return Direction.STAY;
             }
         }
-        else if(stepOfTheGivenDirectionList >= listOfDirections.size()){    // in your Turn neues Ziel suchen! 
+        else if(stepOfTheGivenDirectionList >= listOfDirections.size()){    // ZIEL ERREICHT -> NEUES ZIEL SUCHEN
+            if(currentObjective != null){
+                rewardsForArrivingAtObjective(currentObjective);
+            }
             notMovingToObjective = true;
             hasPreComputed = false;
             return Direction.STAY;
@@ -125,6 +130,27 @@ public class MaximSpockAvatar extends SuperAvatar {
             }
         }
     }
+
+    void rewardsForArrivingAtObjective(SpaceType currentObjective){
+        switch (currentObjective) {
+            case TOILET:
+                bowelMovement = MINSTAT;
+                urination = MINSTAT;
+                break;
+           
+            case BAR:
+                hydration = MAXSTAT;
+                break;
+        
+            case SEATS:
+                energy = MAXSTAT;
+                break;
+
+            default:
+                
+                break;
+        }  
+    } 
 
     Boolean checkIfNextStepOkay(Direction stepOfList, Coordinate personalCoordinates) {
         if (stepOfList == Direction.RIGHT) {
@@ -186,11 +212,14 @@ public class MaximSpockAvatar extends SuperAvatar {
     }
 
     ArrayList<Direction> computeRoute(Coordinate objectiveCoordinates, Coordinate personalCoordinates){
+        System.out.println("---- computeRoute() ----");
         ArrayList<Direction> listOfDirectionsToObjective = new ArrayList<Direction>();
         int moveX = 0;
         int moveY = 0;
+        boolean cantMoveHorizontal = false;
+        boolean cantMoveVertical = false;
 
-        while(objectiveCoordinates.getX() != personalCoordinates.getX() + moveX){
+        while(!cantMoveHorizontal){
             if (objectiveCoordinates.getX() < personalCoordinates.getX() + moveX
                     && clubMemory[personalCoordinates.getX() + moveX - 1][personalCoordinates.getY()] != SpaceType.OBSTACLE) { // objective links, im vgl zu avatar -> avatar nach links gehen
                 listOfDirectionsToObjective.add(Direction.LEFT);
@@ -201,10 +230,14 @@ public class MaximSpockAvatar extends SuperAvatar {
                 moveX++;
             }
             else{
+                cantMoveHorizontal = true;
                 break;
             }
+            if(objectiveCoordinates.getX() != personalCoordinates.getX() + moveX){
+                cantMoveHorizontal = true;
+            }
         }
-        while(objectiveCoordinates.getY() != personalCoordinates.getY() + moveY){
+        while(!cantMoveVertical){
             if(objectiveCoordinates.getY() < personalCoordinates.getY() + moveY
                     && clubMemory[personalCoordinates.getX() + moveX][personalCoordinates.getY() + moveY - 1] != SpaceType.OBSTACLE) { // objective oben, im vgl zu avatar -> avatar nach oben gehen
                 listOfDirectionsToObjective.add(Direction.UP);
@@ -215,7 +248,11 @@ public class MaximSpockAvatar extends SuperAvatar {
                 moveY++;
             }
             else{
+                cantMoveVertical = true;
                 break;
+            }
+            if(objectiveCoordinates.getY() != personalCoordinates.getY() + moveY){
+                cantMoveVertical = true;
             }
         }
 
