@@ -66,7 +66,7 @@ public class RobinAvatar extends SuperAvatar {
     private boolean extPositionValid;
     private PersonalFieldType[] PFTValues = PersonalFieldType.values();
     private SpaceType[] STValues = SpaceType.values();
-    private int uncheckedSpaces;
+    //private int uncheckedSpaces;
     private Vector<Direction> path;
     private int cycle;
     private int[][] needs;
@@ -87,7 +87,7 @@ public class RobinAvatar extends SuperAvatar {
         startDirection = Direction.UP;
         extPosition = new Coordinate(0, 0);
         extPositionValid = false;
-        uncheckedSpaces = 0;
+        //uncheckedSpaces = 0;
         path = new Vector<Direction>();
         avatarSpaces = new Vector<int[]>();
         cycle = 0;
@@ -419,14 +419,17 @@ public class RobinAvatar extends SuperAvatar {
 
 
     //TODO Vortrag............................................................................................
+
+    //Die nächste Richtung zurückgeben, um an der Wand entlang zu laufen
     private Direction followWall() {
-        setInEnvironment(position, 1, PersonalFieldType.WALKED.ordinal());
-        for (int i = 0; i < 4; i++) {
-            int entry = getFromEnvironment(rotate90Clkw(lastWall, i), 1);
-            if (entry == PersonalFieldType.EMPTY.ordinal() || entry == PersonalFieldType.JUST_SEEN.ordinal()) {
-                lastDirection = rotate90Clkw(lastWall, i);
-                lastWall = rotate90Clkw(lastWall, 3 + i);
-                return lastDirection;
+        setInEnvironment(position, 1, PersonalFieldType.WALKED.ordinal()); //aktuelles Feld als betreten markieren
+        for (int i = 0; i < 4; i++) { //alle vier Richtungen durchgehen
+            int entry = getFromEnvironment(rotate90Clkw(lastWall, i), 1); //die angrenzenden Felder im Uhrzeigersinn angefangen
+            //mit der letzten Wand durchgehen
+            if (entry == PersonalFieldType.EMPTY.ordinal() || entry == PersonalFieldType.JUST_SEEN.ordinal()) { //In die erste freie Richtung bewegen
+                lastDirection = rotate90Clkw(lastWall, i); //Die aktuell überprüfte Richtung ist die neue Richtung
+                lastWall = rotate90Clkw(lastWall, 3 + i); //Die letzte Wand liegt links von der neuen Richtung
+                return lastDirection; //Die neue Richtung zurückgeben
             }
         }
         // printEnv();
@@ -480,25 +483,31 @@ public class RobinAvatar extends SuperAvatar {
     
 //TODO Vortrag............................................................................................
 
+//Den kürzesten Weg zum nächsten Feld finden, bei dem Eintrag goalType den Wert goal hat
     private boolean findPath(int goal, int goalType) {
-        boolean retVal = true;
-        destValid = false;
+        boolean retVal = true; //Standardmäßig true zurückgeben, außer es konnte kein Weg gefunden werden
+        destValid = false; //Die destination wird erst valid gesetzt wenn das nächste Feld gefunden wurde
+
+        //pathfinding array auf 0 setzen
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
                 environment[col][row][2] = 0;
             }
         }
         // printEnv(2);
-        setInEnvironment(position, 2, 1);
-        if (fillAround(position, 2, goal, goalType)) {
+        setInEnvironment(position, 2, 1); //Beim aktuellen Feld 1 eintragen
+        if (fillAround(position, 2, goal, goalType)) { //angrenzend 2 eintragen
             int i = 2;
-            for (i = 2; i <= environmentHeight * environmentWidth && !destValid; i++) {
-                boolean keepGoing = false;
+            for (i = 2; i <= environmentHeight * environmentWidth && !destValid; i++) { //Abbruchbedingung wenn ein Ziel gfunden wurde oder
+                //so viele Zahöen eingetragen wurden, dass schon alles voll sein müsste
+                boolean keepGoing = false; //muss in den inneren Schleifen auf true gesetzt werden, damit es weiter geht
+                
+                //Alle Felder durchlaufen
                 for (int row = 0; row < environment[0].length && !destValid; row++) {
                     for (int col = 0; col < environment.length && !destValid; col++) {
-                        if (environment[col][row][2] == i)
-                            if (fillAround(new Coordinate(col, row), i + 1, goal, goalType))
-                                keepGoing = true;
+                        if (environment[col][row][2] == i) //Wenn die aktuelle Zahl gefunden wurde
+                            if (fillAround(new Coordinate(col, row), i + 1, goal, goalType)) //die angrenzenden Felder mit der nächsten Zahl füllen
+                                keepGoing = true; //wenn irgendetwas eingetragen wurde geht es weiter, sonst ist alles voll ohne dass ein Weg gefunden wurde
                     }
                 }
                 if (!keepGoing) {
@@ -514,14 +523,13 @@ public class RobinAvatar extends SuperAvatar {
                 retVal = false;
             }
             // System.out.println("Save Path"); //save Path
-            path.clear();
-            for (i--; i > 0; i--) {
-                for (int j = 0; j < 4; j++) {
-                    Coordinate space = addCoordinates(destination,
-                            directionToCoordinate(rotate90Clkw(Direction.UP, j)));
-                    if (getFromEnvironment(space, 2) == i) {
-                        path.add(0, rotate90Clkw(Direction.UP, j + 2));
-                        destination = space;
+            path.clear(); //Neuen Weg berechnen, erstmal den alten leeren
+            for (i--; i > 0; i--) { //von der letzen eingetragenen Zahl rückwärts gehen
+                for (int j = 0; j < 4; j++) { //Alle angrenzenden Felder durchghen
+                    Coordinate space = addCoordinates(destination, directionToCoordinate(rotate90Clkw(Direction.UP, j))); //aktulles Feld zwischenspeichern
+                    if (getFromEnvironment(space, 2) == i) {//auf aktuell geprüfte Zahl prüfen
+                        path.add(0, rotate90Clkw(Direction.UP, j + 2)); //Die entsprechende Richtung dem Path hinzufügen
+                        destination = space; //Das Feld ist das neu Ziel zu dem der Weg berechnet werden muss
                         break;
                     }
                 }
