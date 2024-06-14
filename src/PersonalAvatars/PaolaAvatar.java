@@ -143,7 +143,7 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
         for(SpaceInfo space:spacesInRange){
             SpaceType spaceType = space.getType();
             if(spaceType != SpaceType.AVATAR){
-                Coordinate spaceCoordinate = space.getAbsoluteCoordinate();
+                Coordinate spaceCoordinate = space.getRelativeToAvatarCoordinate();
                 internalMap[spaceCoordinate.getX()][spaceCoordinate.getY()] = spaceType;
             }
             
