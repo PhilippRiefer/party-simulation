@@ -3,6 +3,8 @@ package PersonalAvatars;
 import AvatarInterface.*;
 import Environment.*;
 import java.awt.Color;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -23,7 +25,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 	Coordinate myCoords = new Coordinate(0, 0); 		// my Coords
 	Direction nextMove;			// saved direction for the next move
- 	SpaceType[][] Mind = new SpaceType[100][100];
+ 	SpaceType[][] Mind = new SpaceType[39][39];
 	FoundObjects objectsfound = new FoundObjects(); // 5 needs implemented
 	Boolean everySecondRound = false;		// zeigt an ob eseine gerade oder ungerade runde ist. 
 
@@ -63,6 +65,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 	@Override
 	public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
+		createTxtFile();
 
 		ObjectNeeded();
 		try {
@@ -347,6 +350,76 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		}
 	}
 
+	    private void createTxtFile() {
+        // Write the visited grid to a text file -> "OlesVisitedSpaces.txt"
+        try (FileWriter writer = new FileWriter("IvensMindmap.txt")) {
+            // writer.write(" The avatar moves " + desicion + "\n");
+            writer.write("+=============================================================================+\n");
+            writer.write("\t\t\t\t\t\t\tMap saved in Iven's head:\n");
+            writer.write("-------------------------------------------------------------------------------\n");
+            // show which characteristic the avatar has
+                writer.write(" need to Talk" + needToTalk + "\n");
+				writer.write(" need to Dance" + needToDance + "\n");
+				writer.write(" need to Rest" + needToRest + "\n");
+				writer.write(" need to Drink" + needToDrink + "\n");
+				writer.write("need to Pee" + needToPee + "\n");
+				writer.write(" need to make Music" + needToMusic + "\n");
+
+            writer.write("+=============================================================================+\n");
+            // run through the array with the seen environment and replace the integer
+            // values with more understandable char values
+			char cellSymbol;
+            for (int i = 0; i < Mind.length; i++) {
+                for (int j = 0; j < Mind[i].length; j++) {
+                    
+					if(Mind[i][j]== null){
+						cellSymbol = '?';
+					}
+					else if(Mind[i][j] == SpaceType.BAR){
+						cellSymbol = 'B';
+					}
+					else if(Mind[i][j]== SpaceType.DANCEFLOOR){
+						cellSymbol = 'D';
+					}
+					else if(Mind[i][j]== SpaceType.EMPTY){
+						cellSymbol = ' ';
+					}
+					else if(Mind[i][j]== SpaceType.DJBOOTH){
+						cellSymbol = 'J';
+					}
+					else if(Mind[i][j]== SpaceType.SEATS){
+						cellSymbol = 'S';
+					}
+					else if(Mind[i][j]== SpaceType.TOILET){
+						cellSymbol = 'T';
+					}
+					else if(Mind[i][j]== SpaceType.OBSTACLE){
+						cellSymbol = 'X';
+					}
+					else{
+						cellSymbol = 'E';
+					}
+                    writer.write(cellSymbol + " ");
+                }
+                writer.write("\n");
+            }
+            // also create a legend to explain the char values
+            writer.write("+=============================================================================+\n");
+            writer.write("\n\t  Legend:\n");
+            writer.write("------------------\n");
+            writer.write("1 -> B:\tBAR\n");
+            //writer.write("2 -> A:\tAVATAR\n");
+            writer.write("3 -> D:\tDANCEFLOOR\n");
+            writer.write("4 ->  :\tEMPTY\n");
+            writer.write("5 -> J:\tDJBOOTH\n");
+            writer.write("6 -> S:\tSEATS\n");
+            writer.write("7 -> T:\tTOILET\n");
+            writer.write("8 -> X:\tOBSTACLE\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
 	private class BorderException extends Exception {
 		public BorderException(String arg) {
 			super(arg);
