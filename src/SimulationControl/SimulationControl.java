@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import Environment.*;
 import PersonalAvatars.*;
-import PersonalAvatars.NasserAvatar;
 import AvatarInterface.*;
 import java.util.Random;
 import org.reflections.Reflections;
@@ -33,12 +32,7 @@ public class SimulationControl {
         environment = new Environment();
         System.out.println("environment created");
 
-
-        /*Reflections reflections = new Reflections("PersonalAvatars");
-=======
-        /* 
         Reflections reflections = new Reflections("PersonalAvatars");
-
 
         for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
             try {
@@ -52,64 +46,24 @@ public class SimulationControl {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        // Explicitly instantiate the avatars
+        // SuperAvatar sudeh1 = new SudehAvatar(nextAvatarID++, perceptionRange, (new Color(0, 77, 64)));
+        // //SuperAvatar sudeh2 = new SudehAvatar(nextAvatarID++, perceptionRange, (new Color(10, 77, 64)));
 
-        }*/
+        // SuperAvatar paola1 = new PaolaAvatar(nextAvatarID++, perceptionRange, (new Color(255, 0, 0)));
 
-        Color color = Color.orange;
-        Color color2 = Color.BLUE;
-        Color color3 = Color.RED;
+        // avatars.add(paola1);
 
-        SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange,Color.orange);
-        SuperAvatar Nasser1 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.black);
-        SuperAvatar Nasser2 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.BLUE);
-        SuperAvatar Nasser3 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.gray);
-        SuperAvatar Nasser4 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.green);
-        SuperAvatar Nasser5 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.cyan);
-        SuperAvatar Nasser6 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.YELLOW);
-        SuperAvatar Nasser7 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.LIGHT_GRAY);
-        SuperAvatar Nasser8 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.PINK);
-        SuperAvatar Nasser9 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.ORANGE);
-
-        avatars.add(Nasser);
-        avatars.add(Nasser1);
-        avatars.add(Nasser2);
-        avatars.add(Nasser3);
-        avatars.add(Nasser4);
-        avatars.add(Nasser5);
-        avatars.add(Nasser6);
-        avatars.add(Nasser7);
-        avatars.add(Nasser8);
-        avatars.add(Nasser9);
-
-
-        SuperAvatar Tom = new TomAvatar(nextAvatarID++, perceptionRange, color);
-        SuperAvatar Tom2 = new TomAvatar(nextAvatarID++, perceptionRange, color2);
-        SuperAvatar Tom3 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        SuperAvatar Tom4 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        SuperAvatar Tom5 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        SuperAvatar Tom6 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        SuperAvatar Tom7 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        SuperAvatar Tom8 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        SuperAvatar Tom9 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        SuperAvatar Tom10 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-
-        avatars.add(Tom);
-        avatars.add(Tom2);
-        avatars.add(Tom3);
-        avatars.add(Tom4);
-        avatars.add(Tom5);
-        avatars.add(Tom6);
-        avatars.add(Tom7);
-        avatars.add(Tom8);
-        avatars.add(Tom9);
-        avatars.add(Tom10);
-
+        // avatars.add(sudeh1);
+        //avatars.add(sudeh2);
+        
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
         }
     }
-
+    
     public static void wait(int ms) {
         try {
             Thread.sleep(ms);
@@ -132,7 +86,7 @@ public class SimulationControl {
                 boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
                 avatar.setHasMoved(hasMoved);
                 System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
-                wait(4);
+                wait(10);
             } catch (Exception e) {
                 System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
                 e.printStackTrace();
@@ -140,4 +94,3 @@ public class SimulationControl {
         }
     }
 }
-

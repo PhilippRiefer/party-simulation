@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * authors: Paola, Ole, Soodeh
+ * 
  * Manages the room environment for avatars in a simulation.
  * This includes tracking and managing space occupancy, avatar locations, and
  * room dimensions.
@@ -59,7 +61,6 @@ public class Room {
             return null; // Or throw an exception?
         }
     }
-
     /**
      * Retrieves the coordinates of an avatar by its ID.
      * 
@@ -93,7 +94,6 @@ public class Room {
     public int getNumRows() {
         return numRows;
     }
-
     /**
      * Sets the number of columns in the room.
      *
@@ -102,7 +102,6 @@ public class Room {
     public void setNumCols(int numCols) {
         this.numCols = numCols;
     }
-
     /**
      * Gets the number of columns in the room.
      *
@@ -178,18 +177,7 @@ public class Room {
         avatarsLocations.put(avatarID, targetCoordinate);
         
     }
-    // public boolean placeAvatar(int avatarID, Coordinate targetCoordinate){
-    //     if (isValidCoordinate(targetCoordinate)) { // Check if the new position is valid
-    //         Coordinate currentPos = avatarsLocations.get(avatarID); // Get current position
-    //         if (currentPos != null) {
-    //             avatarsLocations.put(avatarID, targetCoordinate); // Update the avatar's position in the model
-    //             return true;
-    //         }
-    //     }
-
-    //     return false;
-    // }
-
+    
     /**
      * Checks if a coordinate is occupied by either an OBSTACLE or another AVATAR.
      *
@@ -309,9 +297,7 @@ public class Room {
             avatarsLocations.remove(avatarID);
             findPlaceForAvatar(avatarID);
         }
-    }
-
-    
+    }  
     /**
      * Tries to place an avatar in the room at the specified position.
      * 

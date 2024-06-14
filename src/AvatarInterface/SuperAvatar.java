@@ -10,7 +10,7 @@ public abstract class SuperAvatar implements AvatarInterface {
 		private final int avatarID;		// identification of Avatar
 		private boolean couldMove;		// Flag to check if the last move was successful
 		private int perceptionRange;	// perception range of Avatar
-		private Color color;			// color of Avatar
+		protected Color color;			// color of Avatar
 
 		/**
 		 * Constructs a SuperAvatar with a unique ID and perception range.
