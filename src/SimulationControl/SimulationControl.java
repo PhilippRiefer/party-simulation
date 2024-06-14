@@ -87,18 +87,22 @@ public class SimulationControl {
         SuperAvatar Tom3 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
         SuperAvatar Tom4 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
         SuperAvatar Tom5 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        //SuperAvatar Tom6 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        //SuperAvatar Tom7 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
-        //SuperAvatar Tom8 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        SuperAvatar Tom6 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        SuperAvatar Tom7 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        SuperAvatar Tom8 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        SuperAvatar Tom9 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
+        SuperAvatar Tom10 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
 
         avatars.add(Tom);
         avatars.add(Tom2);
         avatars.add(Tom3);
-        //avatars.add(Tom4);
-        //avatars.add(Tom5);
-        //avatars.add(Tom6);
-        //avatars.add(Tom7);
-        //avatars.add(Tom8);
+        avatars.add(Tom4);
+        avatars.add(Tom5);
+        avatars.add(Tom6);
+        avatars.add(Tom7);
+        avatars.add(Tom8);
+        avatars.add(Tom9);
+        avatars.add(Tom10);
 
 
         for (SuperAvatar avatar : avatars) {
@@ -128,7 +132,7 @@ public class SimulationControl {
                 boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
                 avatar.setHasMoved(hasMoved);
                 System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
-                wait(5);
+                wait(4);
             } catch (Exception e) {
                 System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
                 e.printStackTrace();
