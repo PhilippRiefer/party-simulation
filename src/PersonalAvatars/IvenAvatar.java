@@ -14,7 +14,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	int needToRest = 	2500;
 	int needToTalk =   10000;
 	int needToMusic =  50000; // implement needToMusic 
-	int needToDrink =  40000; // implement needToDrink 
+	int needToDrink =   4000; // implement needToDrink 
 
 	int[] needsInOrder = { needToDance, needToPee, needToRest, needToTalk, needToMusic, needToDrink };
 	SpaceType ObjectNeeded = null;
@@ -27,7 +27,8 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	FoundObjects objectsfound = new FoundObjects(); // 5 needs implemented
 	Boolean everySecondRound = false;		// zeigt an ob eseine gerade oder ungerade runde ist. 
 
-
+	//TODO: needs sollten sich immer ändern für alles was in der nähe ist 
+	//TODO: betrunkenheit soll random bewegung häufiger machen 
 	// Helpful Coordinates
 	Coordinate Coord_Up = new Coordinate(0, -1);
 	Coordinate Coord_Right = new Coordinate(1, 0);
@@ -39,7 +40,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	Coordinate Coord_DownRight = new Coordinate(0, 0);
 
 	public IvenAvatar(int id, int perceptionRange, Color color) {
-		super(id, perceptionRange, color); //
+		super(id, perceptionRange, color.BLACK); //
 	}
 
 	public void checkBorder(ArrayList<SpaceInfo> spacesInRange) throws BorderException {
@@ -197,7 +198,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	void refreshNeeds(SpaceType objectDone) {
 
 		if (objectDone == SpaceType.AVATAR) {
-			needToTalk += 3; // need to talk gets less
+			needToTalk += 300; // need to talk gets less
 			System.out.println("------------------------------------ Avatar talked");
 		}
 		if (objectDone == SpaceType.TOILET) {
