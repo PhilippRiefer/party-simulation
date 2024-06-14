@@ -468,7 +468,8 @@ public class RobinAvatar extends SuperAvatar {
         return lastDirection;
     }
 
-    private void findPath(int goal, int goalType) {
+    private boolean findPath(int goal, int goalType) {
+        boolean retVal = true;
         destValid = false;
         for (int row = 0; row < environment[0].length; row++) {
             for (int col = 0; col < environment.length; col++) {
@@ -491,12 +492,14 @@ public class RobinAvatar extends SuperAvatar {
                 if (!keepGoing) {
                     destination = position; // No path found
                     destValid = true;
+                    retVal = false;
                 }
             }
             // printEnv(2);
             if (!destValid) {
                 destination = position; // No path found
                 destValid = true;
+                retVal = false;
             }
             // System.out.println("Save Path"); //save Path
             path.clear();
@@ -512,10 +515,10 @@ public class RobinAvatar extends SuperAvatar {
                 }
             }
             // System.out.println(path);
-            return;
+            return retVal;
         } else {
             path.clear();
-            return;
+            return false;
         }
 
     }
