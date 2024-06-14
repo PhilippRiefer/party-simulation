@@ -10,11 +10,11 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 	// Basic Needs
 	int needToDance =   1200;
-	int needToPee =      500;
+	int needToPee =    60000;
 	int needToRest = 	2500;
 	int needToTalk =   10000;
 	int needToMusic =  50000; // implement needToMusic 
-	int needToDrink =  90000; // implement needToDrink 
+	int needToDrink =  40000; // implement needToDrink 
 
 	int[] needsInOrder = { needToDance, needToPee, needToRest, needToTalk, needToMusic, needToDrink };
 	SpaceType ObjectNeeded = null;
@@ -25,6 +25,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	Direction nextMove;			// saved direction for the next move
  	SpaceType[][] Mind = new SpaceType[100][100];
 	FoundObjects objectsfound = new FoundObjects(); // 5 needs implemented
+	Boolean everySecondRound = false;		// zeigt an ob eseine gerade oder ungerade runde ist. 
 
 
 	// Helpful Coordinates
@@ -77,7 +78,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 		for (int i = 0; i < lenght; i++) {
 
-/* 			if (ObjectNeeded == spacesInRange.get(i).getType()) {
+ 			if (ObjectNeeded == spacesInRange.get(i).getType()) {
 				// Wo liegt das?
 				if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Up)) {
 					// SpaceType frontTyp = spacesInRange.get(i).getType();
@@ -113,12 +114,21 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 					return Direction.LEFT;
 				}
 			}
-*/		
+		
 	}
-		refreshNeeds(null);
-		wayfinding(spacesInRange);
-		return nextMove;
-		// if nothing needed that is in range.
+		if (everySecondRound){
+			mirroredwayfinding(spacesInRange);
+			everySecondRound = false;
+			return nextMove;
+			
+		}
+		else{
+			wayfinding(spacesInRange);
+			everySecondRound = true;
+			return nextMove;
+			// if nothing needed that is in range.
+		}
+
 		
 	}
 
@@ -159,8 +169,9 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		System.out.println("------------ I will move random");
 		int max = 4;
 		int min = 0;
-		int directionNumber = (int) (Math.random() * ((max - min) + 1) + min); // directionNumber zwischen 0 und 6
-																				// generieren
+		int directionNumber = (int) (Math.random() * ((max - min) + 1) + min); // directionNumber zwischen 0 und 4 generieren
+		refreshNeeds(null);
+
 		if (directionNumber == 0) {
 			return Direction.STAY;
 		} else if (directionNumber >= 1 && directionNumber <= 1) {
@@ -187,13 +198,13 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 		if (objectDone == SpaceType.AVATAR) {
 			needToTalk += 3; // need to talk gets less
-			//System.out.println("--------------------- Avatar talked");
+			System.out.println("------------------------------------ Avatar talked");
 		}
 		if (objectDone == SpaceType.TOILET) {
 			needToPee = 5000; // Reset need
 		}
 		if (objectDone == SpaceType.SEATS) {
-			needToRest += 60; // need to rest gets less
+			needToRest += 600; // need to rest gets less
 		}
 		if (objectDone == SpaceType.DANCEFLOOR) {
 			needToDance += 10; // need to dance gets less
@@ -245,7 +256,13 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	}
 
 	public boolean findAim() {
-		if (orientate < 5){	//TODO orientate ersellen 
+
+		int min = 0;
+		int max = 4;
+		if( (int) (Math.random() * ((max - min) + 1) + min) == 0){	//1/5 chance das Avatar random bewegt
+			return false;
+		}
+		if (orientate < 5){	
 			switch(orientate) {
 				case 0: findCoords = new Coordinate(2, 2); break;
 				case 1: findCoords = new Coordinate(36,17); break;
@@ -253,7 +270,6 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 				case 3: findCoords = new Coordinate(36,2); break;
 				case 4: findCoords = new Coordinate(17,3); break;
 			} 
-			
 			return true;
 		}
 		else {
@@ -263,9 +279,9 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 					return true;
 				}
 			}
+
 			return false;
 		}
-
 	}
 	
 	public void wayfinding(ArrayList<SpaceInfo> spacesInRange){
@@ -287,7 +303,40 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 				else if(findCoords.getY() == myCoords.getY()){
 					nextMove = Direction.STAY;	//All coords are the same. The object was found
 					refreshNeeds(ObjectNeeded);
-					orientate++;
+					if (orientate<5){
+						orientate++;
+					}
+					// TODO Make it noticeable that the object has been found
+				}
+			}
+		}
+		else{
+			nextMove = move(); // Just move
+		}
+	}
+
+	public void mirroredwayfinding(ArrayList<SpaceInfo> spacesInRange){
+		if(findAim()){
+			if(findCoords.getY()<myCoords.getY()){
+				nextMove=Direction.UP;
+			}
+			else if(findCoords.getY()>myCoords.getY()){
+				nextMove=Direction.DOWN;
+			}
+			else if (findCoords.getY()==myCoords.getY()) {
+				
+				if(findCoords.getX()>myCoords.getX()){
+					nextMove=Direction.RIGHT;
+				}
+				else if(findCoords.getX() <myCoords.getX()){
+					nextMove = Direction.LEFT;
+				}
+				else if(findCoords.getX() == myCoords.getX()){
+					nextMove = Direction.STAY;	//All coords are the same. The object was found
+					refreshNeeds(ObjectNeeded);
+					if (orientate<5){
+						orientate++;
+					}
 					// TODO Make it noticeable that the object has been found
 				}
 			}
