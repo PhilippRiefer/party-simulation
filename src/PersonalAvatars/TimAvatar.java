@@ -19,6 +19,7 @@ public class TimAvatar extends SuperAvatar {
     SpaceType currentSpaceType = SpaceType.EMPTY;
     SpaceType nextSpaceType = SpaceType.EMPTY;
     Coordinate currentCoordinate = new Coordinate(0, 0); // Initialisiere currentCoordinate
+    Coordinate lastCoordinate = new Coordinate(0, 0); // Initialisiere currentCoordinate
     SpaceType[][] knownSpace = new SpaceType[40][20];
     int obstacleCounter = 0;
 
@@ -27,6 +28,7 @@ public class TimAvatar extends SuperAvatar {
     ArrayList<Coordinate> Bar = new ArrayList<>();
     ArrayList<Coordinate> Seats = new ArrayList<>();
     ArrayList<Coordinate> DJBooth = new ArrayList<>();
+    ArrayList<SpaceInfo> oldSpaceInRange = new ArrayList<>();
 
     Coordinate Steps = new Coordinate(0, 0);
 
@@ -60,10 +62,41 @@ public class TimAvatar extends SuperAvatar {
     }
 
 
+    Direction lastMove = null;
     public void calculateCurrentCoordinate(ArrayList<SpaceInfo> spacesInRange) {
+
      currentCoordinate.setX(spacesInRange.get(4).getRelativeToAvatarCoordinate().getX());
      currentCoordinate.setY(spacesInRange.get(4).getRelativeToAvatarCoordinate().getY() - 1);
 
+        if(lastMove != null){
+            switch (lastMove) {
+            case RIGHT:
+                currentSpaceType = oldSpaceInRange.get(6).getType(); 
+
+                 break;
+            case LEFT:
+                currentSpaceType = oldSpaceInRange.get(1).getType();
+
+            break;
+            case DOWN:
+                currentSpaceType = oldSpaceInRange.get(4).getType(); 
+
+                break;
+            case UP:
+                currentSpaceType = oldSpaceInRange.get(3).getType();
+            break;
+            default:
+                break;
+            }
+            oldSpaceInRange.clear();
+            oldSpaceInRange.addAll(spacesInRange);
+    
+        }
+        else{
+            currentSpaceType = SpaceType.EMPTY;
+            oldSpaceInRange.clear();
+            oldSpaceInRange.addAll(spacesInRange);
+        }
     }
 
     private void updateNeedsOverTime() {
@@ -87,19 +120,19 @@ public class TimAvatar extends SuperAvatar {
         needs.put("fun", adjustNeed(needs.get("fun"), funChange));
         needs.put("social energy", adjustNeed(needs.get("social energy"), socialEnergyChange));
 
-        System.out.println("Thirst " + needs.get("thirst"));
-        System.out.println("hunger " + needs.get("hunger"));
-        System.out.println("bladder " + needs.get("bladder"));
-        System.out.println("physical energy " + needs.get("physical energy"));
-        System.out.println("fun " + needs.get("fun"));
-        System.out.println("social energy " + needs.get("social energy"));
+       // System.out.println("Thirst " + needs.get("thirst"));
+       // System.out.println("hunger " + needs.get("hunger"));
+      //  System.out.println("bladder " + needs.get("bladder"));
+      //  System.out.println("physical energy " + needs.get("physical energy"));
+      //  System.out.println("fun " + needs.get("fun"));
+       // System.out.println("social energy " + needs.get("social energy"));
     }
 
     private void applyRandomEvents() {
         if (random.nextDouble() < 0.1) {
             int randomThirstIncrease = random.nextInt(80);
             needs.put("thirst", increaseNeed(needs.get("thirst"), randomThirstIncrease));
-            //System.out.println("Zufälliges Ereignis: Durst erhöht um " + randomThirstIncrease);
+            System.out.println("Zufälliges Ereignis: Durst erhöht um " + randomThirstIncrease);
         }
     }
 
@@ -119,32 +152,32 @@ public class TimAvatar extends SuperAvatar {
     public void drink() {
         needs.put("thirst", decreaseNeed(needs.get("thirst"), 30));
         needs.put("bladder", increaseNeed(needs.get("bladder"), 10));
-       // System.out.println("Der Avatar hat getrunken. Durst gesenkt, Blase erhöht.");
+        System.out.println("Der Avatar hat getrunken. Durst gesenkt, Blase erhöht.");
     }
 
     public void eat() {
         needs.put("hunger", decreaseNeed(needs.get("hunger"), 30));
         needs.put("physical energy", increaseNeed(needs.get("physical energy"), 10));
-       // System.out.println("Der Avatar hat gegessen. Hunger gesenkt, physische Energie erhöht.");
+        System.out.println("Der Avatar hat gegessen. Hunger gesenkt, physische Energie erhöht.");
     }
 
     public void dance() {
         needs.put("fun", increaseNeed(needs.get("fun"), 30));
         needs.put("physical energy", decreaseNeed(needs.get("physical energy"), 10));
         needs.put("social energy", increaseNeed(needs.get("social energy"), 10));
-     //   System.out.println("Der Avatar hat getanzt. Spaß und soziale Energie erhöht, physische Energie gesenkt.");
+        System.out.println("Der Avatar hat getanzt. Spaß und soziale Energie erhöht, physische Energie gesenkt.");
     }
 
     public void socialize() {
         needs.put("social energy", increaseNeed(needs.get("social energy"), 30));
         needs.put("fun", increaseNeed(needs.get("fun"), 20));
-       // System.out.println("Der Avatar hatte soziale Interaktion. Soziale Energie und Spaß erhöht.");
+        System.out.println("Der Avatar hatte soziale Interaktion. Soziale Energie und Spaß erhöht.");
     }
 
     public void playMusic() {
         needs.put("physical energy", decreaseNeed(needs.get("physical energy"), 10));
         needs.put("fun", increaseNeed(needs.get("fun"), 20));
-      //  System.out.println("Der Avatar hat Musik aufgelegt. Physische Energie gesenkt, Spaß erhöht.");
+       System.out.println("Der Avatar hat Musik aufgelegt. Physische Energie gesenkt, Spaß erhöht.");
     }
 
     public void pee() {
@@ -155,7 +188,7 @@ public class TimAvatar extends SuperAvatar {
     public void relax() {
         needs.put("physical energy", increaseNeed(needs.get("physical energy"), 30));
         needs.put("social energy", increaseNeed(needs.get("social energy"), 30));
-       // System.out.println("Der Avatar hat sich entspannt.");
+        System.out.println("Der Avatar hat sich entspannt.");
     }
 
     private void updateNeedsAfterAction(SpaceType currentSpaceType) {
@@ -184,9 +217,24 @@ public class TimAvatar extends SuperAvatar {
         }
     }
 
+/**     
+/////////////DoAction/////////////////
+ */
+
     SpaceType destinationSpaceType;
     public Direction doAction(ArrayList<SpaceInfo> spacesInRange) {
         extendKnownSpace(spacesInRange);
+        System.out.println("currentSpaceType:" + currentSpaceType);
+        System.out.println("nextSpaceType:" + nextSpaceType);
+        System.out.println("destination:" + destinationSpaceType);
+        System.out.println("Steps x:" + Steps.getX() + " Steps y:" + Steps.getY());
+        System.out.println("currentNeed:" + mostNeed);
+        if(Testdestination != null){
+        System.out.println("Destination x" + Testdestination.getX() + "Destination y" + Testdestination.getY());
+        }
+
+
+
         if(Steps.getX() == 0 && Steps.getY() == 0) {
             destinationSpaceType = makeSpaceTypeDecision();
             Steps = pathFinding(destinationSpaceType);
@@ -194,8 +242,9 @@ public class TimAvatar extends SuperAvatar {
 
         return coordianteSteps(Steps, spacesInRange);
     }
-
-
+/**     
+/////////////extendKnownSpace/////////////////
+*/
     private void extendKnownSpace(ArrayList<SpaceInfo> spacesInRange) {
         for(SpaceInfo spaceInfo : spacesInRange) {
             Coordinate coordinate = new Coordinate(spaceInfo.getRelativeToAvatarCoordinate().getX(), spaceInfo.getRelativeToAvatarCoordinate().getY());
@@ -235,11 +284,18 @@ public class TimAvatar extends SuperAvatar {
         }
     }
 
-    private SpaceType makeSpaceTypeDecision() {
-        String mostUrgentNeed = getMostUrgentNeed(needs);
-        System.out.println("My need:" + mostUrgentNeed);
 
-        switch (mostUrgentNeed) {
+
+/**     
+/////////////makeSpaceTypeDecision/////////////////
+- getMostUrgentNeed(needs)
+*/
+
+    String mostNeed;
+    private SpaceType makeSpaceTypeDecision() {
+        mostNeed = getMostUrgentNeed(needs);
+
+        switch (mostNeed) {
                 case "thirst":
                 return SpaceType.BAR;
 
@@ -265,6 +321,11 @@ public class TimAvatar extends SuperAvatar {
         
     }
 
+/**     
+//////////////getMostUrgentNeed////////////////
+- calculatePriority
+*/
+
     public static String getMostUrgentNeed(Map<String, Double> needs) {
         String mostUrgentNeed = null;
         double highestPriority = Double.MIN_VALUE;
@@ -279,10 +340,12 @@ public class TimAvatar extends SuperAvatar {
                 mostUrgentNeed = need;
             }
         }
-        System.out.println("My mostUrgentneed:" + mostUrgentNeed);
         return mostUrgentNeed;
     }
 
+/**     
+//////////////calculatePriority////////////////
+*/
     public static double calculatePriority(String need, double value) {
         switch (need) {
             case "thirst":
@@ -299,35 +362,44 @@ public class TimAvatar extends SuperAvatar {
                 throw new IllegalArgumentException("Unbekanntes Bedürfnis: " + need);
         }
     }
+    Coordinate Testdestination = null;
 
+/**     
+//////////////pathFinding////////////////
+- randomIndex
+- randomCoordinate
+*/
 
 
     private Coordinate pathFinding(SpaceType spacetype) {
-        Coordinate destination = null;
+     Coordinate destination = null;
       if(spacetype != SpaceType.EMPTY && spacetype == currentSpaceType){
-                return new Coordinate(0, 0);
+                return currentCoordinate;
       }
       else{
-        switch (spacetype) {
-          case DANCEFLOOR:
-            destination = Dancefloor.isEmpty() ? null : Dancefloor.get(0);
-            break;
-          case DJBOOTH:
-            destination = DJBooth.isEmpty() ? null : DJBooth.get(0);
-            break;
-          case TOILET:
-            destination = Toilet.isEmpty() ? null : Toilet.get(0);
-            break;
-          case BAR:
-            destination = Bar.isEmpty() ? null : Bar.get(0);
-            break;
-          case SEATS:
-            destination = Seats.isEmpty() ? null : Seats.get(0);
-            break;
-          default:
-            break;
+
+            switch (spacetype) {
+             case DANCEFLOOR:
+                destination = Dancefloor.isEmpty() ? null : Dancefloor.get(randomIndex(Dancefloor.size()));
+                break;
+             case DJBOOTH:
+                destination = DJBooth.isEmpty() ? null : DJBooth.get(randomIndex(DJBooth.size()));
+                break;
+             case TOILET:
+                destination = Toilet.isEmpty() ? null : Toilet.get(randomIndex(Toilet.size()));
+                break;
+             case BAR:
+                destination = Bar.isEmpty() ? null : Bar.get(randomIndex(Bar.size()));
+                break;
+             case SEATS:
+                destination = Seats.isEmpty() ? null : Seats.get(randomIndex(Seats.size()));
+                break;
+             default:
+                break;
+            }
         }
-}
+
+        Testdestination = destination;
       
         if (destination == null) {
             destinationSpaceType = SpaceType.EMPTY;
@@ -337,112 +409,25 @@ public class TimAvatar extends SuperAvatar {
       
         // Calculate steps only if a destination is found
         return new Coordinate(
-            destination.getX() - currentCoordinate.getX(),
+            (destination.getX() - currentCoordinate.getX()),
             destination.getY() - currentCoordinate.getY()
         );
-      }
-
-      
-    private Direction coordianteSteps(Coordinate Steps, ArrayList<SpaceInfo> spacesInRange) {
-        Coordinate nextCoordinate = new Coordinate(0, 0);
-
-        if (Steps.getY() > 0){
-
-            nextCoordinate.setY(currentCoordinate.getY() + 1);
-            nextCoordinate.setX(currentCoordinate.getX());
-
-            if(calculateCurrentSpaceType(spacesInRange, nextCoordinate)){
-                Steps.setY(Steps.getY() - 1);
-                return Direction.DOWN;
-            }
-            else{
-                return Direction.STAY;
-            }
-            
-
-        } else if (Steps.getY() < 0) {
-            
-
-            nextCoordinate.setY(currentCoordinate.getY() - 1);
-            nextCoordinate.setX(currentCoordinate.getX());
-
-            if(calculateCurrentSpaceType(spacesInRange, nextCoordinate)){
-                Steps.setY(Steps.getY() + 1);
-                return Direction.UP;
-            }
-            else{
-                return Direction.STAY;
-            }
-           
-
-        } else if (Steps.getX() < 0) {
-            
-
-            nextCoordinate.setX(currentCoordinate.getX() - 1);
-            nextCoordinate.setY(currentCoordinate.getY());
-
-            if(calculateCurrentSpaceType(spacesInRange, nextCoordinate)){
-                Steps.setX(Steps.getX() + 1);
-                return Direction.LEFT;
-            }
-            else{
-                return Direction.STAY;
-            }
-          
-
-        } else if (Steps.getX() > 0) {
-            
-
-            nextCoordinate.setX(currentCoordinate.getX() + 1);
-            nextCoordinate.setY(currentCoordinate.getY());
-
-            if(calculateCurrentSpaceType(spacesInRange, nextCoordinate)){
-                Steps.setX(Steps.getX() - 1);
-                return Direction.RIGHT;
-            }
-            else{
-                return Direction.STAY;
-            }
-         
-        } else {
-            return Direction.STAY;
-        }
     }
 
 
-    
+/**     
+//////////////randomIndex////////////////
+*/
 
-    public boolean calculateCurrentSpaceType(ArrayList<SpaceInfo> spacesInRange, Coordinate nextCoordinate) {
-        if(obstacleCounter < 5){
-            for (SpaceInfo space : spacesInRange) {
-                if (nextCoordinate.equals(space.getRelativeToAvatarCoordinate())) {
-                    nextSpaceType = space.getType();
-                
-                    if(nextSpaceType == SpaceType.OBSTACLE){
-                        obstacleCounter++;
-                        return false;
-                    }
-                    else{
-                        return true;
-                   }
-                }
-                
-            }
-        }
-        else{
-            Steps.setX(0);
-            Steps.setY(0);
-            obstacleCounter = 0;
-            return false;
-        }
-       
-        return false;
+    private int randomIndex(int index){
+        random = new Random();
 
+        return random.nextInt(index);
     }
 
-    
-                
-       
+/**     
+//////////////randomCoordinate////////////////
+*/
 
     private Coordinate randomCoordinate() {
         int randomX = 0;
@@ -464,11 +449,69 @@ public class TimAvatar extends SuperAvatar {
         return new Coordinate(randomX, randomY);
       }
 
+
+
+/**     
+//////////////coordianteSteps////////////////
+- calculateCurrentSpaceType
+*/
+
+    private Direction coordianteSteps(Coordinate Steps, ArrayList<SpaceInfo> spacesInRange) {
+        Coordinate nextCoordinate = new Coordinate(0, 0);
+
+        if (Steps.getY() > 0){
+
+            nextCoordinate.setY(currentCoordinate.getY() + 1);
+            nextCoordinate.setX(currentCoordinate.getX());
+            Steps.setY(Steps.getY() - 1);
+            lastMove = Direction.DOWN;
+            return Direction.DOWN;
+        }
+            
+        else if (Steps.getY() < 0) {
+        
+            nextCoordinate.setY(currentCoordinate.getY() - 1);
+            nextCoordinate.setX(currentCoordinate.getX());
+            Steps.setY(Steps.getY() + 1);
+            lastMove = Direction.UP;
+            return Direction.UP;
+        }
+          
+        else if (Steps.getX() < 0) {
+            
+
+            nextCoordinate.setX(currentCoordinate.getX() - 1);
+            nextCoordinate.setY(currentCoordinate.getY());
+            Steps.setX(Steps.getX() + 1);
+            lastMove = Direction.LEFT;
+            return Direction.LEFT;
+        }
+            
+        else if (Steps.getX() > 0) {
+            
+
+            nextCoordinate.setX(currentCoordinate.getX() + 1);
+            nextCoordinate.setY(currentCoordinate.getY());
+            Steps.setX(Steps.getX() - 1);
+            lastMove = Direction.RIGHT;
+            return Direction.RIGHT;
+        }
+
+        else{
+            lastMove = Direction.STAY;
+            return Direction.STAY;  
+        }      
+    }
+
+
+/**     
+//////////////calculateCurrentSpaceType////////////////
+*/    
+   
+ 
+
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-        currentSpaceType = nextSpaceType;
-        System.out.println("My Spacetype:" + currentSpaceType);
-        System.out.println("My Destination:" + destinationSpaceType);
         calculateCurrentCoordinate(spacesInRange);
         updateNeeds();
         return doAction(spacesInRange);
