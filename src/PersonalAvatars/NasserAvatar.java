@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Random;
+import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import Environment.*;
 import SimulationControl.SimulationControl;
@@ -20,6 +26,7 @@ public class NasserAvatar extends SuperAvatar {
     private int count5 = 0;
     private int count7 = 3;
     private int count8 = 0;
+    private int counttxt = 0;
     private int secondmiddleY;
     private int excludedNumber = 6;
     private String prio = null;
@@ -39,11 +46,44 @@ public class NasserAvatar extends SuperAvatar {
     private int maxX = Integer.MIN_VALUE;
     private int minY = Integer.MAX_VALUE;
     private int maxY = Integer.MIN_VALUE;
+    private char[][] mapData= new char[20][40];  // 2D array to store map data
+   
 
     public NasserAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color); // Leverage the super class to handle ID and perceptionRange
         this.allSpaceInfos = new ArrayList<>();
     }
+
+    public char getFirstLetter(String locationType) {
+        char firstLetter = 'U';  // Standardwert für undefinierte Typen
+    
+        // Prüfen, ob der übergebene Typ "OBSTACLE" ist
+        if ("OBSTACLE".equals(locationType)) {
+            firstLetter = 'O';  
+        }
+        else if ("DANCEFLOOR".equals(locationType)) {
+            firstLetter = 'D';
+        }
+        else if ("BAR".equals(locationType)) {
+            firstLetter = 'B';
+        }
+        else if ("SEATS".equals(locationType)) {
+            firstLetter = 'S';
+        }
+        else if ("DJBOOTH".equals(locationType)) {
+            firstLetter = 'J';
+        }
+        else if ("TOILET".equals(locationType)) {
+            firstLetter = 'T';
+        } else if("EMPTY".equals(locationType)){
+            firstLetter=' ';
+        } else if("AVATAR".equals(locationType)){
+            firstLetter='A';
+        }
+    
+        return firstLetter;
+    }
+    
 
     // Zufallszahlen bei dem eine bestimmte Zahl nicht ausgelassen wird
     // (excludedNumber)
@@ -54,6 +94,37 @@ public class NasserAvatar extends SuperAvatar {
         } while (randomValue == excludedNumber);
         return randomValue;
     }
+
+    public void initializeMap() {
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 40; j++) {
+                mapData[i][j] = '.';  // Füllt die Map mit 'U' für undefined
+            }
+        }
+    }
+
+
+    public void createMapFile() {
+        try (FileWriter writer = new FileWriter("map.txt")) {
+            for (int i = 0; i < mapData.length; i++) {
+                for (int j = 0; j < mapData[i].length; j++) {
+                    writer.write(mapData[i][j] + " ");
+                }
+                writer.write("\n");
+            }
+            //System.out.println("Map file created successfully.");
+        } catch (IOException e) {
+            System.err.println("Error while creating the map file: " + e.getMessage());
+        }
+    }
+
+    public void updateMapData(int x, int y, char newValue) {
+        if (x >= 0 && x < 40 && y >= 0 && y < 20) {
+            mapData[y][x] = newValue;
+        }
+        //createMapFile(); // Aktualisiert die map.txt Datei nach jeder Änderung
+    }
+
 
     // Grenzen des Dancefloors finden
     public void calculateDanceFloorBoundaries() {
@@ -271,18 +342,37 @@ public class NasserAvatar extends SuperAvatar {
         // Koordinaten wo der Avatar sich genau befindet
         middleX = bottomCoordinate.getX();
         middleY = bottomCoordinate.getY() - 1;
+
+       
+    
+        //updateMapData(middleX, middleY,'B');
+        updateMapData(leftTopCoordinate.getX(), leftTopCoordinate.getY(), getFirstLetter(String.valueOf(leftTop.getType())));
+        updateMapData(leftCoordinate.getX(), leftCoordinate.getY(), getFirstLetter(String.valueOf(left.getType())));
+        updateMapData(leftBottomCoordinate.getX(), leftBottomCoordinate.getY(),getFirstLetter(String.valueOf(leftBottom.getType())));
+        updateMapData(topCoordinate.getX(), topCoordinate.getY(),getFirstLetter(String.valueOf(top.getType())));
+        updateMapData(bottomCoordinate.getX(), bottomCoordinate.getY(),getFirstLetter(String.valueOf(bottom.getType())));
+        updateMapData(rightTopCoordinate.getX(), rightTopCoordinate.getY(),getFirstLetter(String.valueOf(rightTop.getType())));
+        updateMapData(rightCoordinate.getX(), rightCoordinate.getY(),getFirstLetter(String.valueOf(right.getType())));
+        updateMapData(rightBottomCoordinate.getX(), rightBottomCoordinate.getY(),getFirstLetter(String.valueOf(rightBottom.getType())));
+        createMapFile();
     }
 
     
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
+        if(counttxt==0){
+        initializeMap();
+        createMapFile();
+        }
+        counttxt=1;
         changeToRelativeToCoordinate(spacesInRange);
         calculateDanceFloorBoundaries();
         return avatarDirection();
     }
 
     public Direction avatarDirection() {
+
 
         Random random = new Random();
         int nextmove;
