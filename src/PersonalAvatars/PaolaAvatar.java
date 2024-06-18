@@ -4,6 +4,8 @@ import AvatarInterface.SuperAvatar;
 import Environment.*;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
 
 /**
@@ -25,48 +27,109 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
     final private int FUN_MAX = 1000; // does not care about going to dancefloor
     final private int FUN_MIN = 0; // wants to have fun in the dancefloor or djbooth
     
+    final private int ROWS = 20;
+    final private int COLUMNS = 40;
 
-    SpaceType[][] internalMap = new SpaceType[40][20];
-    private boolean internalMapCompleteFlag = false; // flag changes to "true" when map has been complete
+    private SpaceType[][] internalMap = new SpaceType[ROWS][COLUMNS];
+    private boolean internalMapIsComplete = false; // flag changes to "true" when map has been complete
                                                     // TODO: Design algorithm to detect that map has been complete 
                                                     // and change this flag.
     private boolean hasGoalInMind = false; // flag changes to "true" when a purpose has been selected (e.g. go to bar)
-                                                    // TODO: Flag must change back to "false" when purpose has been completed   
+                                                    // TODO: Flag must change back to "false" when purpose has been completed  
+                                                    
+    Coordinate currentAvatarLocation = null;
     private int energy; // when low on energy, Paola will want to go to the bar and get a drink
     private int bladder; // when high, Paola will seek the bathroom
     private int social; // when social is high, Paola will be more likely to interact with other avatars
     private int fun; // when fun is low, Paola will want be more likely to go dancing
 
-    private Goal goal;
+    private Plan plan;
     
-    private class Goal {
+    private class Plan {
         private SpaceType target;
-        private Coordinate[][][] route; // Array of steps in route. Each step in the route has an array of 3 Coordinates
-        private boolean fulfilled;
+        private SpaceType[][] m = new SpaceType[ROWS][COLUMNS]; // Input character matrix TODO: NEEDED? Or is the internalMap enough?
+        private Queue<Coordinate> queue = new LinkedList<>(); // Queue of coordinates to explore for the BFS algorithm
+        private Boolean reachedEnd = false;
+        private Boolean[][] explored = new Boolean[ROWS][COLUMNS];
+        private int[] directionEastWest = new int[]{-1, 1, 0, 0};
+        private int[] directionNorthSouth = new int[]{ 0, 0, 1, -1};
 
-        public void setTarget(SpaceType target) {
-            this.target = target;
-        }
+        
+        
+        private Coordinate[][] prev = new Coordinate[ROWS][COLUMNS]; // Array prev to keep track of parent node for the BFS algorithm
+        private Queue<Coordinate> route = new LinkedList<>(); // Queue of steps in route. Each step in the route has a coordinate
 
-        public void setFulfilled(boolean fulfilled) {
-            this.fulfilled = fulfilled;
-        }
-
-        public SpaceType getTarget() {
-            return target;
-        }
-
-        public boolean isFulfilled() {
-            return fulfilled;
+        Plan(){
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLUMNS; j++) {
+                    explored[i][j] = false;
+                }
+            }
         }
 
         void calculateRoute(){
-            // TODO
+            // add starting point to queue
+            queue.add(currentAvatarLocation);
+            // mark current location as visited
+            if (internalMapIsComplete) {
+                explored[currentAvatarLocation.getY()][currentAvatarLocation.getX()] = true;
+            }
+            
+
+        
+            do {
+                Coordinate coordinateToExplore = queue.remove();
+                if (internalMap[coordinateToExplore.getY()][coordinateToExplore.getX()] == target){
+                    reachedEnd = true;
+                    break;
+                }
+                exploreNeighbors(coordinateToExplore);
+            } while (queue.size() > 0 && internalMapIsComplete);
+            
+        }
+
+        private void exploreNeighbors(Coordinate coordinate) {
+            for(int i = 0; i < 4; i++){
+                int neighboringRow = coordinate.getY() + directionEastWest[i];
+                int neighboringColumn = coordinate.getX() + directionNorthSouth[i];
+
+                // Skip out of bounds locations
+                if (neighboringRow < 0 || neighboringColumn < 0) continue;
+                if (neighboringRow >= ROWS || neighboringColumn >= COLUMNS) continue;
+
+                // Skip visited locations or blocked cells
+                if (explored[neighboringRow][neighboringColumn]) continue;
+                if (internalMap[neighboringRow][neighboringColumn] == SpaceType.OBSTACLE) continue;
+
+                queue.add(new Coordinate(neighboringColumn, neighboringRow));
+                if(internalMapIsComplete){
+                    explored[neighboringRow][neighboringColumn] = true;
+                }
+                
+                
+                // Add coordinate being currently explored into the cells corresponding to the neighbors. This is to reconstruct path later
+                prev[neighboringRow][neighboringColumn] = coordinate;
+            }
         }
 
         Coordinate nextMilestone(){
-            // TODO
-            return null;
+            // if the internal map is not complete, the route cannot be calculated, therefore, start with a new queue
+            if(!internalMapIsComplete){
+                queue.clear();
+            }
+            calculateRoute();
+            if(internalMapIsComplete){   
+                return route.remove();
+            }
+            System.out.println();
+            System.out.println("Explored:");
+            printMap(explored);
+            System.out.println("Queue:");
+            queue.forEach(element -> System.out.print("("+ element.getX() + "," + element.getY() + ") "));
+            System.out.println();
+
+            
+            return queue.remove(); // or is it peek?
         }
         
     }
@@ -84,7 +147,6 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
         bladder = 0; // empty bladder
         social = random.nextInt(SOCIAL_MIN, SOCIAL_MAX); // initialize with half of the desire to be social to full desire
         fun = random.nextInt(FUN_MIN, FUN_MAX); // low on fun means wants to dance
-        this.goal = new Goal();
     }
 
     /**
@@ -95,26 +157,49 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
      * @return the direction for the avatar's next turn
      */
     @Override
+ 
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-        // update internal map
-        if (!internalMapCompleteFlag){
-            updateInternalMap(spacesInRange);
-        }
-        
+        /* Spaces in range 
+        * 0-3-5
+        * 1-A-6
+        * 2-4-7
+        */
+        currentAvatarLocation = calculateCurrentLocation(spacesInRange.get(1)); // calculate current location based on the coordinate of the item to the left
+        // depending on where I am standing fulfill a need
 
-        if(hasGoalInMind){
-            if (energy > ENERGY_LOW_WARNING){ // has enough energy
-                if (bladder < BLADDER_HIGH_WARNING){ // does not need to go to toilet
-                    Direction nextMove = calculateDirection(goal.nextMilestone());
-                    return nextMove;
-                } else {
+        updateInternalMap(spacesInRange); // update internal map, only if not complete 
 
-                }
-
-            }
+        // when avatar has reached its current target, get rid of the current plan
+        if (plan!=null && internalMap[currentAvatarLocation.getY()][currentAvatarLocation.getX()] == plan.target){
+            plan = null;
         }
         
         
+        
+        // Commented out for the time being, as logic to manage needs status has not been implemented
+        // if(hasGoalInMind){ // TODO: maybe I need to make 'hasGoalInMind' a trivalue, yes, no, urgent. If urgent, skip checking for energy and toilet needs
+        //     if (energy > ENERGY_LOW_WARNING){ // has enough energy
+        //         if (bladder < BLADDER_HIGH_WARNING){ // does not need to go to toilet
+        //             return calculateDirection(currentAvatarLocation, goal.nextMilestone());
+        //         } else { // needs to go to toilet
+        //             goal.target = SpaceType.TOILET;
+        //             goal.calculateRoute();
+        //             return calculateDirection(currentAvatarLocation, goal.nextMilestone());
+        //         }
+        //     } else { // needs an energy drink
+        //         goal.target = SpaceType.BAR;
+        //         goal.calculateRoute(); // TODO: There are two bars, take care of this when calculating route to bar
+        //         return calculateDirection(currentAvatarLocation, goal.nextMilestone());
+        //     }
+        // } else {
+        //     chooseAGoal();
+        // }
+        
+        if(plan!=null){ // TODO: maybe I need to make 'hasGoalInMind' a trivalue, yes, no, urgent. If urgent, skip checking for energy and toilet needs
+            return calculateDirection(currentAvatarLocation, plan.nextMilestone());
+        }
+        chooseAGoal();
+    
         
         // select purpose based on current need
         // set a purpose flag, so that it does not interfere with other needs and needs aren't 
@@ -128,26 +213,90 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
         
         
         
-        
+        System.out.println("Internal map");
+        printMap(internalMap);
+        System.out.println();
         // For now, let's continue to move randomly as a placeholder
         return randomDirection();
     }
 
-    private Direction calculateDirection(Coordinate nextMilestone) {
-        // Calculate direction based on current position and next milestone
-        
-        return Direction.DOWN;
+    private void chooseAGoal() {
+        // choose goal randomly for the moment TODO: Implement logic to choose goal according to needs
+        plan = new Plan();
+        int directionNumber = (int) (Math.random() * 5);
+
+        switch (directionNumber) {
+            case 0:
+                plan.target = SpaceType.BAR;
+                break;
+            case 1:
+                plan.target = SpaceType.DANCEFLOOR;
+                break;
+            case 2:
+                plan.target = SpaceType.DJBOOTH;
+                break;
+            case 3:
+                plan.target = SpaceType.SEATS;
+                break;
+            case 4:
+                plan.target = SpaceType.TOILET;
+                break;
+            default:
+                plan.target = SpaceType.TOILET;
+                break;
+        }
     }
 
+    private Coordinate calculateCurrentLocation(SpaceInfo spaceInfo) {
+        Coordinate leftToAvatar = spaceInfo.getRelativeToAvatarCoordinate();
+        Coordinate currentLocation = new Coordinate(leftToAvatar.getX()+1, leftToAvatar.getY());
+        return currentLocation;
+    }
+
+    private Direction calculateDirection(Coordinate nextMilestone, Coordinate currentAvatarCoordinate) {
+
+        Coordinate directionCoordinate = nextMilestone.subtract(currentAvatarCoordinate);
+        
+        if (directionCoordinate.equals(new Coordinate(1,0))) return Direction.RIGHT;
+
+        if (directionCoordinate.equals(new Coordinate(-1,0))) return Direction.LEFT;
+
+        if (directionCoordinate.equals(new Coordinate(0,1))) return Direction.UP;
+
+        if (directionCoordinate.equals(new Coordinate(0,-1))) return Direction.DOWN;
+
+        return Direction.STAY;
+}
+
     private void updateInternalMap(ArrayList<SpaceInfo> spacesInRange) {
+        if (!internalMapIsComplete){
+            updateMap(spacesInRange);
+        }
+        
+    }
+
+    private void updateMap(ArrayList<SpaceInfo> spacesInRange) {
         for(SpaceInfo space:spacesInRange){
             SpaceType spaceType = space.getType();
             if(spaceType != SpaceType.AVATAR){
                 Coordinate spaceCoordinate = space.getRelativeToAvatarCoordinate();
-                internalMap[spaceCoordinate.getX()][spaceCoordinate.getY()] = spaceType;
+                internalMap[spaceCoordinate.getY()][spaceCoordinate.getX()] = spaceType;
             }
             
         }
+        checkIfMapComplete();
+    }
+
+    private void checkIfMapComplete() {
+        for (int i = 0; i < internalMap.length; i++) {
+            for (int j = 0; j < internalMap[i].length; j++) {
+                if (internalMap[i][j] == null) {
+                    internalMapIsComplete = false;
+                    return;
+                }
+            }
+        }
+        internalMapIsComplete = true;
     }
 
     /**
@@ -190,5 +339,15 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
     @Override
     public void setPerceptionRange(int perceptionRange) {
         super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
+    }
+
+    public <T> void printMap(T[][] map){
+        for (int i=0; i<map.length; i++){
+            for (int j=0; j<map[i].length; j++){
+                System.out.print(map[i][j]+" ");
+            }
+            System.out.println();
+        }
+        
     }
 }
