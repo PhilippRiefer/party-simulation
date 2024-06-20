@@ -20,13 +20,13 @@ public class Main {
         SimulationControl simcontrol = new SimulationControl(perceptionRange);
         while(true){
             simcontrol.loopThroughAvatars();
-            try {
-                // Make the program wait for one second (1000 milliseconds)
-                Thread.sleep(300);
-            } catch (InterruptedException e) {
-                // Handle the exception if the sleep is interrupted
-                e.printStackTrace();
-            }
+            // try {
+            //     // Make the program wait for one second (1000 milliseconds)
+            //     Thread.sleep(100);
+            // } catch (InterruptedException e) {
+            //     // Handle the exception if the sleep is interrupted
+            //     e.printStackTrace();
+            // }
         }
     }
 }
