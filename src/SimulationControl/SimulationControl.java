@@ -50,7 +50,7 @@ public class SimulationControl {
             }
         }
         */
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 1; i++){
             avatars.add(new RobinAvatar(nextAvatarID++, perceptionRange, Color.GREEN));
         }
 
