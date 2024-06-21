@@ -3,9 +3,8 @@ package SimulationControl;
 import java.awt.Color;
 import java.util.ArrayList;
 import Environment.*;
-import PersonalAvatars.*;
+
 import AvatarInterface.*;
-import java.util.Random;
 import org.reflections.Reflections;
 
 /**

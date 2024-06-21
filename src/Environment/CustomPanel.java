@@ -10,9 +10,7 @@ package Environment;
  * will follow in another class
  ********************************************/
 
- import javax.swing.*;
 
-import java.awt.*;
  
  public class CustomPanel {
  
