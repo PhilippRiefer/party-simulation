@@ -67,7 +67,6 @@ public class TimAvatar extends SuperAvatar {
 
      currentCoordinate.setX(spacesInRange.get(4).getRelativeToAvatarCoordinate().getX());
      currentCoordinate.setY(spacesInRange.get(4).getRelativeToAvatarCoordinate().getY() - 1);
-
         if(lastMove != null){
             switch (lastMove) {
             case RIGHT:
@@ -150,39 +149,39 @@ public class TimAvatar extends SuperAvatar {
     }
 
     public void drink() {
-        needs.put("thirst", decreaseNeed(needs.get("thirst"), 30));
-        needs.put("bladder", increaseNeed(needs.get("bladder"), 10));
+        needs.put("thirst", decreaseNeed(needs.get("thirst"), 3));
+        needs.put("bladder", increaseNeed(needs.get("bladder"), 1));
         System.out.println("Der Avatar hat getrunken. Durst gesenkt, Blase erhöht.");
     }
 
     public void eat() {
-        needs.put("hunger", decreaseNeed(needs.get("hunger"), 30));
-        needs.put("physical energy", increaseNeed(needs.get("physical energy"), 10));
+        needs.put("hunger", decreaseNeed(needs.get("hunger"), 3));
+        needs.put("physical energy", increaseNeed(needs.get("physical energy"), 1));
         System.out.println("Der Avatar hat gegessen. Hunger gesenkt, physische Energie erhöht.");
     }
 
     public void dance() {
-        needs.put("fun", increaseNeed(needs.get("fun"), 30));
-        needs.put("physical energy", decreaseNeed(needs.get("physical energy"), 10));
-        needs.put("social energy", increaseNeed(needs.get("social energy"), 10));
+        needs.put("fun", increaseNeed(needs.get("fun"), 3));
+        needs.put("physical energy", decreaseNeed(needs.get("physical energy"), 1));
+        needs.put("social energy", increaseNeed(needs.get("social energy"), 1));
         System.out.println("Der Avatar hat getanzt. Spaß und soziale Energie erhöht, physische Energie gesenkt.");
     }
 
     public void socialize() {
-        needs.put("social energy", increaseNeed(needs.get("social energy"), 30));
-        needs.put("fun", increaseNeed(needs.get("fun"), 20));
+        needs.put("social energy", increaseNeed(needs.get("social energy"), 3));
+        needs.put("fun", increaseNeed(needs.get("fun"), 2));
         System.out.println("Der Avatar hatte soziale Interaktion. Soziale Energie und Spaß erhöht.");
     }
 
     public void playMusic() {
-        needs.put("physical energy", decreaseNeed(needs.get("physical energy"), 10));
-        needs.put("fun", increaseNeed(needs.get("fun"), 20));
+        needs.put("physical energy", decreaseNeed(needs.get("physical energy"), 1));
+        needs.put("fun", increaseNeed(needs.get("fun"), 2));
        System.out.println("Der Avatar hat Musik aufgelegt. Physische Energie gesenkt, Spaß erhöht.");
     }
 
     public void pee() {
         needs.put("bladder", decreaseNeed(needs.get("bladder"), 30));
-        //System.out.println("Der Avatar war auf Toilette.");
+        System.out.println("Der Avatar war auf Toilette.");
     }
 
     public void relax() {
@@ -229,9 +228,7 @@ public class TimAvatar extends SuperAvatar {
         System.out.println("destination:" + destinationSpaceType);
         System.out.println("Steps x:" + Steps.getX() + " Steps y:" + Steps.getY());
         System.out.println("currentNeed:" + mostNeed);
-        if(Testdestination != null){
-        System.out.println("Destination x" + Testdestination.getX() + "Destination y" + Testdestination.getY());
-        }
+       
 
 
 
@@ -245,6 +242,7 @@ public class TimAvatar extends SuperAvatar {
 /**     
 /////////////extendKnownSpace/////////////////
 */
+
     private void extendKnownSpace(ArrayList<SpaceInfo> spacesInRange) {
         for(SpaceInfo spaceInfo : spacesInRange) {
             Coordinate coordinate = new Coordinate(spaceInfo.getRelativeToAvatarCoordinate().getX(), spaceInfo.getRelativeToAvatarCoordinate().getY());
@@ -362,7 +360,7 @@ public class TimAvatar extends SuperAvatar {
                 throw new IllegalArgumentException("Unbekanntes Bedürfnis: " + need);
         }
     }
-    Coordinate Testdestination = null;
+    
 
 /**     
 //////////////pathFinding////////////////
@@ -399,7 +397,7 @@ public class TimAvatar extends SuperAvatar {
             }
         }
 
-        Testdestination = destination;
+      
       
         if (destination == null) {
             destinationSpaceType = SpaceType.EMPTY;
@@ -463,18 +461,34 @@ public class TimAvatar extends SuperAvatar {
 
             nextCoordinate.setY(currentCoordinate.getY() + 1);
             nextCoordinate.setX(currentCoordinate.getX());
-            Steps.setY(Steps.getY() - 1);
-            lastMove = Direction.DOWN;
-            return Direction.DOWN;
+
+            if(itsFree(nextCoordinate, spacesInRange)){
+                Steps.setY(Steps.getY() - 1);
+                lastMove = Direction.DOWN;
+                return Direction.DOWN;
+            }
+            else{
+                lastMove = Direction.STAY;
+                return Direction.STAY;
+            }
+
+            
         }
             
         else if (Steps.getY() < 0) {
         
             nextCoordinate.setY(currentCoordinate.getY() - 1);
             nextCoordinate.setX(currentCoordinate.getX());
-            Steps.setY(Steps.getY() + 1);
-            lastMove = Direction.UP;
-            return Direction.UP;
+
+            if(itsFree(nextCoordinate, spacesInRange)){
+                Steps.setY(Steps.getY() + 1);
+                lastMove = Direction.UP;
+                return Direction.UP;
+            }
+            else{
+                lastMove = Direction.STAY;
+                return Direction.STAY;
+            }
         }
           
         else if (Steps.getX() < 0) {
@@ -482,9 +496,16 @@ public class TimAvatar extends SuperAvatar {
 
             nextCoordinate.setX(currentCoordinate.getX() - 1);
             nextCoordinate.setY(currentCoordinate.getY());
-            Steps.setX(Steps.getX() + 1);
-            lastMove = Direction.LEFT;
-            return Direction.LEFT;
+
+            if(itsFree(nextCoordinate, spacesInRange)){
+                Steps.setX(Steps.getX() + 1);
+                lastMove = Direction.LEFT;
+                return Direction.LEFT;
+            }
+            else{
+                lastMove = Direction.STAY;
+                return Direction.STAY;
+            }
         }
             
         else if (Steps.getX() > 0) {
@@ -492,22 +513,53 @@ public class TimAvatar extends SuperAvatar {
 
             nextCoordinate.setX(currentCoordinate.getX() + 1);
             nextCoordinate.setY(currentCoordinate.getY());
-            Steps.setX(Steps.getX() - 1);
-            lastMove = Direction.RIGHT;
-            return Direction.RIGHT;
-        }
 
+            if(itsFree(nextCoordinate, spacesInRange)){
+                Steps.setX(Steps.getX() - 1);
+                lastMove = Direction.RIGHT;
+                return Direction.RIGHT;
+            }
+            else{
+                lastMove = Direction.STAY;
+                return Direction.STAY;
+            }   
+        }
         else{
             lastMove = Direction.STAY;
-            return Direction.STAY;  
+            return Direction.STAY;
         }      
+    
+      }
+      int wait = 0;
+    private Boolean itsFree(Coordinate nextCoordinate, ArrayList<SpaceInfo> spacesInRange){
+    
+        for(SpaceInfo spaceInfo : spacesInRange){
+            if(spaceInfo.getRelativeToAvatarCoordinate().getX() == nextCoordinate.getX() && spaceInfo.getRelativeToAvatarCoordinate().getY() == nextCoordinate.getY()){
+                if(spaceInfo.getType() == SpaceType.OBSTACLE){
+                    Steps.setX(0);
+                    Steps.setY(0);
+                    return false;
+                }
+                else if(wait >= 3){
+                    Steps.setX(0);
+                    Steps.setY(0);
+                    wait = 0;
+                    return false;
+                }
+                else if(spaceInfo.getType() == SpaceType.AVATAR){
+                    wait++;
+                    return false;
+                }
+                else{
+                    return true; 
+                }
+            }
+        }
+        return false;
     }
 
 
-/**     
-//////////////calculateCurrentSpaceType////////////////
-*/    
-   
+
  
 
     @Override
