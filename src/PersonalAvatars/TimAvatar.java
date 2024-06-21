@@ -33,7 +33,7 @@ public class TimAvatar extends SuperAvatar {
     Coordinate Steps = new Coordinate(0, 0);
 
     public TimAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, color);
+        super(id, perceptionRange, Color.ORANGE);
 
         HashMap<String, Double> tempCharacterTraits = new HashMap<>();
 
@@ -182,7 +182,7 @@ public class TimAvatar extends SuperAvatar {
 
     public void pee() {
         needs.put("bladder", decreaseNeed(needs.get("bladder"), 30));
-        System.out.println("Der Avatar war auf Toilette.");
+        //System.out.println("Der Avatar war auf Toilette.");
     }
 
     public void relax() {
