@@ -77,7 +77,7 @@ public class RobinAvatar extends SuperAvatar {
     private Vector<int[]> avatarSpaces;
 
     public RobinAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, Color.GREEN);
+        super(id, 1, Color.GREEN);
         environment = new int[2 * environmentWidth + 1][2 * environmentHeight + 1][3];
         position = new Coordinate(environmentWidth, environmentHeight);
         state = State.FIND_WALL;
