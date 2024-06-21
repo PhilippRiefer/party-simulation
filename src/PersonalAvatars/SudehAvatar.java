@@ -62,7 +62,7 @@ public class SudehAvatar extends SuperAvatar {
         }
         Random random = new Random();
         Direction direction = Direction.STAY;
-        if (random.nextInt(100) < 40) { // 60% chance to move randomly
+        if (random.nextInt(100) < 60) { // 60% chance to move randomly
             int directionNumber = random.nextInt(4);
             direction = switch (directionNumber) {
                 case 0 -> Direction.LEFT;
