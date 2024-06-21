@@ -2,6 +2,8 @@ package SimulationControl;
 
 import AvatarInterface.*;
 import Environment.*;
+import PersonalAvatars.IvenAvatar;
+import java.awt.Color;
 import java.util.ArrayList;
 // import org.reflections.Reflections;
 
@@ -46,10 +48,16 @@ public class SimulationControl {
         //  }
 
         
-        SuperAvatar ivenAvatar = new IvenAvatar(nextAvatarID++, perceptionRange, Color.BLUE);
-        SuperAvatar ivenzweiAvatar = new IvenAvatar(nextAvatarID++, perceptionRange, Color.RED);
-        avatars.add(ivenAvatar);
-        avatars.add(ivenzweiAvatar);
+        int numberOfAvatars = 3;
+        for(int i = 0; i < numberOfAvatars; i++) { 
+            Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255));  
+            SuperAvatar Iven = new IvenAvatar(nextAvatarID++, perceptionRange, color); 
+            avatars.add(Iven);
+
+        }
+        for (SuperAvatar avatar : avatars) {  
+            environment.placeAvatar(avatar.getAvatarID());
+        }
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
