@@ -94,7 +94,7 @@ public class SimulationControl {
         SuperAvatar Tom9 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
         SuperAvatar Tom10 = new TomAvatar(nextAvatarID++, perceptionRange, color3);
 
-        avatars.add(Tom);
+        //avatars.add(Tom);
         /* 
         avatars.add(Tom2);
         avatars.add(Tom3);
@@ -105,6 +105,10 @@ public class SimulationControl {
         avatars.add(Tom8);
         avatars.add(Tom9);
         //avatars.add(Tom10);*/
+
+        for(int i = 0; i < 10; i++){
+            avatars.add(new TomAvatar(nextAvatarID++, perceptionRange, Color.RED));
+        }
 
 
         for (SuperAvatar avatar : avatars) {
@@ -134,7 +138,7 @@ public class SimulationControl {
                 boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
                 avatar.setHasMoved(hasMoved);
                 System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
-                wait(60);
+                wait(2);
             } catch (Exception e) {
                 System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
                 e.printStackTrace();
