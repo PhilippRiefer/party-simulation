@@ -2,7 +2,7 @@ package SimulationControl;
 
 import AvatarInterface.*;
 import Environment.*;
-import PersonalAvatars.IvenAvatar;
+import PersonalAvatars.*;
 import java.awt.Color;
 import java.util.ArrayList;
 // import org.reflections.Reflections;
@@ -48,16 +48,20 @@ public class SimulationControl {
         //  }
 
         
-        int numberOfAvatars = 3;
+        int numberOfAvatars = 5;
+        Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255)); 
         for(int i = 0; i < numberOfAvatars; i++) { 
-            Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255));  
-            SuperAvatar Iven = new IvenAvatar(nextAvatarID++, perceptionRange, color); 
-            avatars.add(Iven);
+             
+ 
+            SuperAvatar Paola = new PaolaAvatar(nextAvatarID++, perceptionRange, color);  
+           
+            avatars.add(Paola);
+
 
         }
-        for (SuperAvatar avatar : avatars) {  
-            environment.placeAvatar(avatar.getAvatarID());
-        }
+        SuperAvatar Iven = new IvenAvatar(nextAvatarID++, perceptionRange, color);
+        avatars.add(Iven);
+
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());

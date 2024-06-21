@@ -13,8 +13,8 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	// Basic Needs
 	int needToDance =   3000;
 	int needToPee =    	6000;
-	int needToRest = 	2500;
-	int needToTalk =   	1000;
+	int needToRest = 	1500;
+	int needToTalk =   	2500;
 	int needToMusic =  	9000; // implement needToMusic 
 	int needToDrink =   4000; // implement needToDrink 
 
@@ -25,7 +25,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 	Coordinate myCoords = new Coordinate(0, 0); 		// my Coords
 	Direction nextMove;			// saved direction for the next move
- 	SpaceType[][] Mind = new SpaceType[39][20];
+ 	SpaceType[][] Mind = new SpaceType[40][20];
 	FoundObjects objectsfound = new FoundObjects(); // 5 needs implemented
 	Boolean everySecondRound = false;		// zeigt an ob eseine gerade oder ungerade runde ist. 
 
@@ -77,45 +77,47 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		memory(spacesInRange);
 
 		int lenght = spacesInRange.size();
+
 		if ( ObjectNeeded == SpaceType.AVATAR){		// If I need a Avatar to talk. Look around you
 			for (int i = 0; i < lenght; i++) {
 				if (ObjectNeeded == spacesInRange.get(i).getType()) {
 					// Is somethink I need in range 
 					if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Up)) {					
 						refreshNeeds(ObjectNeeded);
-						nextMove = Direction.UP;
+						return Direction.UP;
 
 					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_UpLeft)) {					
 						refreshNeeds(ObjectNeeded);
-						nextMove = Direction.UP;
+						return Direction.UP;
 
 					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_UpRight)) {					
 						refreshNeeds(ObjectNeeded);
-						nextMove = Direction.UP;
+						return Direction.UP;
 
 					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Right)) {					
 						refreshNeeds(ObjectNeeded);
-						nextMove = Direction.RIGHT;
+						return Direction.RIGHT;
 
 					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Down)) {					
 						refreshNeeds(ObjectNeeded);
-						nextMove = Direction.DOWN;
+						return Direction.DOWN;
 
 					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_DownRight)) {					
 						refreshNeeds(ObjectNeeded);
-						nextMove = Direction.DOWN;
+						return Direction.DOWN;
 
 					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_DownLeft)) {
 						refreshNeeds(ObjectNeeded);
-						nextMove = Direction.DOWN;
+						return Direction.DOWN;
 
 					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Left)) {					
 						refreshNeeds(ObjectNeeded);
-						nextMove = Direction.LEFT;
+						return Direction.LEFT;
 					}
 				}
 			}
 			ObjectNeeded();
+			nextMove = move();		
 			return nextMove;	
 		}	
 		// if nothing needed is in range.
@@ -229,10 +231,10 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		if (needToMusic < 0) {
 			needToMusic = 0;
 		}
-		needToDance -= 50;
+		needToDance -= 5;
 		needToPee -= 22;
-		needToRest -= 31;
-		needToTalk -= 5;
+		needToRest -= 3;
+		needToTalk -= 1;
 		needToMusic -= 3;
 		needToDrink -= 10;
 	}
@@ -330,6 +332,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 				else if(findCoords.getX() == myCoords.getX()){
 					nextMove = Direction.STAY;	//All coords are the same. The object was found
 					refreshNeeds(ObjectNeeded);
+					ObjectNeeded();
 					if (orientate<5){
 						orientate++;
 					}
