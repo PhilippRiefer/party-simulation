@@ -205,13 +205,13 @@ public class TomAvatar extends SuperAvatar {
     
     public Direction takingDecision(ArrayList<SpaceInfo> spacesInRange) {
         
-        if (decision <= 40) {
-            myDirection = goToSomething2(spacesInRange, barList, SpaceType.BAR, 50);
-        } else if (decision > 40 && decision <= 70) {
-            myDirection = goToSomething2(spacesInRange, dancefloorList, SpaceType.DANCEFLOOR, 70);
-        }else if(decision > 70 && decision <= 90){
+        if (decision <= 25) {
+            myDirection = goToSomething2(spacesInRange, barList, SpaceType.BAR, 40);
+        } else if (decision > 25 && decision <= 50) {
+            myDirection = goToSomething2(spacesInRange, dancefloorList, SpaceType.DANCEFLOOR, 50);
+        }else if(decision > 50 && decision <= 75){
             myDirection = goToSomething2(spacesInRange, seatsList, SpaceType.SEATS, 30);
-        }else if(decision > 90 && decision <= 100){
+        }else if(decision > 75 && decision <= 100){
             myDirection = goToSomething2(spacesInRange, toiletList, SpaceType.TOILET,20);
         }
         return myDirection;
