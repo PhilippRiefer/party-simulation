@@ -61,16 +61,25 @@ public class SimulationControl {
 
         SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
         SuperAvatar Nasser1 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
+        SuperAvatar Nasser2 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
+        SuperAvatar Nasser3 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
+        SuperAvatar Nasser4 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
+        SuperAvatar Nasser5 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
 
-        avatars.add(Nasser);
+       // avatars.add(Nasser);
         //avatars.add(Nasser1);
+
+        for(int i=0;i<10;i++){
+            avatars.add(new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN));
+        }
+
     
 
         SuperAvatar Tom = new TomAvatar(nextAvatarID++, perceptionRange, Color.BLUE);
         SuperAvatar Tom1 = new TomAvatar(nextAvatarID++, perceptionRange, Color.BLUE);
      
 
-        avatars.add(Tom);
+        //avatars.add(Tom);
         //avatars.add(Tom1);
     
 
@@ -101,7 +110,7 @@ public class SimulationControl {
                 boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
                 avatar.setHasMoved(hasMoved);
                 System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
-                wait(20);
+                wait(1);
             } catch (Exception e) {
                 System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
                 e.printStackTrace();
