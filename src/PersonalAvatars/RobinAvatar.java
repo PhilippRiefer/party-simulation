@@ -183,7 +183,39 @@ public class RobinAvatar extends SuperAvatar {
                 if (true) {
                     needs[i][1]++;
                 }
-            } else {
+            } 
+            else if(needs[i][0] == SpaceType.DANCEFLOOR.ordinal() && getFromEnvironment(position, 0) == SpaceType.BAR.ordinal())
+            {
+                if (rng.nextInt(100) < 40 && needs[i][1] > 0) {
+                    needs[i][1]--;
+                }
+            }
+            else if(needs[i][0] == SpaceType.BAR.ordinal() && getFromEnvironment(position, 0) == SpaceType.DANCEFLOOR.ordinal())
+            {
+                if (rng.nextInt(100) < 40 && needs[i][1] > 0) {
+                    needs[i][1]--;
+                }
+            }
+            else if(needs[i][0] == SpaceType.SEATS.ordinal() && getFromEnvironment(position, 0) == SpaceType.DANCEFLOOR.ordinal())
+            {
+                if (rng.nextInt(100) < 40 && needs[i][1] > 0) {
+                    needs[i][1]--;
+                }
+            }
+            else if(needs[i][0] == SpaceType.SEATS.ordinal() && getFromEnvironment(position, 0) == SpaceType.TOILET.ordinal())
+            {
+                if (rng.nextInt(100) < 40 && needs[i][1] < 100) {
+                    needs[i][1]++;
+                }
+            }
+            else if(needs[i][0] == SpaceType.TOILET.ordinal() && getFromEnvironment(position, 0) == SpaceType.BAR.ordinal())
+            {
+                if (rng.nextInt(100) < 40 && needs[i][1] > 0) {
+                    needs[i][1]--;
+                }
+            }
+            else
+            {
                 if (rng.nextInt(100) < 20 && needs[i][1] > 0) {
                     needs[i][1]--;
                 }
@@ -205,7 +237,7 @@ public class RobinAvatar extends SuperAvatar {
                 if (currentNeed < 0) {
                     changeNeed(minNeed);
                 } else {
-                    if (!(state == State.FILL_NEED && needs[currentNeed][1] < 50)) {
+                    if (!(((state == State.FILL_NEED) || (state == State.MOVE_TO_NEEDED)) && needs[currentNeed][1] < 50)) {
                         changeNeed(minNeed);
                     }
                 }
