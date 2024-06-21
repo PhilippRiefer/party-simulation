@@ -101,7 +101,7 @@ public class RobinAvatar extends SuperAvatar {
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-        createTxtFile();
+        //createTxtFile();
         cycle++;
         updatePosition();
         updateNeeds();
