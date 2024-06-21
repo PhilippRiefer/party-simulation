@@ -25,7 +25,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 	Coordinate myCoords = new Coordinate(0, 0); 		// my Coords
 	Direction nextMove;			// saved direction for the next move
- 	SpaceType[][] Mind = new SpaceType[39][39];
+ 	SpaceType[][] Mind = new SpaceType[39][20];
 	FoundObjects objectsfound = new FoundObjects(); // 5 needs implemented
 	Boolean everySecondRound = false;		// zeigt an ob eseine gerade oder ungerade runde ist. 
 
@@ -211,10 +211,11 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 			needToRest += 600; // need to rest gets less
 		}
 		if (objectDone == SpaceType.DANCEFLOOR) {
-			needToDance += 10; // need to dance gets less
+			needToDance += 80; // need to dance gets less
 		}
 		if (objectDone == SpaceType.BAR) {
 			needToDrink += 90; // need to Drink gets less
+			needToPee -= 10;
 		}
 		if (objectDone == SpaceType.DJBOOTH) {
 			needToMusic += 180; // need to dance gets less
@@ -238,12 +239,12 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		if (needToMusic < 0) {
 			needToMusic = 0;
 		}
-		needToDance--;
-		needToPee--;
-		needToRest--;
-		needToTalk--;
-		needToMusic--;
-		needToDrink--;
+		needToDance-=50;
+		needToPee-=22;
+		needToRest-=31;
+		needToTalk-=5;
+		needToMusic-=3;
+		needToDrink-= 10;
 	}
 
 	public void memory(ArrayList<SpaceInfo> spacesInRange) {
@@ -358,42 +359,42 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
             writer.write("\t\t\t\t\t\t\tMap saved in Iven's head:\n");
             writer.write("-------------------------------------------------------------------------------\n");
             // show which characteristic the avatar has
-                writer.write(" need to Talk" + needToTalk + "\n");
-				writer.write(" need to Dance" + needToDance + "\n");
-				writer.write(" need to Rest" + needToRest + "\n");
-				writer.write(" need to Drink" + needToDrink + "\n");
-				writer.write("need to Pee" + needToPee + "\n");
-				writer.write(" need to make Music" + needToMusic + "\n");
+                writer.write(" need to Talk: " + needToTalk + "\n");
+				writer.write(" need to Dance: " + needToDance + "\n");
+				writer.write(" need to Rest: " + needToRest + "\n");
+				writer.write(" need to Drink: " + needToDrink + "\n");
+				writer.write(" need to Pee: " + needToPee + "\n");
+				writer.write(" need to make Music: " + needToMusic + "\n");
 
             writer.write("+=============================================================================+\n");
             // run through the array with the seen environment and replace the integer
             // values with more understandable char values
 			char cellSymbol;
-            for (int i = 0; i < Mind.length; i++) {
-                for (int j = 0; j < Mind[i].length; j++) {
+            for (int i = 0; i < Mind[0].length; i++) {
+                for (int j = 0; j < Mind.length; j++) {
                     
-					if(Mind[i][j]== null){
+					if(Mind[j][i]== null){
 						cellSymbol = '?';
 					}
-					else if(Mind[i][j] == SpaceType.BAR){
+					else if(Mind[j][i] == SpaceType.BAR){
 						cellSymbol = 'B';
 					}
-					else if(Mind[i][j]== SpaceType.DANCEFLOOR){
+					else if(Mind[j][i]== SpaceType.DANCEFLOOR){
 						cellSymbol = 'D';
 					}
-					else if(Mind[i][j]== SpaceType.EMPTY){
+					else if(Mind[j][i]== SpaceType.EMPTY){
 						cellSymbol = ' ';
 					}
-					else if(Mind[i][j]== SpaceType.DJBOOTH){
+					else if(Mind[j][i]== SpaceType.DJBOOTH){
 						cellSymbol = 'J';
 					}
-					else if(Mind[i][j]== SpaceType.SEATS){
+					else if(Mind[j][i]== SpaceType.SEATS){
 						cellSymbol = 'S';
 					}
-					else if(Mind[i][j]== SpaceType.TOILET){
+					else if(Mind[j][i]== SpaceType.TOILET){
 						cellSymbol = 'T';
 					}
-					else if(Mind[i][j]== SpaceType.OBSTACLE){
+					else if(Mind[j][i]== SpaceType.OBSTACLE){
 						cellSymbol = 'X';
 					}
 					else{
