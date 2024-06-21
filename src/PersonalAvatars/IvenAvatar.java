@@ -11,11 +11,11 @@ import java.util.Arrays;
 public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 	// Basic Needs
-	int needToDance =   1200;
-	int needToPee =    60000;
+	int needToDance =   3000;
+	int needToPee =    	6000;
 	int needToRest = 	2500;
-	int needToTalk =   10000;
-	int needToMusic =  50000; // implement needToMusic 
+	int needToTalk =   	1000;
+	int needToMusic =  	9000; // implement needToMusic 
 	int needToDrink =   4000; // implement needToDrink 
 
 	int[] needsInOrder = { needToDance, needToPee, needToRest, needToTalk, needToMusic, needToDrink };
@@ -66,8 +66,6 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	@Override
 	public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
 		createTxtFile();
-
-		ObjectNeeded();
 		try {
 			checkBorder(spacesInRange);
 		} catch (BorderException e) {
@@ -79,47 +77,48 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		memory(spacesInRange);
 
 		int lenght = spacesInRange.size();
+		if ( ObjectNeeded == SpaceType.AVATAR){		// If I need a Avatar to talk. Look around you
+			for (int i = 0; i < lenght; i++) {
+				if (ObjectNeeded == spacesInRange.get(i).getType()) {
+					// Is somethink I need in range 
+					if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Up)) {					
+						refreshNeeds(ObjectNeeded);
+						nextMove = Direction.UP;
 
-		for (int i = 0; i < lenght; i++) {
+					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_UpLeft)) {					
+						refreshNeeds(ObjectNeeded);
+						nextMove = Direction.UP;
 
- 			if (ObjectNeeded == spacesInRange.get(i).getType()) {
-				// Wo liegt das?
-				if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Up)) {
-					// SpaceType frontTyp = spacesInRange.get(i).getType();
-					refreshNeeds(ObjectNeeded);
-					return Direction.UP;
-				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_UpLeft)) {
-					// SpaceType frontTyp = spacesInRange.get(i).getType();
-					refreshNeeds(ObjectNeeded);
-					return Direction.UP;
-				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_UpRight)) {
-					// SpaceType frontTyp = spacesInRange.get(i).getType();
-					refreshNeeds(ObjectNeeded);
-					return Direction.UP;
-				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Right)) {
-					// SpaceType rightTyp = spacesInRange.get(i).getType();
-					refreshNeeds(ObjectNeeded);
-					return Direction.RIGHT;
-				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Down)) {
-					// SpaceType backTyp = spacesInRange.get(i).getType();
-					refreshNeeds(ObjectNeeded);
-					return Direction.DOWN;
-				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_DownRight)) {
-					// SpaceType backTyp = spacesInRange.get(i).getType();
-					refreshNeeds(ObjectNeeded);
-					return Direction.DOWN;
-				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_DownLeft)) {
-					// SpaceType backTyp = spacesInRange.get(i).getType();
-					refreshNeeds(ObjectNeeded);
-					return Direction.DOWN;
-				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Left)) {
-					// SpaceType leftTyp = spacesInRange.get(i).getType();
-					refreshNeeds(ObjectNeeded);
-					return Direction.LEFT;
+					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_UpRight)) {					
+						refreshNeeds(ObjectNeeded);
+						nextMove = Direction.UP;
+
+					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Right)) {					
+						refreshNeeds(ObjectNeeded);
+						nextMove = Direction.RIGHT;
+
+					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Down)) {					
+						refreshNeeds(ObjectNeeded);
+						nextMove = Direction.DOWN;
+
+					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_DownRight)) {					
+						refreshNeeds(ObjectNeeded);
+						nextMove = Direction.DOWN;
+
+					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_DownLeft)) {
+						refreshNeeds(ObjectNeeded);
+						nextMove = Direction.DOWN;
+
+					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Left)) {					
+						refreshNeeds(ObjectNeeded);
+						nextMove = Direction.LEFT;
+					}
 				}
 			}
-		
-	}
+			ObjectNeeded();
+			return nextMove;	
+		}	
+		// if nothing needed is in range.
 		if (everySecondRound){
 			mirroredwayfinding(spacesInRange);
 			everySecondRound = false;
@@ -130,10 +129,8 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 			wayfinding(spacesInRange);
 			everySecondRound = true;
 			return nextMove;
-			// if nothing needed that is in range.
+			
 		}
-
-		
 	}
 
 	void ObjectNeeded() {
@@ -146,19 +143,20 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 		Arrays.sort(needsInOrder);
 		if (needsInOrder[0] == needToDance) {
-			ObjectNeeded = SpaceType.DANCEFLOOR; // Dancefloor
+			ObjectNeeded = SpaceType.DANCEFLOOR; 	// Dancefloor is most needed
 		} else if (needsInOrder[0] == needToPee) {
-			ObjectNeeded = SpaceType.TOILET;
+			ObjectNeeded = SpaceType.TOILET;		// Toilet is most needed
 		} else if (needsInOrder[0] == needToRest) {
-			ObjectNeeded = SpaceType.SEATS;
+			ObjectNeeded = SpaceType.SEATS;			// Seats is most needed
 		} else if (needsInOrder[0] == needToTalk) {
-			ObjectNeeded = SpaceType.AVATAR;
-		} else if (needsInOrder[0] == needToDrink) {
-			ObjectNeeded = SpaceType.BAR;
-		} else if (needsInOrder[0] == needToMusic) {
-			ObjectNeeded = SpaceType.DJBOOTH;
-
+			ObjectNeeded = SpaceType.AVATAR;		// Avatar is most needed
 			//System.out.println("----- Avatar want to talked");
+		} else if (needsInOrder[0] == needToDrink) {
+			ObjectNeeded = SpaceType.BAR;			// Bar is most needed
+		} else if (needsInOrder[0] == needToMusic) {
+			ObjectNeeded = SpaceType.DJBOOTH;		// DJbooth is most needed
+
+			
 		}
 		try {
 			if (ObjectNeeded == null) {
@@ -170,7 +168,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	}
 
 	Direction move() {
-		System.out.println("------------ I will move random");
+		//System.out.println("------------ I will move random");
 		int max = 4;
 		int min = 0;
 		int directionNumber = (int) (Math.random() * ((max - min) + 1) + min); // directionNumber zwischen 0 und 4 generieren
@@ -189,13 +187,6 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		} else {
 			return Direction.STAY;
 		}
-		// return switch (directionNumber) {
-		// case 0 -> Direction.LEFT;
-		// case 1 -> Direction.RIGHT;
-		// case 2 -> Direction.UP;
-		// case 3 -> Direction.DOWN;
-		//// case 6 -> Direction.RIGHT;
-		// default -> Direction.STAY;
 	}
 
 	void refreshNeeds(SpaceType objectDone) {
@@ -205,10 +196,10 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 			System.out.println("------------------------------------ Avatar talked");
 		}
 		if (objectDone == SpaceType.TOILET) {
-			needToPee = 5000; // Reset need
+			needToPee = 5000; // need to pee gets less
 		}
 		if (objectDone == SpaceType.SEATS) {
-			needToRest += 600; // need to rest gets less
+			needToRest += 1250; // need to rest gets less
 		}
 		if (objectDone == SpaceType.DANCEFLOOR) {
 			needToDance += 80; // need to dance gets less
@@ -218,9 +209,8 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 			needToPee -= 10;
 		}
 		if (objectDone == SpaceType.DJBOOTH) {
-			needToMusic += 180; // need to dance gets less
+			needToMusic += 180; // need to make Music gets less
 		}
-
 		if (needToDance < 0) {
 			needToDance = 0;
 		}
@@ -239,12 +229,12 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		if (needToMusic < 0) {
 			needToMusic = 0;
 		}
-		needToDance-=50;
-		needToPee-=22;
-		needToRest-=31;
-		needToTalk-=5;
-		needToMusic-=3;
-		needToDrink-= 10;
+		needToDance -= 50;
+		needToPee -= 22;
+		needToRest -= 31;
+		needToTalk -= 5;
+		needToMusic -= 3;
+		needToDrink -= 10;
 	}
 
 	public void memory(ArrayList<SpaceInfo> spacesInRange) {
@@ -308,6 +298,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 				else if(findCoords.getY() == myCoords.getY()){
 					nextMove = Direction.STAY;	//All coords are the same. The object was found
 					refreshNeeds(ObjectNeeded);
+					ObjectNeeded();
 					if (orientate<5){
 						orientate++;
 					}
@@ -365,6 +356,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 				writer.write(" need to Drink: " + needToDrink + "\n");
 				writer.write(" need to Pee: " + needToPee + "\n");
 				writer.write(" need to make Music: " + needToMusic + "\n");
+				writer.write(" Object I am looking for " + ObjectNeeded + "\n");
 
             writer.write("+=============================================================================+\n");
             // run through the array with the seen environment and replace the integer
