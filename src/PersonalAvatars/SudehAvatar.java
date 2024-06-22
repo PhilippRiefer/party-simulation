@@ -1,14 +1,9 @@
-// SudehAvatar.java
 package PersonalAvatars;
 
 import java.awt.Color;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-//import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import Environment.Coordinate;
 import Environment.Direction;
@@ -21,6 +16,7 @@ public class SudehAvatar extends SuperAvatar {
     private int[][] visitedCells = new int[20][40];
     private static final Map<String, Integer> TYPE = new HashMap<>();
     private int stayCounter;
+    private Random random = new Random();
 
     private int drink = 0;
     private int dance = 0;
@@ -48,129 +44,103 @@ public class SudehAvatar extends SuperAvatar {
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-        if(stayCounter > 0){
+        Direction direction;
+        if (stayCounter > 0) {
             stayCounter--;
             if (stayCounter == 0) {
                 System.out.println("Stay duration over. Resuming movement.");
-                // Reset stayCounter and switch to movement mode
-                stayCounter = 0;
-                return randomDirection();
+                direction = randomDirection();
             } else {
                 System.out.println("Staying in place for " + stayCounter + " turns.");
+                direction = Direction.STAY;
             }
-            return Direction.STAY;
-        }
-        Random random = new Random();
-        Direction direction = Direction.STAY;
-        if (random.nextInt(100) < 60) { // 60% chance to move randomly
-            int directionNumber = random.nextInt(4);
-            direction = switch (directionNumber) {
-                case 0 -> Direction.LEFT;
-                case 1 -> Direction.RIGHT;
-                case 2 -> Direction.UP;
-                case 3 -> Direction.DOWN;
-                default -> Direction.STAY;
-            };
         } else {
-            //check the spaceInrange and decide what to do
-            for(SpaceInfo space : spacesInRange){
-                SpaceType type = space.getType();
-                switch (type){
-                    case EMPTY: //wandaring 
-                        setAvatarColor(new Color(10, 80, 70));
-                        direction = getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
-                        return direction;
-
-                    case AVATAR: //socializing
-                        setAvatarColor(new Color(204, 0, 200));
-                        //talk++;
-                        stayCounter = getStayDuration(type);
-                        direction = getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
-                        return direction;
-
-                    case DANCEFLOOR: //feeling festive
-                        setAvatarColor(new Color(0, 240, 200));
-                        stayCounter = getStayDuration(type);
-                        direction = getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
-                        return direction;
-
-                    case BAR: //feeling thirsty
-                        setAvatarColor(new Color(0, 240, 200));
-                        stayCounter = getStayDuration(type);
-                        direction = getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
-                        return direction;
-
-                    case TOILET: //need to pee
-                        setAvatarColor(new Color(0, 240, 200));
-                        stayCounter = getStayDuration(type);
-                        direction = getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
-                        return direction;
-                        
-                    case DJBOOTH: 
-                        setAvatarColor(new Color(0, 240, 200));
-                        stayCounter = getStayDuration(type);
-                        direction = getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
-                        return direction;
-
-                    case SEATS: 
-                        setAvatarColor(new Color(0, 240, 200));
-                        stayCounter = getStayDuration(type);
-                        direction = getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
-                        return direction;
-        
-                    case OBSTACLE: //Found an obstacle, skipping.
-                        continue;
-                    default:
-                        continue;
-                }
-
+            direction = findBestDirection(spacesInRange);
+            if (direction == Direction.STAY) {
+                direction = randomDirection();
             }
-
         }
 
-        
-        
-        // Save visited spaces
-        int[] left = checkSpace(spacesInRange, 1); // check cell to the left
-        int[] above = checkSpace(spacesInRange, 3); // check cell above
-        int[] bottom = checkSpace(spacesInRange, 4); // check cell down
-        int[] right = checkSpace(spacesInRange, 6); // check cell to the right
-        int[][] directions = { left, above, bottom, right };
-        visitedSpaces(directions);
+        // Update visited spaces and environment
+        int[] directions = checkSpace(spacesInRange, 0); // You may need to loop over spacesInRange or find the current space
+        visitedSpaces(new int[][]{directions});
 
         return direction;
     }
 
-    private int getStayDuration(SpaceType type) {
-        
-        switch (type) {
-            case AVATAR:
-                talk ++;
-                return 10; // Stay for .. turns
-
-            case DANCEFLOOR:
-                dance ++;
-                return 10; // Stay for .. turns
-
-            case DJBOOTH:
-                dj ++;
-                return 10; // Stay for .. turns
-
-            case TOILET:
-                peeOrDrug++;
-                return 10; // Stay for .. turns
-
-            case BAR:
-                drink ++;
-                return 10; // Stay for .. turns
-
-            case SEATS:
-                rest ++;
-                return 10; // Stay for .. turns
-
-            default:
-                return 0;
+    private Direction findBestDirection(ArrayList<SpaceInfo> spacesInRange) {
+        PriorityQueue<SpaceInfo> queue = new PriorityQueue<>(Comparator.comparingInt(this::heuristicCost));
+        for (SpaceInfo space : spacesInRange) {
+            queue.offer(space);
         }
+
+        while (!queue.isEmpty()) {
+            SpaceInfo space = queue.poll();
+            SpaceType type = space.getType();
+            if (type != SpaceType.OBSTACLE) {
+                int stayDuration = getStayDuration(type);
+                if (stayDuration > 0) {
+                    setAvatarColor(getColorForType(type));
+                    stayCounter = stayDuration;
+                    return getDirectionFromCoordinate(space.getRelativeToAvatarCoordinate());
+                }
+            }
+        }
+        return Direction.STAY;
+    }
+
+    private int heuristicCost(SpaceInfo space) {
+        SpaceType type = space.getType();
+        int baseCost = switch (type) {
+            case BAR -> 10;
+            case AVATAR -> 20;
+            case DANCEFLOOR -> 15;
+            case DJBOOTH -> 25;
+            case TOILET -> 10;
+            case SEATS -> 5;
+            default -> 0;
+        };
+        Coordinate coord = space.getRelativeToAvatarCoordinate();
+        int distance = Math.abs(coord.getX()) + Math.abs(coord.getY());
+        return baseCost + distance;
+    }
+
+    private Color getColorForType(SpaceType type) {
+        return switch (type) {
+            case BAR, DANCEFLOOR, DJBOOTH, TOILET, SEATS -> new Color(0, 90, 80);
+            case AVATAR -> new Color(204, 0, 200);
+            default -> new Color(0, 90, 80);
+        };
+    }
+
+    private int getStayDuration(SpaceType type) {
+        return switch (type) {
+            case AVATAR -> {
+                talk++;
+                yield 2;
+            }
+            case DANCEFLOOR -> {
+                dance++;
+                yield 10;
+            }
+            case DJBOOTH -> {
+                dj++;
+                yield 10;
+            }
+            case TOILET -> {
+                peeOrDrug++;
+                yield 10;
+            }
+            case BAR -> {
+                drink++;
+                yield 10;
+            }
+            case SEATS -> {
+                rest++;
+                yield 10;
+            }
+            default -> 0;
+        };
     }
 
     private Direction getDirectionFromCoordinate(Coordinate coordinate) {
@@ -179,15 +149,26 @@ public class SudehAvatar extends SuperAvatar {
 
         if (x == 1) {
             return Direction.RIGHT;
-        } else if (x == - 1) {
+        } else if (x == -1) {
             return Direction.LEFT;
         } else if (y == 1) {
             return Direction.DOWN;
-        } else if (y == - 1) {
+        } else if (y == -1) {
             return Direction.UP;
         }
 
         return randomDirection();
+    }
+
+    private Direction randomDirection() {
+        int directionNumber = random.nextInt(4);
+        return switch (directionNumber) {
+            case 0 -> Direction.LEFT;
+            case 1 -> Direction.RIGHT;
+            case 2 -> Direction.UP;
+            case 3 -> Direction.DOWN;
+            default -> Direction.STAY;
+        };
     }
 
     private int[] checkSpace(ArrayList<SpaceInfo> spacesInRange, int spaceNumber) {
@@ -219,11 +200,11 @@ public class SudehAvatar extends SuperAvatar {
         int myY = directions[0][2];
         visitedCells[myY][myX] = 99;
         wander++;
-        
-        for (int i = 0; i < directions.length; i++) {
-            int y = directions[i][2];
-            int x = directions[i][1];
-            int type = directions[i][0];
+
+        for (int[] direction : directions) {
+            int y = direction[2];
+            int x = direction[1];
+            int type = direction[0];
             seenEnvironment[y][x] = type;
         }
         createTxtFile();
@@ -232,16 +213,16 @@ public class SudehAvatar extends SuperAvatar {
     private void createTxtFile() {
         try (FileWriter writer = new FileWriter("SudehVisitedSpaces.txt")) {
             writer.write("+=============================================================================+\n");
-            writer.write("\t\t\t\t\t\t\tMap of SudehAvatr's Decisions\n");
+            writer.write("\t\t\t\t\t\t\tMap of SudehAvatar's Decisions\n");
             writer.write("-------------------------------------------------------------------------------\n");
-            writer.write(" SudehAvatr was wandering in the nightclub for " + wander + " minutes.\n");
+            writer.write(" SudehAvatar was wandering in the nightclub for " + wander + " minutes.\n");
             writer.write(" then it Decided to: \n\n");
-            writer.write(" buy a Drink      " + drink     + " times.\n");
-            writer.write(" Dance for        " + dance     + " minutes.\n");
-            writer.write(" be the DJ for    " + dj        + " rounds.\n");
-            writer.write(" be social for    " + talk      + " seconds.\n");
+            writer.write(" buy a Drink      " + drink + " times.\n");
+            writer.write(" Dance for        " + dance + " minutes.\n");
+            writer.write(" be the DJ for    " + dj + " rounds.\n");
+            writer.write(" be social for    " + talk + " seconds.\n");
             writer.write(" go to the Toilet " + peeOrDrug + " times, for pee or drug?.\n");
-            writer.write(" chill for        " + rest      + " minutes.\n");
+            writer.write(" chill for        " + rest + " minutes.\n");
             writer.write("+=============================================================================+\n");
             for (int i = 0; i < seenEnvironment.length; i++) {
                 for (int j = 0; j < seenEnvironment[i].length; j++) {
@@ -250,7 +231,7 @@ public class SudehAvatar extends SuperAvatar {
                         case 0 -> cellSymbol = '.';
                         case 1 -> cellSymbol = 'B';
                         case 2 -> cellSymbol = 'A';
-                        case 3 -> cellSymbol = '/';
+                        case 3 -> cellSymbol = 'Y';
                         case 4 -> cellSymbol = ' ';
                         case 5 -> cellSymbol = 'D';
                         case 6 -> cellSymbol = 'S';
@@ -276,17 +257,6 @@ public class SudehAvatar extends SuperAvatar {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private Direction randomDirection() {
-        int directionNumber = (int) (Math.random() * 4);
-        return switch (directionNumber) {
-            case 0 -> Direction.LEFT;
-            case 1 -> Direction.RIGHT;
-            case 2 -> Direction.UP;
-            case 3 -> Direction.DOWN;
-            default -> Direction.STAY;
-        };
     }
 
     @Override
