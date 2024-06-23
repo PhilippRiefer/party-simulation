@@ -2,12 +2,18 @@ package PersonalAvatars;
 
 import java.lang.Math;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import AvatarInterface.SuperAvatar;
 import Environment.Coordinate;
 import Environment.Direction;
 import Environment.SpaceInfo;
 import Environment.SpaceType;
 import java.awt.Color;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class MaximSpockAvatar extends SuperAvatar {
     // wohin auslagern?
@@ -44,37 +50,57 @@ public class MaximSpockAvatar extends SuperAvatar {
 
     int x = 1;
 
-    /**
-     * Determines the direction for the avatar's next turn based on the spaces
-     * within its perception range.
-     * 
-     * @return the direction for the avatar's next turn
-     */
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         int sizeOfArrayList = spacesInRange.size();
         Coordinate personalCoordinates = spacesInRange.get(sizeOfArrayList / 2).getRelativeToAvatarCoordinate(); // 2n^2 + 2n
         personalCoordinates.setY(personalCoordinates.getY() - 1);
 
-        // For Debugging
         System.out.println("\t\t\t---------Round " + x + "---------");
         x++;
         System.out.println("Current Objective:  " + currentObjective);
-
-        //for(int i = 0; i < spacesInRange.size(); i++){
-        //    System.out.println("spacesInRange(" + i +"), x="+spacesInRange.get(i).getRelativeToAvatarCoordinate().getX()+", y=" +spacesInRange.get(i).getRelativeToAvatarCoordinate().getY());
-        //}
         
         saveSpacesInRange(spacesInRange, personalCoordinates); // 1. step is to save Environment in memory
         if (countedTurns > 99 && notMovingToObjective) { // 2. if counted Turns > 99 -> scouting not as default
             System.out.println("NOT SCOUTING AS DEFAULT ANYMORE");
-            currentObjective = decideNextMovement();
+            if(!allSpacesScouted){
+                currentObjective = decideNextMovement();
+            } 
+            else{
+                return Direction.STAY;
+            }
         }
-        updateStats(); // stats are updated each turn (getting thirstier for e.g.)
-        //System.out.println("\t---STATS Updated---");
-        // returning next chosen direction to SimulationControl
+        printFloor();
+        updateStats(); 
         return moveTo(clubMemory, currentObjective, personalCoordinates, spacesInRange); 
-        //return Direction.UP;
+    }
+
+    private void printFloor() {
+        Map<SpaceType, Character> symbols = new HashMap<>();
+        symbols.put(SpaceType.EMPTY, '.');
+        symbols.put(SpaceType.OBSTACLE, '#');
+        symbols.put(SpaceType.AVATAR, 'A');
+        symbols.put(SpaceType.DANCEFLOOR, 'D');
+        symbols.put(SpaceType.DJBOOTH, 'J');
+        symbols.put(SpaceType.TOILET, 'T');
+        symbols.put(SpaceType.BAR, 'B');
+        symbols.put(SpaceType.SEATS, 'S');
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("clubMemory.txt"))) {
+            for (int j = 0; j < YCOORDINATEMAX; j++) {
+                for (int i = 0; i < XCOORDINATEMAX; i++) {
+                    Character symbol = symbols.get(clubMemory[i][j]);
+                    if (symbol == null) {
+                        symbol = '?';
+                    }
+                    writer.write(symbol);
+                    writer.write(' ');
+                }
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Direction moveTo(SpaceType[][] clubMemory, SpaceType currentObjective, Coordinate personalCoordinates, ArrayList<SpaceInfo> spacesInRange) {
@@ -137,53 +163,50 @@ public class MaximSpockAvatar extends SuperAvatar {
                 bowelMovement = MINSTAT;
                 urination = MINSTAT;
                 break;
-           
             case BAR:
                 hydration = MAXSTAT;
                 break;
-        
             case SEATS:
                 energy = MAXSTAT;
                 break;
-
             default:
-                
                 break;
         }  
     } 
 
-    Boolean checkIfNextStepOkay(Direction stepOfList, Coordinate personalCoordinates) {
-        if (stepOfList == Direction.RIGHT) {
-            if (clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.OBSTACLE)
-                && clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.AVATAR)) {
-                System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
-                return false;
-            }
+    public boolean checkIfNextStepOkay(Direction stepOfList, Coordinate personalCoordinates) {
+        int x = personalCoordinates.getX();
+        int y = personalCoordinates.getY();
+        int nextX = x, nextY = y;
+
+        switch (stepOfList) {
+            case RIGHT:
+                nextX = x + 1;
+                break;
+            case LEFT:
+                nextX = x - 1;
+                break;
+            case UP:
+                nextY = y - 1;
+                break;
+            case DOWN:
+                nextY = y + 1;
+                break;
         }
-        if (stepOfList == Direction.LEFT) {
-            if (clubMemory[personalCoordinates.getX() - 1][personalCoordinates.getY()] == (SpaceType.OBSTACLE)
-                && clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.AVATAR)) {
-                System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
-                return false;
-            }
+
+        if (isObstacleOrAvatar(nextX, nextY)) {
+            System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
+            return false;
         }
-        if (stepOfList == Direction.UP) {
-            if (clubMemory[personalCoordinates.getX()][personalCoordinates.getY() - 1] == (SpaceType.OBSTACLE)
-                && clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.AVATAR)) {
-                System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
-                return false;
-            }
-        }
-        if (stepOfList == Direction.DOWN) {
-            if (clubMemory[personalCoordinates.getX()][personalCoordinates.getY() + 1] == (SpaceType.OBSTACLE)
-                && clubMemory[personalCoordinates.getX() + 1][personalCoordinates.getY()] == (SpaceType.AVATAR)) {
-                System.out.println("ETWAS STEHT IM WEG -> NEUEN WEG BERECHNEN!");
-                return false;
-            }
-        }
-       
-        // wenn alles in Ordnung!
+        
         return true;
+    }
+
+    private boolean isObstacleOrAvatar(int x, int y) {
+        if (x < 0 || y < 0 || x >= clubMemory.length || y >= clubMemory[0].length) {
+            return false;
+        }
+        return clubMemory[x][y] == SpaceType.OBSTACLE || clubMemory[x][y] == SpaceType.AVATAR;
     }
 
     ArrayList<Direction> preComputeDirection(SpaceType[][] clubMemory, SpaceType currentObjective, Coordinate personalCoordinates) {
@@ -416,29 +439,6 @@ public class MaximSpockAvatar extends SuperAvatar {
         urination++;
         countedTurns++;
     }
-
-    /**
-     * Generates a random direction for the avatar to move.
-     *
-     * @return a random direction
-     */
-    // private Direction randomDirection() {
-    // int directionNumber = (int) (Math.random() * 4);
-
-    // switch (directionNumber) {
-    // case 0:
-    // return Direction.LEFT;
-    // case 1:
-    // return Direction.RIGHT;
-    // case 2:
-    // return Direction.UP;
-    // case 3:
-    // return Direction.DOWN;
-    // default:
-    // return Direction.STAY; // Safety net, though unnecessary as directionNumber
-    // is bound by 0-3
-    // }
-    // }
 
     /**
      * Returns the perception range of the avatar.
