@@ -33,7 +33,6 @@ public class MaximSpockAvatar extends SuperAvatar {
     SpaceType[][] clubMemory = new SpaceType[XCOORDINATEMAX][YCOORDINATEMAX]; // Mr. Spocks internal map of the
                                                                               // Environment
     // internal variables for movement
-    boolean notMovingToObjective = true;
     boolean hasPreComputed = false;
     boolean hasWaitedOneTurnForOtherAvatarToLeave = false;
     
@@ -47,30 +46,45 @@ public class MaximSpockAvatar extends SuperAvatar {
         super(id, perceptionRange, color);
     }
 
-    int x = 1;
-
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         int sizeOfArrayList = spacesInRange.size();
         Coordinate personalCoordinates = spacesInRange.get(sizeOfArrayList / 2).getRelativeToAvatarCoordinate(); // 2n^2 + 2n
         personalCoordinates.setY(personalCoordinates.getY() - 1);
 
-        System.out.println("\t\t\t---------Round " + x + "---------");
-        x++;
+        System.out.println("\t\t\t---------Round " + countedTurns + "---------");
         System.out.println("allSpacesScouted:  " + allSpacesScouted);
         System.out.println("Current Objective:  " + currentObjective);
-        
+
+        System.out.println("energy:  " + energy);
+        System.out.println("hydration:  " + hydration);
+        System.out.println("bowelMovement:  " + bowelMovement);
+        System.out.println("urination:  " + urination);
+
+        updateStats(); 
         saveSpacesInRange(spacesInRange, personalCoordinates); // 1. step is to save Environment in memory
-        if (countedTurns > 99 && notMovingToObjective) { // 2. if counted Turns > 99 -> scouting not as default
+        printFloor();
+        
+        allSpacesScouted = checkIfAllSpacesScouted(); // Update allSpacesScouted status
+        if (countedTurns > 99) { // 2. if counted Turns > 99 -> scouting not as default
             System.out.println("NOT SCOUTING AS DEFAULT ANYMORE");
             currentObjective = decideNextMovement();
             if(allSpacesScouted && currentObjective == null){
                 return Direction.STAY;
             }
         }
-        printFloor();
-        updateStats(); 
         return moveTo(clubMemory, currentObjective, personalCoordinates, spacesInRange); 
+    }
+
+    private boolean checkIfAllSpacesScouted() {
+        for (int i = 0; i < XCOORDINATEMAX; i++) {
+            for (int j = 0; j < YCOORDINATEMAX; j++) {
+                if (clubMemory[i][j] == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private void printFloor() {
@@ -107,12 +121,14 @@ public class MaximSpockAvatar extends SuperAvatar {
         if (!hasPreComputed || hasWaitedOneTurnForOtherAvatarToLeave) { // definitely preComputing path to Objective
             System.out.println("\t---PRECOMPUTING PATH!!!---");
             listOfDirections = preComputeDirection(clubMemory, currentObjective, personalCoordinates);
-            if(listOfDirections == null){
-                notMovingToObjective = true;
+            if(listOfDirections.size() == 0){
                 hasPreComputed = false;
                 return Direction.STAY;
             }
-            hasPreComputed = true;
+            else{
+                hasPreComputed = true;
+                return listOfDirections.get(stepOfTheGivenDirectionList++);
+            }
         }
 
         if (listOfDirections.size() == 0) { // Liste ist leer!
@@ -125,7 +141,6 @@ public class MaximSpockAvatar extends SuperAvatar {
                 return Direction.STAY;
             } else {
                 hasWaitedOneTurnForOtherAvatarToLeave = false;
-                notMovingToObjective = true;
                 hasPreComputed = false;
                 return Direction.STAY;
             }
@@ -134,7 +149,6 @@ public class MaximSpockAvatar extends SuperAvatar {
             if(currentObjective != null){
                 rewardsForArrivingAtObjective(currentObjective);
             }
-            notMovingToObjective = true;
             hasPreComputed = false;
             return Direction.STAY;
         }
@@ -148,7 +162,6 @@ public class MaximSpockAvatar extends SuperAvatar {
                 return Direction.STAY;
             } else{
                 hasWaitedOneTurnForOtherAvatarToLeave = false;
-                notMovingToObjective = true;
                 hasPreComputed = false;
                 return Direction.STAY;
             }
@@ -393,10 +406,10 @@ public class MaximSpockAvatar extends SuperAvatar {
         while (i < spacesInRange.size()) {
             int clubMemoryCoordinateX = spacesInRange.get(i).getRelativeToAvatarCoordinate().getX();
             int clubMemoryCoordinateY = spacesInRange.get(i).getRelativeToAvatarCoordinate().getY();
-            if(i == 2*Math.pow(getPerceptionRange(), 2) + 2 * getPerceptionRange()){
+            if(i == (2*Math.pow(getPerceptionRange(), 2) + 2 * getPerceptionRange())){
                 clubMemoryCoordinateY++;
             }
-            if(clubMemoryCoordinateX > 0 || clubMemoryCoordinateX < XCOORDINATEMAX || clubMemoryCoordinateY > 0 || clubMemoryCoordinateY > YCOORDINATEMAX){
+            if(clubMemoryCoordinateX >= 0 || clubMemoryCoordinateX < XCOORDINATEMAX || clubMemoryCoordinateY >= 0 || clubMemoryCoordinateY > YCOORDINATEMAX){
                 clubMemory[clubMemoryCoordinateX][clubMemoryCoordinateY] = spacesInRange.get(i).getType();
             }
             i++;
@@ -424,21 +437,11 @@ public class MaximSpockAvatar extends SuperAvatar {
         countedTurns++;
     }
 
-    /**
-     * Returns the perception range of the avatar.
-     *
-     * @return the perception range
-     */
     @Override
     public int getPerceptionRange() {
         return super.getPerceptionRange(); // Assuming SuperAvatar has a method to get the perception range
     }
 
-    /**
-     * Sets the perception range of the avatar.
-     *
-     * @param perceptionRange the perception range to set
-     */
     @Override
     public void setPerceptionRange(int perceptionRange) {
         super.setPerceptionRange(perceptionRange); // Set the perception range via the superclass method
