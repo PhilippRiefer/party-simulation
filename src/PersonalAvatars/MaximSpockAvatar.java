@@ -64,7 +64,7 @@ public class MaximSpockAvatar extends SuperAvatar {
         updateStats(); 
         saveSpacesInRange(spacesInRange, personalCoordinates); // 1. step is to save Environment in memory
         printFloor();
-        
+
         allSpacesScouted = checkIfAllSpacesScouted(); // Update allSpacesScouted status
         if (countedTurns > 99) { // 2. if counted Turns > 99 -> scouting not as default
             System.out.println("NOT SCOUTING AS DEFAULT ANYMORE");
@@ -170,14 +170,14 @@ public class MaximSpockAvatar extends SuperAvatar {
 
     void rewardsForArrivingAtObjective(SpaceType currentObjective){
         switch (currentObjective) {
-            case TOILET:
+            case SpaceType.TOILET:
                 bowelMovement = MINSTAT;
                 urination = MINSTAT;
                 break;
-            case BAR:
+            case SpaceType.BAR:
                 hydration = MAXSTAT;
                 break;
-            case SEATS:
+            case SpaceType.SEATS:
                 energy = MAXSTAT;
                 break;
             default:
@@ -293,7 +293,7 @@ public class MaximSpockAvatar extends SuperAvatar {
             //System.out.println("Checking surroundings with distance: " + surrounding);
             objectiveCoordinates = checkVicinityForObjective(currentObjective, personalCoordinates, surrounding); 
             // if objective Coordiantes are showing the current objective
-            if (objectiveCoordinates.getX() != personalCoordinates.getX() && objectiveCoordinates.getY() != personalCoordinates.getY()) { 
+            if (objectiveCoordinates.getX() != personalCoordinates.getX() || objectiveCoordinates.getY() != personalCoordinates.getY()) { 
                 System.out.println("OBJECTIVE FOUND IN MEMORY \t\t\t---- FOUND COORDINATES! --------");
                 System.out.println("objective at found Coordinates: " + clubMemory[objectiveCoordinates.getX()][objectiveCoordinates.getY()]);
                 System.out.println("objectiveCoordinateX in Memory: " + objectiveCoordinates.getX() + "\nobjectiveCoordinateY in Memory: " + objectiveCoordinates.getY());
