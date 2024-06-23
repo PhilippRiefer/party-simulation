@@ -33,7 +33,6 @@ public class MaximSpockAvatar extends SuperAvatar {
     SpaceType[][] clubMemory = new SpaceType[XCOORDINATEMAX][YCOORDINATEMAX]; // Mr. Spocks internal map of the
                                                                               // Environment
     // internal variables for movement
-    boolean isScoutingForObject = false;
     boolean notMovingToObjective = true;
     boolean hasPreComputed = false;
     boolean hasWaitedOneTurnForOtherAvatarToLeave = false;
@@ -58,15 +57,14 @@ public class MaximSpockAvatar extends SuperAvatar {
 
         System.out.println("\t\t\t---------Round " + x + "---------");
         x++;
+        System.out.println("allSpacesScouted:  " + allSpacesScouted);
         System.out.println("Current Objective:  " + currentObjective);
         
         saveSpacesInRange(spacesInRange, personalCoordinates); // 1. step is to save Environment in memory
         if (countedTurns > 99 && notMovingToObjective) { // 2. if counted Turns > 99 -> scouting not as default
             System.out.println("NOT SCOUTING AS DEFAULT ANYMORE");
-            if(!allSpacesScouted){
-                currentObjective = decideNextMovement();
-            } 
-            else{
+            currentObjective = decideNextMovement();
+            if(allSpacesScouted && currentObjective == null){
                 return Direction.STAY;
             }
         }
@@ -214,24 +212,14 @@ public class MaximSpockAvatar extends SuperAvatar {
         // find cell that is objective in Memory
         Coordinate objectiveCoordinates = findObjectiveInMemory(currentObjective, personalCoordinates);
 
-        if (objectiveCoordinates == personalCoordinates) { // found nothing in Memory -> scout Empty Spaces
-            System.out.println("\t---WHILE PRECOMPUTING FOR OBJECTIVE -> NOTHING FOUND -> DEFAULT: SCOUTING!---");
-            objectiveCoordinates = findObjectiveInMemory(null, personalCoordinates);
-            if (objectiveCoordinates == personalCoordinates) {  // not known
-                if(currentObjective != null){
-                    isScoutingForObject = true;
-                }
-                else{
-                    System.out.println("every null has been cleared");
-                    return listOfDirectionsToObjective;
-                }
-            }
+        if (objectiveCoordinates == personalCoordinates) { // Found nothing in Memory -> scout Empty Spaces
+            return listOfDirectionsToObjective;
         }
-
-        listOfDirectionsToObjective = computeRoute(objectiveCoordinates, personalCoordinates);
-        stepOfTheGivenDirectionList = 0;    // gerade neue Route berechnet -> bei erstem Schritt anfangen (Bei Liste = 0)
-        isScoutingForObject = false;
-        return listOfDirectionsToObjective;
+        else {  // found objective in Memory -> compute Route
+            listOfDirectionsToObjective = computeRoute(objectiveCoordinates, personalCoordinates);
+            stepOfTheGivenDirectionList = 0;    // gerade neue Route berechnet -> bei erstem Schritt anfangen (Bei Liste = 0)
+            return listOfDirectionsToObjective;
+        }
     }
 
     ArrayList<Direction> computeRoute(Coordinate objectiveCoordinates, Coordinate personalCoordinates){
@@ -408,14 +396,10 @@ public class MaximSpockAvatar extends SuperAvatar {
             if(i == 2*Math.pow(getPerceptionRange(), 2) + 2 * getPerceptionRange()){
                 clubMemoryCoordinateY++;
             }
-            // TODO TRY CATCH
             if(clubMemoryCoordinateX > 0 || clubMemoryCoordinateX < XCOORDINATEMAX || clubMemoryCoordinateY > 0 || clubMemoryCoordinateY > YCOORDINATEMAX){
                 clubMemory[clubMemoryCoordinateX][clubMemoryCoordinateY] = spacesInRange.get(i).getType();
             }
             i++;
-            //System.out.println("clubMemoryX: " + clubMemoryCoordinateX);
-            //System.out.println("clubMemoryY: " + clubMemoryCoordinateY);
-            //System.out.println("clubMemory[" + i + "]: " + clubMemory[clubMemoryCoordinateX][clubMemoryCoordinateY] );
         }
         System.out.println("\t---ClubMemory updated---");
     }
