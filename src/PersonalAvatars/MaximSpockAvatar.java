@@ -240,52 +240,62 @@ public class MaximSpockAvatar extends SuperAvatar {
         }
     }
 
-    ArrayList<Direction> computeRoute(Coordinate objectiveCoordinates, Coordinate personalCoordinates){
+    ArrayList<Direction> computeRoute(Coordinate objectiveCoordinates, Coordinate personalCoordinates) {
         System.out.println("---- computeRoute() ----");
-        ArrayList<Direction> listOfDirectionsToObjective = new ArrayList<Direction>();
-        int moveX = 0;
-        int moveY = 0;
-        boolean cantMoveHorizontal = false;
-        boolean cantMoveVertical = false;
-
-        while(!cantMoveHorizontal){
-            if (objectiveCoordinates.getX() < personalCoordinates.getX() + moveX
-                    && clubMemory[personalCoordinates.getX() + moveX - 1][personalCoordinates.getY()] != SpaceType.OBSTACLE) { // objective links, im vgl zu avatar -> avatar nach links gehen
-                listOfDirectionsToObjective.add(Direction.LEFT);
-                moveX--;
-            }
-            else if(clubMemory[personalCoordinates.getX() + moveX + 1][personalCoordinates.getY()] != SpaceType.OBSTACLE){                                                           // objective rechts, im vgl zu avatar -> avatar nach rechts gehen
-                listOfDirectionsToObjective.add(Direction.RIGHT);
-                moveX++;
-            }
-            else{
-                cantMoveHorizontal = true;
-                break;
-            }
-            if(objectiveCoordinates.getX() != personalCoordinates.getX() + moveX){
-                cantMoveHorizontal = true;
-            }
-        }
-        while(!cantMoveVertical){
-            if(objectiveCoordinates.getY() < personalCoordinates.getY() + moveY
-                    && clubMemory[personalCoordinates.getX() + moveX][personalCoordinates.getY() + moveY - 1] != SpaceType.OBSTACLE) { // objective oben, im vgl zu avatar -> avatar nach oben gehen
-                listOfDirectionsToObjective.add(Direction.UP);
-                moveY--;
-            }
-            else if(clubMemory[personalCoordinates.getX() + moveX][personalCoordinates.getY() + moveY + 1] != SpaceType.OBSTACLE) {                                                           // objective unten, im vgl zu avatar -> avatar nach unten gehen
-                listOfDirectionsToObjective.add(Direction.DOWN);
-                moveY++;
-            }
-            else{
-                cantMoveVertical = true;
-                break;
-            }
-            if(objectiveCoordinates.getY() != personalCoordinates.getY() + moveY){
-                cantMoveVertical = true;
+        ArrayList<Direction> listOfDirectionsToObjective = new ArrayList<>();
+        int currentX = personalCoordinates.getX();
+        int currentY = personalCoordinates.getY();
+        int objectiveX = objectiveCoordinates.getX();
+        int objectiveY = objectiveCoordinates.getY();
+    
+        // Move horizontally towards the objective
+        while (currentX != objectiveX) {
+            if (objectiveX < currentX) { // Move left
+                if (isSpaceFree(currentX - 1, currentY)) {
+                    listOfDirectionsToObjective.add(Direction.LEFT);
+                    currentX--;
+                } else {
+                    break;
+                }
+            } else { // Move right
+                if (isSpaceFree(currentX + 1, currentY)) {
+                    listOfDirectionsToObjective.add(Direction.RIGHT);
+                    currentX++;
+                } else {
+                    break;
+                }
             }
         }
+    
+        // Move vertically towards the objective
+        while (currentY != objectiveY) {
+            if (objectiveY < currentY) { // Move up
+                if (isSpaceFree(currentX, currentY - 1)) {
+                    listOfDirectionsToObjective.add(Direction.UP);
+                    currentY--;
+                } else {
+                    break;
+                }
+            } else { // Move down
+                if (isSpaceFree(currentX, currentY + 1)) {
+                    listOfDirectionsToObjective.add(Direction.DOWN);
+                    currentY++;
+                } else {
+                    break;
+                }
+            }
+        }
+    
         System.out.println("---- listOfDirectionsToObjective ----: " + listOfDirectionsToObjective);
         return listOfDirectionsToObjective;
+    }
+    
+    private boolean isSpaceFree(int x, int y) {
+        // Check if coordinates are within bounds and the space is not an obstacle
+        if (x >= 0 && x < XCOORDINATEMAX && y >= 0 && y < YCOORDINATEMAX) {
+            return clubMemory[x][y] != SpaceType.OBSTACLE;
+        }
+        return false;
     }
 
     Coordinate findObjectiveInMemory(SpaceType currentObjective, Coordinate personalCoordinates) { 
