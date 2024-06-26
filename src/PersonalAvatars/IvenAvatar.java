@@ -208,11 +208,10 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 			if (spacesInRange.get(i).getType() != SpaceType.AVATAR) {
 				Mind[spacesInRange.get(i).getRelativeToAvatarCoordinate().getX()][spacesInRange.get(i).getRelativeToAvatarCoordinate().getY()] = spacesInRange.get(i).getType();
-				if ((spacesInRange.get(i).getType() != SpaceType.EMPTY) && (spacesInRange.get(i).getType() != SpaceType.OBSTACLE))
-						objectsfound.addElement(spacesInRange.get(i).getType(), spacesInRange.get(i).getRelativeToAvatarCoordinate().getX(), spacesInRange.get(i)
-						.getRelativeToAvatarCoordinate().getY());						
+				if ((spacesInRange.get(i).getType() != SpaceType.EMPTY) && (spacesInRange.get(i).getType() != SpaceType.OBSTACLE)){
+					objectsfound.addElement(spacesInRange.get(i).getType(), spacesInRange.get(i).getRelativeToAvatarCoordinate().getX(), spacesInRange.get(i).getRelativeToAvatarCoordinate().getY());						
+				}
 			}
-
 		}
 	}
 
