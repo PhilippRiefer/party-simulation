@@ -132,11 +132,11 @@ public class TimAvatarUpdateNeeds {
             case "thirst":
             case "hunger":
             case "bladder":
-                return 100.0 - value;
+                return value;
             case "physical energy":
             case "fun":
             case "social energy":
-                return value;
+                return 100 - value;
             default:
                 return 0.0;
         }
@@ -146,35 +146,76 @@ public class TimAvatarUpdateNeeds {
      * Updates avatar needs over time based on character traits and predefined changes.
      */
     public void updateNeedsOverTime(HashMap<String, Double> needs, Map<String, Double> characterTraits) {
-        String[] needsArray = {"thirst", "hunger", "bladder", "physical energy", "fun", "social energy"};
-        double[] changesArray = {0.1, 0.1, 0.1, -0.1, -0.1, -0.1};
-        String[] traitsArray = {"good drinker", "good eater", "strong bladder", "active", null, "social"};
+        double thirstChange = 0.4;
+        double hungerChange = 0.4;
+        double bladderChange = 0.4;
+        double physicalEnergyChange = -0.4;
+        double funChange = -0.4;
+        double socialEnergyChange = -0.4;
 
-        for (int i = 0; i < needsArray.length; i++) {
-            String need = needsArray[i];
-            double change = changesArray[i];
-            String trait = traitsArray[i];
+        thirstChange *= 1.0 - (characterTraits.get("good drinker") / 100.0);
+        hungerChange *= 1.0 - (characterTraits.get("good eater") / 100.0);
+        bladderChange *= 1.0 - (characterTraits.get("strong bladder") / 100.0);
+        physicalEnergyChange *= 1.0 + (characterTraits.get("active") / 100.0);
+        socialEnergyChange *= 1.0 + (characterTraits.get("social") / 100.0);
 
-            if (trait != null) {
-                if (need.equals("physical energy") || need.equals("social energy")) {
-                    change *= 1.0 + (characterTraits.get(trait) / 100.0); // Adjust change based on trait
-                } else {
-                    change *= 1.0 - (characterTraits.get(trait) / 100.0); // Adjust change based on trait
-                }
-            }
+        needs.put("thirst", adjustNeed(needs.get("thirst"), thirstChange));
+        needs.put("hunger", adjustNeed(needs.get("hunger"), hungerChange));
+        needs.put("bladder", adjustNeed(needs.get("bladder"), bladderChange));
+        needs.put("physical energy", adjustNeed(needs.get("physical energy"), physicalEnergyChange));
+        needs.put("fun", adjustNeed(needs.get("fun"), funChange));
+        needs.put("social energy", adjustNeed(needs.get("social energy"), socialEnergyChange));
 
-            needs.put(need, adjustNeed(needs.get(need), change));
-        }
+        System.out.println("Thirst " + needs.get("thirst"));
+        System.out.println("hunger " + needs.get("hunger"));
+        System.out.println("bladder " + needs.get("bladder"));
+        System.out.println("physical energy " + needs.get("physical energy"));
+        System.out.println("fun " + needs.get("fun"));
+        System.out.println("social energy " + needs.get("social energy"));
+
     }
 
     /**
      * Applies random events affecting avatar needs, such as sudden increase in thirst.
      */
     public void applyRandomEvents(HashMap<String, Double> needs) {
-        if (random.nextDouble() < 0.1) { // 10% chance of random event
+
+        if (random.nextDouble() < 0.01) { // 10% chance of random event
             int randomThirstIncrease = random.nextInt(80); // Random increase in thirst up to 80
-            needs.put("thirst", increaseNeed(needs.get("thirst"), randomThirstIncrease));
-            System.out.println("Zufälliges Ereignis: Durst erhöht um " + randomThirstIncrease);
+
+            int randomInt = random.nextInt(7);
+            String key;
+            switch (randomInt) {
+                case 1:
+                    key = "thirst";
+                    break;
+                case 2:
+                    key = "hunger";
+                    break;
+    
+                case 3:
+                    key = "bladder";
+                    break;
+    
+                case 4:
+                    key = "physical energy";
+                    break;
+    
+                case 5:
+                    key = "fun";
+                    break;
+    
+                case 6:
+                    key = "social energy";
+                    break;
+            
+                default:
+                key = "thirst";
+                    break;
+            }
+
+            needs.put(key, increaseNeed(needs.get(key), randomThirstIncrease));
+            System.out.println("Zufälliges Ereignis:" + key + " erhöht um " + randomThirstIncrease);
         }
     }
 

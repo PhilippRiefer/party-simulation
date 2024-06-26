@@ -8,10 +8,15 @@ import Environment.SpaceType;
 
 public class TimAvatarCurrentSpace {
 
-    ArrayList<SpaceInfo> oldSpaceType = new ArrayList<>();
 
     public TimAvatarCurrentSpace() {
     }
+
+    public static  ArrayList<Coordinate> Dancefloor = new ArrayList<>();
+    public static ArrayList<Coordinate> DJBooth = new ArrayList<>();
+    public static ArrayList<Coordinate> Toilet = new ArrayList<>();
+    public static ArrayList<Coordinate> Bar = new ArrayList<>();
+    public static ArrayList<Coordinate>  Seats = new ArrayList<>();
 
      public Coordinate calculateCurrentCoordinate(ArrayList<SpaceInfo> spacesInRange) {
         Coordinate currentCoordinate = new Coordinate(0, 0);
@@ -55,4 +60,42 @@ public class TimAvatarCurrentSpace {
         return currentSpaceType;
         
     }
+
+    public static void extendKnownSpace(ArrayList<SpaceInfo> spacesInRange) {
+        for(SpaceInfo spaceInfo : spacesInRange) {
+            Coordinate coordinate = new Coordinate(spaceInfo.getRelativeToAvatarCoordinate().getX(), spaceInfo.getRelativeToAvatarCoordinate().getY());
+            SpaceType type = spaceInfo.getType();
+
+            switch(type) {
+                case DANCEFLOOR:
+                    if(!Dancefloor.contains(coordinate )) {
+                        Dancefloor.add(coordinate);
+                    }
+                    break;
+                case DJBOOTH:
+                    if(!DJBooth.contains(coordinate )) {
+                        DJBooth.add(coordinate );
+                    }
+                    break;
+                case TOILET:
+                    if(!Toilet.contains(coordinate )) {
+                        Toilet.add(coordinate );
+                    }
+                    break;
+                case BAR:
+                    if(!Bar.contains(coordinate )) {
+                        Bar.add(coordinate);
+                    }
+                    break;
+                case SEATS:
+                    if(!Seats.contains(coordinate )) {
+                        Seats.add(coordinate );
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
 }

@@ -15,6 +15,8 @@ public class TimAvatar extends SuperAvatar {
     private SpaceType currentSpaceType = SpaceType.EMPTY;
     private Coordinate currentCoordinate = new Coordinate(0, 0);
     private Direction lastDirection;
+    ArrayList<SpaceInfo> oldSpaceInRange = new ArrayList<>();
+    ArrayList<SpaceInfo> currentSpaceInRange = new ArrayList<>();
 
     private TimAvatarMove mover = new TimAvatarMove();
     private TimAvatarUpdateNeeds updater = new TimAvatarUpdateNeeds();
@@ -49,20 +51,26 @@ public class TimAvatar extends SuperAvatar {
 
     Coordinate steps = new Coordinate(0,0);
     private Direction doAction(ArrayList<SpaceInfo> spacesInRange) {
+        TimAvatarCurrentSpace.extendKnownSpace(spacesInRange);
         if(steps.getX() == 0 && steps.getY() == 0) {
             SpaceType destinationSpaceType = updater.makeSpaceTypeDecision(needs);
             steps = mover.pathFinding(destinationSpaceType, currentCoordinate);
+            System.out.println(destinationSpaceType);
         }
-        lastDirection = mover.coordinateSteps(steps, spacesInRange);
+        System.out.println("X: " + steps.getX() + "Y: " + steps.getY());
+        
+        lastDirection = mover.coordinateSteps(steps, spacesInRange, currentCoordinate);
         return lastDirection;
     }
 
 
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
+        currentSpaceInRange = spacesInRange;
         currentCoordinate = orientation.calculateCurrentCoordinate(spacesInRange);
-        currentSpaceType = orientation.calculateCurrentSpaceType(spacesInRange, spacesInRange, null, currentSpaceType);
+        currentSpaceType = orientation.calculateCurrentSpaceType(currentSpaceInRange, oldSpaceInRange, lastDirection, currentSpaceType);
         updateNeeds();
-        return doAction(spacesInRange);
+        lastDirection = doAction(spacesInRange);
+        return lastDirection;
     }
 
     @Override

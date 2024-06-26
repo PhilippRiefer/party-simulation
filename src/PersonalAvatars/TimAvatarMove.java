@@ -6,14 +6,8 @@ import Environment.*;
 
 public class TimAvatarMove {
 
-    private Coordinate currentCoordinate = randomCoordinate();
     private int wait = 0;
 
-    private ArrayList<SpaceInfo> Dancefloor = new ArrayList<>();
-    private ArrayList<SpaceInfo> DJBooth = new ArrayList<>();
-    private ArrayList<SpaceInfo> Toilet = new ArrayList<>();
-    private ArrayList<SpaceInfo> Bar = new ArrayList<>();
-    private ArrayList<SpaceInfo>  Seats = new ArrayList<>();
 
     public TimAvatarMove() {
 
@@ -23,19 +17,19 @@ public class TimAvatarMove {
         Coordinate destination = null;
             switch (destinationSpaceType) {
                 case DANCEFLOOR:
-                    destination = getRandomLocation(Dancefloor);
+                    destination = getRandomLocation(TimAvatarCurrentSpace.Dancefloor);
                     break;
                 case DJBOOTH:
-                    destination = getRandomLocation(DJBooth);
+                    destination = getRandomLocation(TimAvatarCurrentSpace.DJBooth);
                     break;
                 case TOILET:
-                    destination = getRandomLocation(Toilet);
+                    destination = getRandomLocation(TimAvatarCurrentSpace.Toilet);
                     break;
                 case BAR:
-                    destination = getRandomLocation(Bar);
+                    destination = getRandomLocation(TimAvatarCurrentSpace.Bar);
                     break;
                 case SEATS:
-                    destination = getRandomLocation(Seats);
+                    destination = getRandomLocation(TimAvatarCurrentSpace.Seats);
                     break;
                 default:
                     break;
@@ -44,6 +38,7 @@ public class TimAvatarMove {
 
         if (destination == null) {
             // Fallback to random movement if no specific destination found
+            System.out.println("Random Destionation");
             return new Coordinate(
                     randomCoordinate().getX() - currentCoordinate.getX(),
                     randomCoordinate().getY() - currentCoordinate.getY());
@@ -56,15 +51,15 @@ public class TimAvatarMove {
         );
     }
 
-    private Coordinate getRandomLocation(ArrayList<SpaceInfo> spaceList) {
+    private Coordinate getRandomLocation(ArrayList<Coordinate> spaceList) {
         if (spaceList.isEmpty()) {
             return null;
         }
         Random random = new Random();
-        return spaceList.get(random.nextInt(spaceList.size())).getRelativeToAvatarCoordinate();
+        return spaceList.get(random.nextInt(spaceList.size()));
     }
 
-    public Direction coordinateSteps(Coordinate steps, ArrayList<SpaceInfo> spacesInRange) {
+    public Direction coordinateSteps(Coordinate steps, ArrayList<SpaceInfo> spacesInRange, Coordinate currentCoordinate) {
         Coordinate nextCoordinate = new Coordinate(0, 0);
 
         if (steps.getY() > 0) {
@@ -72,6 +67,7 @@ public class TimAvatarMove {
             nextCoordinate.setX(currentCoordinate.getX());
 
             if (isFree(nextCoordinate, spacesInRange, steps)) {
+                steps.setY(steps.getY() - 1);
                 return Direction.DOWN;
             }
 
@@ -80,6 +76,7 @@ public class TimAvatarMove {
             nextCoordinate.setX(currentCoordinate.getX());
 
             if (isFree(nextCoordinate, spacesInRange, steps)) {
+                steps.setY(steps.getY() + 1);
                 return Direction.UP;
             }
         } else if (steps.getX() < 0) {
@@ -87,6 +84,7 @@ public class TimAvatarMove {
             nextCoordinate.setY(currentCoordinate.getY());
 
             if (isFree(nextCoordinate, spacesInRange, steps)) {
+                steps.setX(steps.getX() + 1);
                 return Direction.LEFT;
             }
         } else if (steps.getX() > 0) {
@@ -94,6 +92,7 @@ public class TimAvatarMove {
             nextCoordinate.setY(currentCoordinate.getY());
 
             if (isFree(nextCoordinate, spacesInRange, steps)) {
+                steps.setX(steps.getX() - 1);
                 return Direction.RIGHT;
             }
         }
