@@ -64,74 +64,38 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	}
 
 	@Override
-	public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
-		createTxtFile();
+	public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {		
 		try {
 			checkBorder(spacesInRange);
 		} catch (BorderException e) {
-			//System.out.println("RelativeToAvatarCoordinate has not the right size \n I moved randomly");
-			return move();
+			return moveRandom();
 		}
-		myCoords.setX(spacesInRange.get(3).getRelativeToAvatarCoordinate().getX()); 
-		myCoords.setY((spacesInRange.get(3).getRelativeToAvatarCoordinate().getY()+1)); 
+		createTxtFile();
+		setMyCoord(spacesInRange);
 		memory(spacesInRange);
 
-		int lenght = spacesInRange.size();
-
-		if ( ObjectNeeded == SpaceType.AVATAR){		// If I need a Avatar to talk. Look around you
-			for (int i = 0; i < lenght; i++) {
-				if (ObjectNeeded == spacesInRange.get(i).getType()) {
-					// Is somethink I need in range 
-					if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Up)) {					
-						refreshNeeds(ObjectNeeded);
-						return Direction.UP;
-
-					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_UpLeft)) {					
-						refreshNeeds(ObjectNeeded);
-						return Direction.UP;
-
-					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_UpRight)) {					
-						refreshNeeds(ObjectNeeded);
-						return Direction.UP;
-
-					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Right)) {					
-						refreshNeeds(ObjectNeeded);
-						return Direction.RIGHT;
-
-					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Down)) {					
-						refreshNeeds(ObjectNeeded);
-						return Direction.DOWN;
-
-					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_DownRight)) {					
-						refreshNeeds(ObjectNeeded);
-						return Direction.DOWN;
-
-					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_DownLeft)) {
-						refreshNeeds(ObjectNeeded);
-						return Direction.DOWN;
-
-					} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Left)) {					
-						refreshNeeds(ObjectNeeded);
-						return Direction.LEFT;
-					}
-				}
+		if ( ObjectNeeded == SpaceType.AVATAR){		// Do I want to talk?		
+			nextMove = isItInRangeAndWhere(spacesInRange); // Is some one around me?
+			if ( nextMove != null){	
+				ObjectNeeded();
+				refreshNeeds(ObjectNeeded);				// Update needs				
+				return nextMove;		
 			}
-			ObjectNeeded();
-			nextMove = move();		
-			return nextMove;	
+			else{
+				refreshNeeds(null);			// Update needs	
+				return moveRandom();				// If no Avatar around me. Move randomly
+			}
 		}	
-		// if nothing needed is in range.
+		// if the avatar doesn't want to talk
 		if (everySecondRound){
-			mirroredwayfinding(spacesInRange);
+			mirroredwayfinding();
 			everySecondRound = false;
-			return nextMove;
-			
+			return nextMove;			
 		}
 		else{
-			wayfinding(spacesInRange);
+			wayfinding();
 			everySecondRound = true;
-			return nextMove;
-			
+			return nextMove;			
 		}
 	}
 
@@ -169,7 +133,7 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		}
 	}
 
-	Direction move() {
+	Direction moveRandom() {
 		//System.out.println("------------ I will move random");
 		int max = 4;
 		int min = 0;
@@ -281,8 +245,8 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		}
 	}
 	
-	public void wayfinding(ArrayList<SpaceInfo> spacesInRange){
-		if(findAim()){
+	public void wayfinding(){
+		if(findAim()){							//Have I seen the SpaceType I need and where is it? 
 			if(findCoords.getX()<myCoords.getX()){
 				nextMove=Direction.LEFT;
 			}
@@ -301,19 +265,18 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 					nextMove = Direction.STAY;	//All coords are the same. The object was found
 					refreshNeeds(ObjectNeeded);
 					ObjectNeeded();
-					if (orientate<5){
+					if (orientate<5){			// Am I oriented yet? 
 						orientate++;
-					}
-					// TODO Make it noticeable that the object has been found
+					}					
 				}
 			}
 		}
 		else{
-			nextMove = move(); // Just move
+			nextMove = moveRandom(); // Just move
 		}
 	}
 
-	public void mirroredwayfinding(ArrayList<SpaceInfo> spacesInRange){
+	public void mirroredwayfinding(){
 		if(findAim()){
 			if(findCoords.getY()<myCoords.getY()){
 				nextMove=Direction.UP;
@@ -335,14 +298,49 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 					ObjectNeeded();
 					if (orientate<5){
 						orientate++;
-					}
-					// TODO Make it noticeable that the object has been found
+					}				
 				}
 			}
 		}
 		else{
-			nextMove = move(); // Just move
+			nextMove = moveRandom(); // Just move
 		}
+	}
+	private Direction isItInRangeAndWhere(ArrayList<SpaceInfo> spacesInRange){
+		for (int i = 0; i < spacesInRange.size(); i++) {
+			if (ObjectNeeded == spacesInRange.get(i).getType()) {
+				// Is somethink I need in range 
+				if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Up)) {
+					return Direction.UP;
+
+				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_UpLeft)) {
+					return Direction.UP;
+
+				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_UpRight)) {
+					return Direction.UP;
+
+				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Right)) {	
+					return Direction.RIGHT;
+
+				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Down)) {	
+					return Direction.DOWN;
+
+				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_DownRight)) {	
+					return Direction.DOWN;
+
+				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_DownLeft)) {
+					return Direction.DOWN;
+
+				} else if (spacesInRange.get(i).getRelativeToAvatarCoordinate().equals(Coord_Left)) {	
+					return Direction.LEFT;
+				}
+			}
+		}
+		return null;
+	}
+	private void setMyCoord(ArrayList<SpaceInfo> spacesInRange){
+		myCoords.setX(spacesInRange.get(3).getRelativeToAvatarCoordinate().getX()); 
+		myCoords.setY((spacesInRange.get(3).getRelativeToAvatarCoordinate().getY()+1)); 
 	}
 
 	    private void createTxtFile() {
@@ -411,10 +409,10 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
             writer.write("6 -> S:\tSEATS\n");
             writer.write("7 -> T:\tTOILET\n");
             writer.write("8 -> X:\tOBSTACLE\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    	}
 	
 	private class BorderException extends Exception {
 		public BorderException(String arg) {
