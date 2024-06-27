@@ -20,7 +20,7 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
     final private int ENERGY_LOSS_PER_TURN = 1;
     final private int ENERGY_INCREMENT_PER_TURN_IN_BAR = 500;
 
-    final private int FULL_BLADDER = 1000; // TODO: Define behavior for when full bladder is reached
+    final private int FULL_BLADDER = 2000; // TODO: Define behavior for when full bladder is reached
     final private int BLADDER_HIGH_WARNING = 900; // to prioritize visiting the toilet
     final private int EMPTY_BLADDER = 0; 
     final private int BLADDER_FILL_PER_TURN = 10;
@@ -163,7 +163,7 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
 
                 // Skip visited locations or blocked cells
                 if (explored[neighboringRow][neighboringColumn]) continue;
-                if (internalMap[neighboringRow][neighboringColumn] == SpaceType.OBSTACLE) continue;
+                if (internalMap[neighboringRow][neighboringColumn] == SpaceType.OBSTACLE || internalMap[neighboringRow][neighboringColumn] == SpaceType.AVATAR) continue;
 
                 queue.add(new Coordinate(neighboringColumn, neighboringRow));
                 // if(internalMapIsComplete){
@@ -187,30 +187,30 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
             int ranY;
 
             // guess that the toilet is somewhere in bottom right corner of the club, if my target is toilet
-            if (target == SpaceType.TOILET) {
-                // Restrict random numbers to the bottom right corner of the grid
-                int startX = (int) (COLUMNS * 0.75); // Start at 75% of the grid width
-                int startY = (int) (ROWS * 0.75); // Start at 75% of the grid height
-                ranX = startX + (int) (Math.random() * (COLUMNS - 2 - startX)); // between startX and COLUMNS - 2
-                ranY = startY + (int) (Math.random() * (ROWS - 2 - startY)); // between startY and ROWS - 2
-            } else
-            // guess that the bar is somewhere in the first or last quarters of the club, if my target is bar
-            if (target == SpaceType.BAR) {
-                // Guess that the bar is somewhere in the first or last quarters of the grid
-                if (Math.random() < 0.5) {
-                    // First quarter
-                    ranX = 1 + (int) (Math.random() * (COLUMNS / 4));
-                    ranY = 1 + (int) (Math.random() * (ROWS - 2));
-                } else {
-                    // Last quarter
-                    ranX = (int) (COLUMNS * 0.75) + (int) (Math.random() * (COLUMNS / 4 - 2));
-                    ranY = 1 + (int) (Math.random() * (ROWS - 2));
-                }
-            } else {
+            // if (target == SpaceType.TOILET) {
+            //     // Restrict random numbers to the bottom right corner of the grid
+            //     int startX = (int) (COLUMNS * 0.75); // Start at 75% of the grid width
+            //     int startY = (int) (ROWS * 0.75); // Start at 75% of the grid height
+            //     ranX = startX + (int) (Math.random() * (COLUMNS - 2 - startX)); // between startX and COLUMNS - 2
+            //     ranY = startY + (int) (Math.random() * (ROWS - 2 - startY)); // between startY and ROWS - 2
+            // } else
+            // // guess that the bar is somewhere in the first or last quarters of the club, if my target is bar
+            // if (target == SpaceType.BAR) {
+            //     // Guess that the bar is somewhere in the first or last quarters of the grid
+            //     if (Math.random() < 0.5) {
+            //         // First quarter
+            //         ranX = 1 + (int) (Math.random() * (COLUMNS / 4));
+            //         ranY = 1 + (int) (Math.random() * (ROWS - 2));
+            //     } else {
+            //         // Last quarter
+            //         ranX = (int) (COLUMNS * 0.75) + (int) (Math.random() * (COLUMNS / 4 - 2));
+            //         ranY = 1 + (int) (Math.random() * (ROWS - 2));
+            //     }
+            // } else {
                 // Calculate a random X and Y for other targets
                 ranX = 1 + (int) (Math.random() * (COLUMNS - 2)); // between 1 and COLUMNS - 2
                 ranY = 1 + (int) (Math.random() * (ROWS - 2)); // between 1 and ROWS - 2
-            }
+            // }
             
             // update global `targetCoordinate` with the random assumption
             targetCoordinate = new Coordinate(ranX, ranY);
@@ -337,14 +337,17 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
         if (internalMap[currentAvatarLocation.getY()][currentAvatarLocation.getX()] != null) {
             switch (internalMap[currentAvatarLocation.getY()][currentAvatarLocation.getX()]) {
                 case TOILET:
-                    bladder = Math.max(EMPTY_BLADDER, bladder - BLADDER_EMPTYING_PER_TURN_IN_TOILET);
+                    // bladder = Math.max(EMPTY_BLADDER, bladder - BLADDER_EMPTYING_PER_TURN_IN_TOILET);
+                    bladder = EMPTY_BLADDER;
                     break;
                 case DJBOOTH:
                 case DANCEFLOOR:
-                    fun = Math.min(FUN_MAX, fun + FUN_INCREMENT_PER_TURN_IN_DANCEFLOOR_OR_DJBOOTH);
+                    // fun = Math.min(FUN_MAX, fun + FUN_INCREMENT_PER_TURN_IN_DANCEFLOOR_OR_DJBOOTH);
+                    fun =  FUN_MAX;
                     break;
                 case BAR:
-                    energy = Math.min(ENERGY_MAX, energy + ENERGY_INCREMENT_PER_TURN_IN_BAR);
+                    // energy = Math.min(ENERGY_MAX, energy + ENERGY_INCREMENT_PER_TURN_IN_BAR);
+                    energy = ENERGY_MAX;
                     break;
                 default:
                     energy = Math.max(ENERGY_MIN, energy - ENERGY_LOSS_PER_TURN); // loses one energy point per turn
@@ -361,31 +364,45 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
     }
 
     private void chooseAGoal() {
-        // choose goal randomly for the moment TODO: Implement logic to choose goal according to needs
-        plan = new Plan();
-        int directionNumber = (int) (Math.random() * 5);
-
-        switch (directionNumber) {
-            case 0:
-                plan.target = SpaceType.BAR;
-                break;
-            case 1:
+        // Calculate the weights based on the current needs
+        int funWeight = FUN_MAX - fun; // Higher weight if fun is low
+        int seatWeight = FUN_MAX / 2; // Constant weight for seats
+        int barWeight = (ENERGY_MAX - energy) / 2; // Higher weight if energy is low
+        int toiletWeight = bladder; // Higher weight if bladder is high
+    
+        // Sum the weights to get the total weight
+        int totalWeight = funWeight + seatWeight + barWeight + toiletWeight;
+    
+        // Generate a random number in the range of the total weight
+        int randomWeight = (int) (Math.random() * totalWeight);
+    
+        // Select the goal based on the random weight
+        if (randomWeight < funWeight) {
+            // Prioritize having fun at the dancefloor or DJ booth
+            plan = new Plan();
+            
+            if (Math.random() < 0.5) {
                 plan.target = SpaceType.DANCEFLOOR;
-                break;
-            case 2:
+            } else {
                 plan.target = SpaceType.DJBOOTH;
-                break;
-            case 3:
-                plan.target = SpaceType.SEATS;
-                break;
-            case 4:
-                plan.target = SpaceType.TOILET;
-                break;
-            default:
-                plan.target = SpaceType.TOILET;
-                break;
+            }
+            
+        } else if (randomWeight < funWeight + seatWeight) {
+            // Second priority is going to the seats
+            plan = new Plan();
+            plan.target = SpaceType.SEATS;
+        } else if (randomWeight < funWeight + seatWeight + barWeight) {
+            // Third priority is going to the bar
+            plan = new Plan();
+            plan.target = SpaceType.BAR;
+        } else {
+            // Last priority is going to the toilet
+            plan = new Plan();
+            plan.target = SpaceType.TOILET;
         }
     }
+    
+    
 
     private Coordinate calculateCurrentLocation(SpaceInfo spaceInfo) {
         Coordinate leftToAvatar = spaceInfo.getRelativeToAvatarCoordinate();
@@ -409,18 +426,18 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
 }
 
     private void updateInternalMap(ArrayList<SpaceInfo> spacesInRange) {
-        if (!internalMapIsComplete){
+        // if (!internalMapIsComplete){
             updateMap(spacesInRange);
-        }        
+        // }        
     }
 
     private void updateMap(ArrayList<SpaceInfo> spacesInRange) {
         for(SpaceInfo space:spacesInRange){
             SpaceType spaceType = space.getType();
-            if(spaceType != SpaceType.AVATAR){
+            // if(spaceType != SpaceType.AVATAR){
                 Coordinate spaceCoordinate = space.getRelativeToAvatarCoordinate();
                 internalMap[spaceCoordinate.getY()][spaceCoordinate.getX()] = spaceType;
-            }
+            // }
             
         }
         checkIfMapComplete();
