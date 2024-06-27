@@ -43,3 +43,4 @@ all_java_files.txt
 lib/
 out/
 src/Avatar_Interface
+src/SimulationControl/SimulationControl.java
