@@ -106,7 +106,7 @@ public class SimulationControl {
         avatars.add(Tom9);
         //avatars.add(Tom10);*/
 
-        for(int i = 0; i < 40; i++){
+        for(int i = 0; i < 20; i++){
             avatars.add(new TomAvatar(nextAvatarID++, perceptionRange, Color.blue));
         }
 
