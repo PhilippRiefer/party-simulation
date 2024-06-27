@@ -4,6 +4,7 @@ import AvatarInterface.SuperAvatar;
 import Environment.*;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -47,17 +48,20 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
     
     private class Plan {
         private SpaceType target;
-        private SpaceType[][] m = new SpaceType[ROWS][COLUMNS]; // Input character matrix TODO: NEEDED? Or is the internalMap enough?
+        // private SpaceType[][] m = new SpaceType[ROWS][COLUMNS]; // Input character matrix TODO: NEEDED? Or is the internalMap enough?
         private Queue<Coordinate> queue = new LinkedList<>(); // Queue of coordinates to explore for the BFS algorithm
         private Boolean reachedEnd = false;
         private Boolean[][] explored = new Boolean[ROWS][COLUMNS];
         private int[] directionEastWest = new int[]{-1, 1, 0, 0};
         private int[] directionNorthSouth = new int[]{ 0, 0, 1, -1};
 
+        boolean asumptionHasBeenMade = false; // for use when map is not complete. Avatar makes an assumption of where the target will be. 
+        Coordinate targetCoordinate; // for use when map is not complete. This is the target coordinate where the avatar assumes the target will be.
+
         
         
         private Coordinate[][] prev = new Coordinate[ROWS][COLUMNS]; // Array prev to keep track of parent node for the BFS algorithm
-        private Queue<Coordinate> route = new LinkedList<>(); // Queue of steps in route. Each step in the route has a coordinate
+        private LinkedList<Coordinate> route = new LinkedList<>(); // Queue of steps in route. Each step in the route has a coordinate
 
         Plan(){
             for (int i = 0; i < ROWS; i++) {
@@ -71,21 +75,56 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
             // add starting point to queue
             queue.add(currentAvatarLocation);
             // mark current location as visited
-            if (internalMapIsComplete) {
+            // if (internalMapIsComplete) {
                 explored[currentAvatarLocation.getY()][currentAvatarLocation.getX()] = true;
+            // }
+            Coordinate endCoordinate = null;
+            while (queue.size() > 0) {
+                Coordinate coordinateToExplore = queue.remove();
+                if (internalMap[coordinateToExplore.getY()][coordinateToExplore.getX()] == target) {
+                    endCoordinate = coordinateToExplore;
+                    reachedEnd = true; // TODO Is this really needed?
+                    break;
+                }
+                exploreNeighbors(coordinateToExplore);
             }
             
+            reconstructRoute(currentAvatarLocation, endCoordinate);
+        }
 
-        
-            do {
+        private void calculateRoute(Coordinate targetCoordinate) {
+            queue.add(currentAvatarLocation);
+            explored[currentAvatarLocation.getY()][currentAvatarLocation.getX()] = true;
+            
+            while (queue.size() > 0){
                 Coordinate coordinateToExplore = queue.remove();
-                if (internalMap[coordinateToExplore.getY()][coordinateToExplore.getX()] == target){
+                System.out.println("queue: " + queue);
+                System.out.println("target coordinete: "+ targetCoordinate);
+                if (coordinateToExplore.equals(targetCoordinate)){
                     reachedEnd = true;
                     break;
                 }
                 exploreNeighbors(coordinateToExplore);
-            } while (queue.size() > 0 && internalMapIsComplete);
+            }
+            if (reachedEnd){
+                reconstructRoute(currentAvatarLocation, targetCoordinate);
+            }
+        }
+
+        private void reconstructRoute(Coordinate startCoordinate, Coordinate endCoordinate) {
+            // reconstruct route going backwards from startCoordinate
+            route.add(endCoordinate);
+            // check in prev what coordinate is stored in endCoordinate
+            Coordinate at = prev[endCoordinate.getY()][endCoordinate.getX()];
+            while(at!=null){
+                // add that coordinate to route
+                route.add(at);
+                System.out.println("unreversed route: " +route);
+                // repeat with the coordinate that was just added to route
+                at = prev[at.getY()][at.getX()];
+            }
             
+            Collections.reverse(route);  
         }
 
         private void exploreNeighbors(Coordinate coordinate) {
@@ -102,35 +141,89 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
                 if (internalMap[neighboringRow][neighboringColumn] == SpaceType.OBSTACLE) continue;
 
                 queue.add(new Coordinate(neighboringColumn, neighboringRow));
-                if(internalMapIsComplete){
+                // if(internalMapIsComplete){
                     explored[neighboringRow][neighboringColumn] = true;
-                }
-                
-                
+                // }
+                 
                 // Add coordinate being currently explored into the cells corresponding to the neighbors. This is to reconstruct path later
-                prev[neighboringRow][neighboringColumn] = coordinate;
+                prev[neighboringRow][neighboringColumn] = coordinate;               
             }
+        }
+
+        private Coordinate makeAssumption() {
+            // if assumption has been made, no need to make assumption
+            if (asumptionHasBeenMade){
+                // return already calculated assumed coordinate
+                return targetCoordinate;
+            }
+            // if assumption has not been made:
+            //calculate a random X and Y
+            int ranX = 1 + (int) (Math.random() * (COLUMNS - 2)); // between 1 and COLUMNS - 1
+            int ranY = 1 + (int) (Math.random() * (ROWS - 2)); // between 1 and ROWS - 1
+            // update global `targetCoordinate` with the random assumption
+            targetCoordinate = new Coordinate(ranX, ranY);
+            // return assumed coordinate
+            return targetCoordinate;
         }
 
         Coordinate nextMilestone(){
-            // if the internal map is not complete, the route cannot be calculated, therefore, start with a new queue
-            if(!internalMapIsComplete){
-                queue.clear();
+            route.clear();
+            // if the internal map is not complete, make an assumption of where the target location will be, and calculate route to get there
+            if (!internalMapIsComplete){
+                targetCoordinate = makeAssumption();                
+                calculateRoute(targetCoordinate);
             }
-            calculateRoute();
-            if(internalMapIsComplete){   
-                return route.remove();
+            // if the internal map is complete, calculate route to the target location
+            else if (internalMapIsComplete) {
+                calculateRoute(); // calculates the route every time. Needed because other avatars might move in my original way
             }
-            System.out.println();
-            System.out.println("Explored:");
-            printMap(explored);
-            System.out.println("Queue:");
-            queue.forEach(element -> System.out.print("("+ element.getX() + "," + element.getY() + ") "));
-            System.out.println();
+            Coordinate next;
+            do {
+                next = route.remove();
+            } while (currentAvatarLocation.equals(next));
 
             
-            return queue.remove(); // or is it peek?
+            System.out.println("--");
+            System.out.println("route: " + route);
+            System.out.println("--");
+            return next;
+            
+            
+            
+            // // if the internal map is not complete, the route cannot be calculated, therefore, start with a new queue
+            // if(!internalMapIsComplete){
+            //     queue.clear();
+            // }
+            // calculateRoute(); // calculates the route every time. Needed because other avatars might move in my original way
+            // if(internalMapIsComplete){   
+            //     return route.remove();
+            // }
+            // System.out.println();
+            // // System.out.println("Explored:");
+            // // printMap(explored);
+            // System.out.println("Queue:");
+            // queue.forEach(element -> System.out.print(element));
+            // System.out.println();
+            // System.out.println("prev:");
+            // // printMap(prev);
+
+            // Coordinate next = queue.remove();
+            // Coordinate parentOfCurrentCoordinate = prev[currentAvatarLocation.getY()][currentAvatarLocation.getX()];
+
+            // System.out.println("Next: "+ next);
+            // System.out.println("parent of current coordinate: " + parentOfCurrentCoordinate);
+            // System.out.println("next is equal to parent of current coordinate:"+ next.equals(parentOfCurrentCoordinate));
+            // System.out.println("");
+            // // if next in queue is the same as parent of current coordinate, remove it from queue
+            // if (next.equals(parentOfCurrentCoordinate)){
+            //     next = queue.remove();
+            //     System.out.println("New next: "+ next);
+            // }
+   
+            // return next; // or is it peek?
         }
+
+        
         
     }
 
@@ -195,8 +288,11 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
         //     chooseAGoal();
         // }
         
+        // if already has a plan in mind and has not reached it
         if(plan!=null){ // TODO: maybe I need to make 'hasGoalInMind' a trivalue, yes, no, urgent. If urgent, skip checking for energy and toilet needs
-            return calculateDirection(currentAvatarLocation, plan.nextMilestone());
+            Coordinate nextMilestone = plan.nextMilestone();
+            Direction direction = calculateDirection(nextMilestone, currentAvatarLocation);
+            return direction;
         }
         chooseAGoal();
     
@@ -255,11 +351,11 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
 
     private Direction calculateDirection(Coordinate nextMilestone, Coordinate currentAvatarCoordinate) {
 
-        Coordinate directionCoordinate = nextMilestone.subtract(currentAvatarCoordinate);
+        Coordinate directionCoordinate = currentAvatarCoordinate.subtract(nextMilestone);
         
-        if (directionCoordinate.equals(new Coordinate(1,0))) return Direction.RIGHT;
+        if (directionCoordinate.equals(new Coordinate(1,0))) return Direction.LEFT;
 
-        if (directionCoordinate.equals(new Coordinate(-1,0))) return Direction.LEFT;
+        if (directionCoordinate.equals(new Coordinate(-1,0))) return Direction.RIGHT;
 
         if (directionCoordinate.equals(new Coordinate(0,1))) return Direction.UP;
 
