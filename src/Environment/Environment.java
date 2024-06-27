@@ -102,8 +102,18 @@ public class Environment {
         }
         for(int x = 24; x < 30; ++x){
             view.paintComponent(x, 2, Color.GRAY);
+            view.paintComponent(x, 3, Color.GRAY);
+            view.paintComponent(x, 4, Color.GRAY);
+            view.paintComponent(x, 5, Color.GRAY);
+            view.paintComponent(x, 6, Color.GRAY);
+            view.paintComponent(x, 7, Color.GRAY);
             view.paintComponent(x, 8, Color.GRAY);
             setSpaceType(x, 2, SpaceType.OBSTACLE);
+            setSpaceType(x, 3, SpaceType.OBSTACLE);
+            setSpaceType(x, 4, SpaceType.OBSTACLE);
+            setSpaceType(x, 5, SpaceType.OBSTACLE);
+            setSpaceType(x, 6, SpaceType.OBSTACLE);
+            setSpaceType(x, 7, SpaceType.OBSTACLE);
             setSpaceType(x, 8, SpaceType.OBSTACLE);
         }
         for(int x = 0; x < 40; ++x){

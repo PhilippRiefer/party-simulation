@@ -101,6 +101,7 @@ public class RobinAvatar extends SuperAvatar {
 
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
+        //TODO: Vortrag
         createTxtFile();
         cycle++;
         updatePosition();
@@ -126,6 +127,10 @@ public class RobinAvatar extends SuperAvatar {
         newPath = false;
         updateEnvironment(spacesInRange);
         // printEnv(1);
+        if(!(PFTValues[getFromEnvironment(Direction.UP, 1)].isWalkable() || PFTValues[getFromEnvironment(Direction.RIGHT, 1)].isWalkable() || PFTValues[getFromEnvironment(Direction.DOWN, 1)].isWalkable() || PFTValues[getFromEnvironment(Direction.LEFT, 1)].isWalkable())){
+            lastDirection = Direction.STAY;
+            return Direction.STAY;
+        }
         switch (state) {
             case FIND_WALL:
                 return findWall();
