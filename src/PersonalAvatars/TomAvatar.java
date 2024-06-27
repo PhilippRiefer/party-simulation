@@ -30,7 +30,7 @@ public class TomAvatar extends SuperAvatar {
     private int stayCounter = 0;
     private int decision = (int) (random.nextDouble() * 100);
     private int merker = 0;
-    private int counterHitAvatar = 0;
+    private int counterHitAvatar = 1;
     private int xDancefloor = 0, yDancefloor = 0;
     private int merkerDirection = 0;
 
@@ -206,13 +206,13 @@ public class TomAvatar extends SuperAvatar {
     public Direction takingDecision(ArrayList<SpaceInfo> spacesInRange) {
         
         if (decision <= 25) {
-            myDirection = goToSomething2(spacesInRange, barList, SpaceType.BAR, 40);
+            myDirection = goToSomething2(spacesInRange, barList, SpaceType.BAR, 30);
         } else if (decision > 25 && decision <= 50) {
-            myDirection = goToSomething2(spacesInRange, dancefloorList, SpaceType.DANCEFLOOR, 50);
+            myDirection = goToSomething2(spacesInRange, dancefloorList, SpaceType.DANCEFLOOR, 30);
         }else if(decision > 50 && decision <= 75){
             myDirection = goToSomething2(spacesInRange, seatsList, SpaceType.SEATS, 30);
         }else if(decision > 75 && decision <= 100){
-            myDirection = goToSomething2(spacesInRange, toiletList, SpaceType.TOILET,20);
+            myDirection = goToSomething2(spacesInRange, toiletList, SpaceType.TOILET,30);
         }
         return myDirection;
     }
@@ -299,10 +299,14 @@ public class TomAvatar extends SuperAvatar {
 
         
             aimType.sort(Comparator.comparingInt(space -> getManhattanDistance(space.getRelativeToAvatarCoordinate(), myPosition)));
-            foundCoordinate = aimType.get(++counterHitAvatar).getRelativeToAvatarCoordinate();
-            if(counterHitAvatar == aimType.size() - 1){
-                counterHitAvatar = 0;
+            
+            if(counterHitAvatar >= aimType.size() - 1){
+                counterHitAvatar = 1;
+                decision = (int) (random.nextDouble() * 100);
             }
+
+            foundCoordinate = aimType.get(counterHitAvatar).getRelativeToAvatarCoordinate();
+            counterHitAvatar++;
         }
         return foundCoordinate;
     }
@@ -442,6 +446,9 @@ public char getFirstLetter(SpaceType locationType) {
             break;
             case 1:
                 myDirection = goToStart(spacesInRange);
+                if(conflictDetected(spacesInRange, myDirection) == true){
+                    myDirection = goDancing();
+                }
                 break;
             case 2:
                 createMentalMap(spacesInRange);
