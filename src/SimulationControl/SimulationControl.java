@@ -34,6 +34,7 @@ public class SimulationControl {
 
         Reflections reflections = new Reflections("PersonalAvatars");
 
+
         for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
             try {
                 
