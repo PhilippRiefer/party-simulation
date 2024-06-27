@@ -51,14 +51,14 @@ public class OleAvatar extends SuperAvatar {
         TYPE.put("SEATS", 6);
         TYPE.put("TOILET", 7);
     }
-    // save the number of moves,
-    // drinks, interrogations and dancemoves
+    // Counter
     // ----------------------------------
     private int run = 0;
     private int drinks = 0;
     private int drinksCounted = 0;
     private int suspicious = 0;
     private int danced = 0;
+    private int suspiciousCounted = 0;
     private String decision;
 
     // static variable to check if a cell
@@ -245,31 +245,38 @@ public class OleAvatar extends SuperAvatar {
         boolean right = false;
         int minIndex = 0; // variable to identify which direction contains the targetValue
 
-        // run through all arrays and find the targetValue in cell [0]
-        for (int i = 0; i < directions.length; i++) {
-            // look for avatars
-            if (directions[i][0] == targetValue) {
-                minIndex = i; // save direction
-                // pause at the avatar and interrogate him
-                suspicious++;
-                wait(10);
-                return chooseDirBasedOnIndex(minIndex);
+        // Safety, if the avatar got stuck
+        if (suspiciousCounted > 10) {
+            suspiciousCounted = 0;
+            return randomDirection();
+        } else {
+            // run through all arrays and find the targetValue in cell [0]
+            for (int i = 0; i < directions.length; i++) {
+                // look for avatars
+                if (directions[i][0] == targetValue) {
+                    minIndex = i; // save direction
+                    // pause at the avatar and interrogate him
+                    suspicious++;
+                    suspiciousCounted++;
+                    wait(10);
+                    return chooseDirBasedOnIndex(minIndex);
+                }
             }
+            // No Avatar found -> check if a place was visited before
+            if (checkIfVisitedBefore(directions, 0)) {
+                left = true;
+            }
+            if (checkIfVisitedBefore(directions, 1)) {
+                above = true;
+            }
+            if (checkIfVisitedBefore(directions, 2)) {
+                bottom = true;
+            }
+            if (checkIfVisitedBefore(directions, 3)) {
+                right = true;
+            }
+            return chooseDirBasedOnVisitedSpaces(left, above, bottom, right);
         }
-        // No Avatar found -> check if a place was visited before
-        if (checkIfVisitedBefore(directions, 0)) {
-            left = true;
-        }
-        if (checkIfVisitedBefore(directions, 1)) {
-            above = true;
-        }
-        if (checkIfVisitedBefore(directions, 2)) {
-            bottom = true;
-        }
-        if (checkIfVisitedBefore(directions, 3)) {
-            right = true;
-        }
-        return chooseDirBasedOnVisitedSpaces(left, above, bottom, right);
     }
 
     // Choose the direction
@@ -278,21 +285,22 @@ public class OleAvatar extends SuperAvatar {
     private Direction chooseDirBasedOnIndex(int minIndex) {
         switch (minIndex) {
             case 0:
-            decision = "[Target found -> LEFT]";
+                decision = "[Target found -> LEFT]";
                 return Direction.LEFT;
             case 1:
-            decision = "[Target found -> UP]";
+                decision = "[Target found -> UP]";
                 return Direction.UP;
             case 2:
-            decision = "[Target found -> DOWN]";
+                decision = "[Target found -> DOWN]";
                 return Direction.DOWN;
             case 3:
-            decision = "[Target found -> RIGHT]";
+                decision = "[Target found -> RIGHT]";
                 return Direction.RIGHT;
             default:
                 return Direction.STAY;
         }
     }
+
     private Direction chooseDirBasedOnVisitedSpaces(boolean left, boolean above, boolean bottom, boolean right) {
         // if all directions have been visited, choose direction based on index
         if (left && above && bottom && right) {
@@ -404,7 +412,7 @@ public class OleAvatar extends SuperAvatar {
     private void createTxtFile() {
         // Write the visited grid to a text file -> "OlesVisitedSpaces.txt"
         try (FileWriter writer = new FileWriter("OlesVisitedSpaces.txt")) {
-            writer.write(decision+"\n\n");
+            writer.write(decision + "\n\n");
             writer.write("+=============================================================================+\n");
             writer.write("\t\t\t\t\t\t\tMap saved in Ole's head:\n");
             writer.write("-------------------------------------------------------------------------------\n");
