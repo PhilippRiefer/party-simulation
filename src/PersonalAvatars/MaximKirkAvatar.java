@@ -15,7 +15,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class MaximSpockAvatar extends SuperAvatar {
+public class MaximKirkAvatar extends SuperAvatar {
     // wohin auslagern?
     final private int MAXSTAT = 200;
     final private int MINSTAT = 0;
@@ -23,6 +23,7 @@ public class MaximSpockAvatar extends SuperAvatar {
     final private int XCOORDINATEMAX = 40;
     final private int YCOORDINATEMAX = 20;
     // internal stats of Mr. Spock
+    int fun = MAXSTAT;
     int energy = MAXSTAT;
     int hydration = MAXSTAT;
     int bowelMovement = MINSTAT;
@@ -42,8 +43,8 @@ public class MaximSpockAvatar extends SuperAvatar {
     ArrayList<Direction> listOfDirections = new ArrayList<Direction>();
 
     // perception Range should be higher than of a human!
-    public MaximSpockAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, new Color(0, 73, 144));
+    public MaximKirkAvatar(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, new Color(205, 220, 57));
     }
 
     @Override
@@ -173,22 +174,6 @@ public class MaximSpockAvatar extends SuperAvatar {
         }
     }
 
-    void rewardsForArrivingAtObjective(SpaceType currentObjective){
-        switch (currentObjective) {
-            case SpaceType.TOILET:
-                bowelMovement = MINSTAT;
-                urination = MINSTAT;
-                break;
-            case SpaceType.BAR:
-                hydration = MAXSTAT;
-                break;
-            case SpaceType.SEATS:
-                energy = MAXSTAT;
-                break;
-            default:
-                break;
-        }  
-    } 
 
     public boolean checkIfNextStepOkay(Direction stepOfList, Coordinate personalCoordinates) {
         int x = personalCoordinates.getX();
@@ -429,7 +414,9 @@ public class MaximSpockAvatar extends SuperAvatar {
     public SpaceType decideNextMovement() {
         if (bowelMovement > (200 - THRESHOLD) || urination > (200 - THRESHOLD)) {
             return currentObjective = SpaceType.TOILET;
-        } else if (hydration < THRESHOLD) {
+        } else if (fun < THRESHOLD) {
+            return currentObjective = SpaceType.DANCEFLOOR;
+        }else if (hydration < THRESHOLD) {
             return currentObjective = SpaceType.BAR;
         } else if (energy < THRESHOLD) {
             return currentObjective = SpaceType.SEATS;
@@ -438,7 +425,28 @@ public class MaximSpockAvatar extends SuperAvatar {
         }
     }
 
+    void rewardsForArrivingAtObjective(SpaceType currentObjective){
+        switch (currentObjective) {
+            case SpaceType.DANCEFLOOR:
+                fun = fun + 20;
+                break;
+            case SpaceType.TOILET:
+                bowelMovement = MINSTAT;
+                urination = MINSTAT;
+                break;
+            case SpaceType.BAR:
+                hydration = MAXSTAT;
+                break;
+            case SpaceType.SEATS:
+                energy = MAXSTAT;
+                break;
+            default:
+                break;
+        }  
+    } 
+
     public void updateStats() {
+        fun--;
         energy--;
         hydration--;
         bowelMovement++;
