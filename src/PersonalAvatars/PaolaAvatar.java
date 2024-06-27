@@ -17,16 +17,23 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
     final private int ENERGY_MAX = 2400; // enough to visit the 800 cells in the room 3 times, as each turn deducts one energy point
     final private int ENERGY_LOW_WARNING = 50; // for interrupt to go visit the bar for a drink
     final private int ENERGY_MIN = 0; // if 0, fall asleep and replenish
+    final private int ENERGY_LOSS_PER_TURN = 1;
+    final private int ENERGY_INCREMENT_PER_TURN_IN_BAR = 500;
 
     final private int FULL_BLADDER = 1000; // TODO: Define behavior for when full bladder is reached
     final private int BLADDER_HIGH_WARNING = 900; // to prioritize visiting the toilet
     final private int EMPTY_BLADDER = 0; 
+    final private int BLADDER_FILL_PER_TURN = 10;
+    final private int BLADDER_EMPTYING_PER_TURN_IN_TOILET = 200;
 
     final private int SOCIAL_MAX = 1000; // wants to find other avatars
     final private int SOCIAL_MIN = 0; // does not care for other avatars
+    final private int SOCIAL_INCREASE_PER_TURN = 10;
 
     final private int FUN_MAX = 1000; // does not care about going to dancefloor
     final private int FUN_MIN = 0; // wants to have fun in the dancefloor or djbooth
+    final private int FUN_DECREMENT_PER_TURN = 10;
+    final private int FUN_INCREMENT_PER_TURN_IN_DANCEFLOOR_OR_DJBOOTH = 5;
     
     final private int ROWS = 20;
     final private int COLUMNS = 40;
@@ -45,6 +52,7 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
     private int fun; // when fun is low, Paola will want be more likely to go dancing
 
     private Plan plan;
+    private boolean internalMapHasAllElements = false; // when it is set to true, the avatar will stop making assumptions of where things are
     
     private class Plan {
         private SpaceType target;
@@ -115,8 +123,8 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
             
             while (queue.size() > 0){
                 Coordinate coordinateToExplore = queue.remove();
-                System.out.println("queue: " + queue);
-                System.out.println("target coordinete: "+ targetCoordinate);
+                // System.out.println("queue: " + queue);
+                // System.out.println("target coordinete: "+ targetCoordinate);
                 if (coordinateToExplore.equals(targetCoordinate)){
                     reachedEnd = true;
                     break;
@@ -136,7 +144,7 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
             while(at!=null){
                 // add that coordinate to route
                 route.add(at);
-                System.out.println("unreversed route: " +route);
+                // System.out.println("unreversed route: " +route);
                 // repeat with the coordinate that was just added to route
                 at = prev[at.getY()][at.getX()];
             }
@@ -169,14 +177,41 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
 
         private Coordinate makeAssumption() {
             // if assumption has been made, no need to make assumption
-            if (asumptionHasBeenMade){
+            if (asumptionHasBeenMade) {
                 // return already calculated assumed coordinate
                 return targetCoordinate;
             }
+            
             // if assumption has not been made:
-            //calculate a random X and Y
-            int ranX = 1 + (int) (Math.random() * (COLUMNS - 2)); // between 1 and COLUMNS - 1
-            int ranY = 1 + (int) (Math.random() * (ROWS - 2)); // between 1 and ROWS - 1
+            int ranX;
+            int ranY;
+
+            // guess that the toilet is somewhere in bottom right corner of the club, if my target is toilet
+            if (target == SpaceType.TOILET) {
+                // Restrict random numbers to the bottom right corner of the grid
+                int startX = (int) (COLUMNS * 0.75); // Start at 75% of the grid width
+                int startY = (int) (ROWS * 0.75); // Start at 75% of the grid height
+                ranX = startX + (int) (Math.random() * (COLUMNS - 2 - startX)); // between startX and COLUMNS - 2
+                ranY = startY + (int) (Math.random() * (ROWS - 2 - startY)); // between startY and ROWS - 2
+            } else
+            // guess that the bar is somewhere in the first or last quarters of the club, if my target is bar
+            if (target == SpaceType.BAR) {
+                // Guess that the bar is somewhere in the first or last quarters of the grid
+                if (Math.random() < 0.5) {
+                    // First quarter
+                    ranX = 1 + (int) (Math.random() * (COLUMNS / 4));
+                    ranY = 1 + (int) (Math.random() * (ROWS - 2));
+                } else {
+                    // Last quarter
+                    ranX = (int) (COLUMNS * 0.75) + (int) (Math.random() * (COLUMNS / 4 - 2));
+                    ranY = 1 + (int) (Math.random() * (ROWS - 2));
+                }
+            } else {
+                // Calculate a random X and Y for other targets
+                ranX = 1 + (int) (Math.random() * (COLUMNS - 2)); // between 1 and COLUMNS - 2
+                ranY = 1 + (int) (Math.random() * (ROWS - 2)); // between 1 and ROWS - 2
+            }
+            
             // update global `targetCoordinate` with the random assumption
             targetCoordinate = new Coordinate(ranX, ranY);
             // update assumptionHasBeenMade
@@ -184,67 +219,32 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
             // return assumed coordinate
             return targetCoordinate;
         }
+        
 
         Coordinate nextMilestone(){
             route.clear();
             // if the internal map is not complete, make an assumption of where the target location will be, and calculate route to get there
-            if (!internalMapIsComplete){
+            if (!internalMapHasAllElements){
                 targetCoordinate = makeAssumption();                
                 calculateRoute(targetCoordinate);
             }
             // if the internal map is complete, calculate route to the target location
-            else if (internalMapIsComplete) {
+            else if (internalMapHasAllElements) {
                 calculateRoute(); // calculates the route every time. Needed because other avatars might move in my original way
             }
             Coordinate next;
             do {
                 next = route.remove();
             } while (currentAvatarLocation.equals(next));
-
-            
-            System.out.println("--");
-            System.out.println("route: " + route);
-            System.out.println("next: " + next);
-            System.out.println("--");
+      
+            // System.out.println("--");
+            // System.out.println("route: " + route);
+            // System.out.println("next: " + next);
+            // System.out.println("--");
             return next;
-            
-            
-            
-            // // if the internal map is not complete, the route cannot be calculated, therefore, start with a new queue
-            // if(!internalMapIsComplete){
-            //     queue.clear();
-            // }
-            // calculateRoute(); // calculates the route every time. Needed because other avatars might move in my original way
-            // if(internalMapIsComplete){   
-            //     return route.remove();
-            // }
-            // System.out.println();
-            // // System.out.println("Explored:");
-            // // printMap(explored);
-            // System.out.println("Queue:");
-            // queue.forEach(element -> System.out.print(element));
-            // System.out.println();
-            // System.out.println("prev:");
-            // // printMap(prev);
-
-            // Coordinate next = queue.remove();
-            // Coordinate parentOfCurrentCoordinate = prev[currentAvatarLocation.getY()][currentAvatarLocation.getX()];
-
-            // System.out.println("Next: "+ next);
-            // System.out.println("parent of current coordinate: " + parentOfCurrentCoordinate);
-            // System.out.println("next is equal to parent of current coordinate:"+ next.equals(parentOfCurrentCoordinate));
-            // System.out.println("");
-            // // if next in queue is the same as parent of current coordinate, remove it from queue
-            // if (next.equals(parentOfCurrentCoordinate)){
-            //     next = queue.remove();
-            //     System.out.println("New next: "+ next);
-            // }
-   
-            // return next; // or is it peek?
+          
         }
-
-        
-        
+       
     }
 
     /**
@@ -281,41 +281,40 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
         // depending on where I am standing fulfill a need
 
         updateInternalMap(spacesInRange); // update internal map, only if not complete 
+        updateNeeds();
 
         // when avatar has reached its current target, get rid of the current plan
         if (plan != null && (internalMap[currentAvatarLocation.getY()][currentAvatarLocation.getX()] == plan.target || currentAvatarLocation.equals(plan.targetCoordinate)))
-        {
+        {   
             plan = null;
         }
         
         
-        
-        // Commented out for the time being, as logic to manage needs status has not been implemented
-        // if(hasGoalInMind){ // TODO: maybe I need to make 'hasGoalInMind' a trivalue, yes, no, urgent. If urgent, skip checking for energy and toilet needs
-        //     if (energy > ENERGY_LOW_WARNING){ // has enough energy
-        //         if (bladder < BLADDER_HIGH_WARNING){ // does not need to go to toilet
-        //             return calculateDirection(currentAvatarLocation, goal.nextMilestone());
-        //         } else { // needs to go to toilet
-        //             goal.target = SpaceType.TOILET;
-        //             goal.calculateRoute();
-        //             return calculateDirection(currentAvatarLocation, goal.nextMilestone());
-        //         }
-        //     } else { // needs an energy drink
-        //         goal.target = SpaceType.BAR;
-        //         goal.calculateRoute(); // TODO: There are two bars, take care of this when calculating route to bar
-        //         return calculateDirection(currentAvatarLocation, goal.nextMilestone());
-        //     }
-        // } else {
-        //     chooseAGoal();
-        // }
-        
-        // if already has a plan in mind and has not reached it
         if(plan!=null){ // TODO: maybe I need to make 'hasGoalInMind' a trivalue, yes, no, urgent. If urgent, skip checking for energy and toilet needs
-            Coordinate nextMilestone = plan.nextMilestone();
-            Direction direction = calculateDirection(nextMilestone, currentAvatarLocation);
-            return direction;
+            if (energy > ENERGY_LOW_WARNING){ // has enough energy
+                if (bladder < BLADDER_HIGH_WARNING){ // does not need to go to toilet
+                    return calculateDirection(plan.nextMilestone(), currentAvatarLocation);
+                } else { // needs to go to toilet
+                    plan.target = SpaceType.TOILET;
+                    plan.calculateRoute();
+                    return calculateDirection(plan.nextMilestone(), currentAvatarLocation);
+                }
+            } else { // needs an energy drink
+                plan.target = SpaceType.BAR;
+                plan.calculateRoute(); 
+                return calculateDirection(currentAvatarLocation, plan.nextMilestone());
+            }
+        } else {
+            chooseAGoal();
         }
-        chooseAGoal();
+        
+        // // if already has a plan in mind and has not reached it
+        // if(plan!=null){ // TODO: maybe I need to make 'hasGoalInMind' a trivalue, yes, no, urgent. If urgent, skip checking for energy and toilet needs
+        //     Coordinate nextMilestone = plan.nextMilestone();
+        //     Direction direction = calculateDirection(nextMilestone, currentAvatarLocation);
+        //     return direction;
+        // }
+        // chooseAGoal();
     
         
         // select purpose based on current need
@@ -327,14 +326,38 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
             // return that direction
         // if purpose flag is not raised, choose a purpose based on needs
 
-        
-        
-        
         System.out.println("Internal map");
         printMap(internalMap);
         System.out.println();
         // For now, let's continue to move randomly as a placeholder
         return randomDirection();
+    }
+
+    private void updateNeeds() {
+        if (internalMap[currentAvatarLocation.getY()][currentAvatarLocation.getX()] != null) {
+            switch (internalMap[currentAvatarLocation.getY()][currentAvatarLocation.getX()]) {
+                case TOILET:
+                    bladder = Math.max(EMPTY_BLADDER, bladder - BLADDER_EMPTYING_PER_TURN_IN_TOILET);
+                    break;
+                case DJBOOTH:
+                case DANCEFLOOR:
+                    fun = Math.min(FUN_MAX, fun + FUN_INCREMENT_PER_TURN_IN_DANCEFLOOR_OR_DJBOOTH);
+                    break;
+                case BAR:
+                    energy = Math.min(ENERGY_MAX, energy + ENERGY_INCREMENT_PER_TURN_IN_BAR);
+                    break;
+                default:
+                    energy = Math.max(ENERGY_MIN, energy - ENERGY_LOSS_PER_TURN); // loses one energy point per turn
+                    bladder = Math.min(FULL_BLADDER, bladder + BLADDER_FILL_PER_TURN); // bladder fills up 10 points per turn
+                    fun = Math.max(FUN_MIN, fun - FUN_DECREMENT_PER_TURN); // gets bored by 10 points as time goes by
+                    break;
+            }
+        }
+        else {
+            energy = Math.max(ENERGY_MIN, energy - ENERGY_LOSS_PER_TURN); // loses one energy point per turn
+            bladder = Math.min(FULL_BLADDER, bladder + BLADDER_FILL_PER_TURN); // bladder fills up 10 points per turn
+            fun = Math.max(FUN_MIN, fun - FUN_DECREMENT_PER_TURN); // gets bored by 10 points as time goes by
+        }
     }
 
     private void chooseAGoal() {
@@ -388,8 +411,7 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
     private void updateInternalMap(ArrayList<SpaceInfo> spacesInRange) {
         if (!internalMapIsComplete){
             updateMap(spacesInRange);
-        }
-        
+        }        
     }
 
     private void updateMap(ArrayList<SpaceInfo> spacesInRange) {
@@ -402,6 +424,10 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
             
         }
         checkIfMapComplete();
+        if(!internalMapHasAllElements){
+            checkIfMapHasAllElements();
+        }
+        
     }
 
     private void checkIfMapComplete() {
@@ -414,6 +440,45 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
             }
         }
         internalMapIsComplete = true;
+    }
+
+    /**
+     * Checks if the internal map is complete by verifying the presence of specific required space types.
+     * The map is considered complete if it contains at least one of each of the following space types:
+     * TOILET, DANCEFLOOR, DJBOOTH, BAR, and SEATS. If all these space types are present, the
+     * `internalMapIsComplete` flag is set to true.
+     */
+    private void checkIfMapHasAllElements() {
+        boolean hasToilet = false;
+        boolean hasDancefloor = false;
+        boolean hasDjBooth = false;
+        boolean hasBar = false;
+        boolean hasSeats = false;
+    
+        for (int i = 0; i < internalMap.length; i++) {
+            for (int j = 0; j < internalMap[i].length; j++) {
+                if (internalMap[i][j] == SpaceType.TOILET) {
+                    hasToilet = true;
+                }
+                if (internalMap[i][j] == SpaceType.DANCEFLOOR) {
+                    hasDancefloor = true;
+                }
+                if (internalMap[i][j] == SpaceType.DJBOOTH) {
+                    hasDjBooth = true;
+                }
+                if (internalMap[i][j] == SpaceType.BAR) {
+                    hasBar = true;
+                }
+                if (internalMap[i][j] == SpaceType.SEATS) {
+                    hasSeats = true;
+                }
+                // If all types are found, no need to continue checking
+                if (hasToilet && hasDancefloor && hasDjBooth && hasBar && hasSeats) {
+                    internalMapHasAllElements = true;
+                    return;
+                }
+            }
+        }
     }
 
     /**
