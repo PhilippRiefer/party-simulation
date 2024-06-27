@@ -44,3 +44,4 @@ lib/
 out/
 src/Avatar_Interface
 src/SimulationControl/SimulationControl.java
+SudehVisitedSpaces.txt
