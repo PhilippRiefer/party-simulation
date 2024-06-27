@@ -105,4 +105,8 @@ public class Coordinate {
     public void setX(int x) {
         this.x = x;
     }
+
+    public String toString(){
+        return "("+ this.getX() + "," + this.getY() + ")";
+    }
 }
