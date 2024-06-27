@@ -72,27 +72,44 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
         }
 
         void calculateRoute(){
-            // add starting point to queue
+            // Reset explored and prev arrays
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLUMNS; j++) {
+                    explored[i][j] = false;
+                    prev[i][j] = null;
+                }
+            }
+        
+            queue.clear(); // Clear the queue
             queue.add(currentAvatarLocation);
-            // mark current location as visited
-            // if (internalMapIsComplete) {
-                explored[currentAvatarLocation.getY()][currentAvatarLocation.getX()] = true;
-            // }
+            explored[currentAvatarLocation.getY()][currentAvatarLocation.getX()] = true;
+        
             Coordinate endCoordinate = null;
             while (queue.size() > 0) {
                 Coordinate coordinateToExplore = queue.remove();
                 if (internalMap[coordinateToExplore.getY()][coordinateToExplore.getX()] == target) {
                     endCoordinate = coordinateToExplore;
-                    reachedEnd = true; // TODO Is this really needed?
+                    reachedEnd = true;
                     break;
                 }
                 exploreNeighbors(coordinateToExplore);
             }
-            
-            reconstructRoute(currentAvatarLocation, endCoordinate);
+        
+            if (endCoordinate != null) {
+                reconstructRoute(currentAvatarLocation, endCoordinate);
+            }
         }
+        
 
         private void calculateRoute(Coordinate targetCoordinate) {
+            // Reset explored and prev arrays
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLUMNS; j++) {
+                    explored[i][j] = false;
+                    prev[i][j] = null;
+                }
+            }
+            queue.clear(); // Clear the queue
             queue.add(currentAvatarLocation);
             explored[currentAvatarLocation.getY()][currentAvatarLocation.getX()] = true;
             
@@ -162,6 +179,8 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
             int ranY = 1 + (int) (Math.random() * (ROWS - 2)); // between 1 and ROWS - 1
             // update global `targetCoordinate` with the random assumption
             targetCoordinate = new Coordinate(ranX, ranY);
+            // update assumptionHasBeenMade
+            asumptionHasBeenMade = true;
             // return assumed coordinate
             return targetCoordinate;
         }
@@ -185,6 +204,7 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
             
             System.out.println("--");
             System.out.println("route: " + route);
+            System.out.println("next: " + next);
             System.out.println("--");
             return next;
             
@@ -263,7 +283,8 @@ public class PaolaAvatar extends SuperAvatar { // implements AvatarInterface
         updateInternalMap(spacesInRange); // update internal map, only if not complete 
 
         // when avatar has reached its current target, get rid of the current plan
-        if (plan!=null && internalMap[currentAvatarLocation.getY()][currentAvatarLocation.getX()] == plan.target){
+        if (plan != null && (internalMap[currentAvatarLocation.getY()][currentAvatarLocation.getX()] == plan.target || currentAvatarLocation.equals(plan.targetCoordinate)))
+        {
             plan = null;
         }
         
