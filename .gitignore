@@ -31,3 +31,15 @@ src/.DS_Store
 party-simulation.iml
 .idea/
 diff
+OlesVisitedSpaces.txt
+SudehVisitedSpaces.txt
+.vscode/
+LICENSE
+PaolaAvatar-requirements.txt
+README.md
+all
+all_code
+all_java_files.txt
+lib/
+out/
+src/Avatar_Interface
