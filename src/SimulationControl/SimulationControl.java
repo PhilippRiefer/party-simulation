@@ -46,19 +46,20 @@ public class SimulationControl {
         //         e.printStackTrace();
         //     }
         // }
+
+
         // Explicitly instantiate the avatars
-        int numberOfAvatars = 2;
+        // int numberOfAvatars = 2;
 
-        for(int i = 0; i < numberOfAvatars; i++) {
-            Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255));
-            SuperAvatar philipp = new PhilippAvatar(nextAvatarID++, perceptionRange, color);
-            avatars.add(philipp);
-        }
-
-        for (SuperAvatar avatar : avatars) {
-            environment.placeAvatar(avatar.getAvatarID());
-        }
+        // for(int i = 0; i < numberOfAvatars; i++) {
+        //     Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255));
+        //     SuperAvatar philipp = new PhilippAvatar(nextAvatarID++, perceptionRange, color);
+        //     avatars.add(philipp);
+        // }
         
+        SuperAvatar philipp = new PhilippAvatar(nextAvatarID, perceptionRange, new Color(0, 60, 160));
+        avatars.add(philipp);
+
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
         }

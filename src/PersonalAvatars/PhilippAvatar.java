@@ -8,7 +8,6 @@ import java.util.ArrayList;
 public class PhilippAvatar extends SuperAvatar {
 
     private Coordinate currentCoordinate = new Coordinate(0, 0);
-    
 
     public PhilippAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
@@ -17,10 +16,13 @@ public class PhilippAvatar extends SuperAvatar {
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         // throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println(spacesInRange);
         return randomDirection();
     }
 
     private Direction randomDirection() {
+        System.out.println("Philipp is moving randomly.");
+
         int directionNumber = (int) (Math.random() * 4);
 
         return switch (directionNumber) {
@@ -31,8 +33,6 @@ public class PhilippAvatar extends SuperAvatar {
             default -> stay();
         };
     }
-
-
 
     private Direction stay() {
         printCoordinate(currentCoordinate);
