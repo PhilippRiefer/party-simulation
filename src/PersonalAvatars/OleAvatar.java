@@ -5,7 +5,7 @@ package PersonalAvatars;
  * Version: 1.0
  * Date:    20240511
  * ------------------------------------------
- * Description: personal avatar of Ole 
+ * Description: personal avatar by Ole 
  ********************************************/
 
 import java.awt.Color;
@@ -19,6 +19,9 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import javax.swing.Spring;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,9 +59,7 @@ public class OleAvatar extends SuperAvatar {
     private int drinksCounted = 0;
     private int suspicious = 0;
     private int danced = 0;
-
-    // Not really needed
-    private String desicion;
+    private String decision;
 
     // static variable to check if a cell
     // visited before
@@ -100,12 +101,11 @@ public class OleAvatar extends SuperAvatar {
         int[][] directions = { left, above, bottom, right };
         // save the visited spaces
         visitedSpaces(directions);
-        int minValue = left[0]; // set left as cell with the smallest value
         // choose behaviour
         if (CHOSEN_BEHAVIOUR == 0) {
-            direction = imitatePolice(directions, minValue, 2);
+            direction = imitatePolice(directions, 2);
         } else {
-            direction = drinkingAndDancing(directions, minValue);
+            direction = drinkingAndDancing(directions, 1);
         }
         return direction;
     }
@@ -151,164 +151,175 @@ public class OleAvatar extends SuperAvatar {
     // a drink and the go dancing.
     // -> return Direction
     // ----------------------------------
-    private Direction drinkingAndDancing(int[][] directions, int minValue) {
+    private Direction drinkingAndDancing(int[][] directions, int targetValue) {
         blink(Color.ORANGE, Color.BLACK); // let the avatar blink
+        boolean left = false;
+        boolean above = false;
+        boolean bottom = false;
+        boolean right = false;
         int minIndex = 0; // variable to identify which direction contains the targetValue
-        // create list for the number of values found
-        List<Integer> minIndices = new ArrayList<>();
-        minIndices.add(0); // start with the first element
+
         // the avatar got to much drinks, search for the dancefloor
-        if ((drinks > 20 && danced < 30) || (drinks > 40 && danced < 60)) {
-            return needToDance(directions, minValue, 3);
+        if ((drinks > 5 && danced < 5) || (drinks > 10 && danced < 10)) {
+            return needToDance(directions, 3);
         } else {
-            // run through all arrays and find the smallest number in cell [0]
-            for (int i = 1; i < directions.length; i++) {
-                // check whether the cell has a smaller value than on the left
-                if (directions[i][0] < minValue) {
-                    minValue = directions[i][0]; // save it
-                    minIndex = i; // save the direction
-                    minIndices.clear(); // new minimum -> clear the list
-                    minIndices.add(i); // add the index of the new minimum
-                } else if (directions[i][0] == minValue) {
-                    minIndices.add(i); // add index if it matches the current minimum
-                }
-            }
-            // check if there are multiple arrays with the same minimum value
-            // IMPORTANT: randomly select one of the indices with the minimum value, so the
-            // avatar does not walk in one direction
-            if (minIndices.size() > 1) {
-                Random random = new Random();
-                minIndex = minIndices.get(random.nextInt(minIndices.size()));
-            }
-            // choose the target
-            if (minValue == 1) { // BAR
-                // pause at the bar and get a drink
-                drinks++;
-                drinksCounted++;
-                wait(10);
-                return Direction.DOWN;
-            } else {
-                // Check if the coordinates of the avatar where also visited before
-                // and and visualize this with a color
-                if (isVisited(directions)) {
-                    return randomDirection();
-                } else {
-                    // choose direction based on the index
+            // run through all arrays and find the targetValue in cell [0]
+            for (int i = 0; i < directions.length; i++) {
+                // look for avatars
+                if (directions[i][0] == targetValue) {
+                    minIndex = i; // save direction
+                    // pause at the bar and get a drink
+                    drinks++;
+                    drinksCounted++;
+                    wait(10);
                     return chooseDirBasedOnIndex(minIndex);
                 }
             }
+            // No BAR found -> check if a place was visited before
+            if (checkIfVisitedBefore(directions, 0)) {
+                left = true;
+            }
+            if (checkIfVisitedBefore(directions, 1)) {
+                above = true;
+            }
+            if (checkIfVisitedBefore(directions, 2)) {
+                bottom = true;
+            }
+            if (checkIfVisitedBefore(directions, 3)) {
+                right = true;
+            }
+            return chooseDirBasedOnVisitedSpaces(left, above, bottom, right);
         }
+    }
+
+    // Search for the dancefloor.
+    // -> return Direction
+    // ----------------------------------
+    private Direction needToDance(int[][] directions, int targetValue) {
+        blink(Color.ORANGE, Color.CYAN); // blink
+        boolean left = false;
+        boolean above = false;
+        boolean bottom = false;
+        boolean right = false;
+        int minIndex = 0; // variable to identify which direction contains the targetValue
+        // reset values if values are exceeded
+        if (drinks > 10 && danced < 10) {
+            drinks = 0;
+            danced = 0;
+        }
+        // run through all arrays and find the targetValue in cell [0]
+        for (int i = 0; i < directions.length; i++) {
+            // look for dancefloor
+            if (directions[i][0] == targetValue) {
+                minIndex = i; // save direction
+                danced++;
+                wait(10);
+                return chooseDirBasedOnIndex(minIndex);
+            }
+        }
+        // No Floor found -> check if a place was visited before
+        if (checkIfVisitedBefore(directions, 0)) {
+            left = true;
+        }
+        if (checkIfVisitedBefore(directions, 1)) {
+            above = true;
+        }
+        if (checkIfVisitedBefore(directions, 2)) {
+            bottom = true;
+        }
+        if (checkIfVisitedBefore(directions, 3)) {
+            right = true;
+        }
+        return chooseDirBasedOnVisitedSpaces(left, above, bottom, right);
     }
 
     // Option 2. Imitate a policeofficer
     // and follow suspicious avatars.
     // -> return Direction
     // ----------------------------------
-    private Direction imitatePolice(int[][] directions, int minValue, int targetValue) {
+    private Direction imitatePolice(int[][] directions, int targetValue) {
         blink(Color.BLUE, Color.RED); // blink like the police
+        boolean left = false;
+        boolean above = false;
+        boolean bottom = false;
+        boolean right = false;
         int minIndex = 0; // variable to identify which direction contains the targetValue
-        // create list for the number of values found
-        List<Integer> foundIndices = new ArrayList<>();
-        List<Integer> minIndices = new ArrayList<>();
+
         // run through all arrays and find the targetValue in cell [0]
         for (int i = 0; i < directions.length; i++) {
+            // look for avatars
             if (directions[i][0] == targetValue) {
                 minIndex = i; // save direction
-                foundIndices.add(i); // save direction
                 // pause at the avatar and interrogate him
                 suspicious++;
                 wait(10);
+                return chooseDirBasedOnIndex(minIndex);
             }
         }
-        // no Avatar found -> search for the best ranking
-        if (foundIndices.size() <= 1) {
-            // run through all arrays and find the smallest number in cell [0]
-            for (int i = 1; i < directions.length; i++) {
-                // check whether the cell has a smaller value than on the left
-                if (directions[i][0] < minValue) {
-                    minValue = directions[i][0]; // save it
-                    minIndex = i; // save the direction
-                    minIndices.clear(); // new minimum -> clear the list
-                    minIndices.add(i); // add the index of the new minimum
-                } else if (directions[i][0] == minValue) {
-                    minIndices.add(i); // add index if it matches the current minimum
-                }
-            }
-            // check if there are multiple arrays with the same minimum value
-            // IMPORTANT: randomly select one of the indices with the minimum value, so the
-            // avatar does not walk in one direction
-            if (minIndices.size() > 1) {
-                Random random = new Random();
-                minIndex = minIndices.get(random.nextInt(minIndices.size()));
-            }
-            // stay away from the bar
-            if (minValue == 1) { // BAR
-                return Direction.DOWN;
-            } else {
-                // Check if the coordinates of the avatar where also visited before
-                // and and visualize this with a color
-                if (isVisited(directions)) {
-                    return randomDirection();
-                }
-            }
+        // No Avatar found -> check if a place was visited before
+        if (checkIfVisitedBefore(directions, 0)) {
+            left = true;
         }
-        return chooseDirBasedOnIndex(minIndex);
+        if (checkIfVisitedBefore(directions, 1)) {
+            above = true;
+        }
+        if (checkIfVisitedBefore(directions, 2)) {
+            bottom = true;
+        }
+        if (checkIfVisitedBefore(directions, 3)) {
+            right = true;
+        }
+        return chooseDirBasedOnVisitedSpaces(left, above, bottom, right);
     }
 
-    // Search for the dancefloor.
-    // -> return Direction
-    // ----------------------------------
-    private Direction needToDance(int[][] directions, int minValue, int targetValue) {
-        int minIndex = 0; // variable to identify which direction contains the targetValue
-        // reset values if values are exceeded
-        if (drinks > 40 && danced < 60) {
-            drinks = 0;
-            danced = 0;
-        }
-        // create list for the number of values found
-        List<Integer> foundIndices = new ArrayList<>();
-        // run through all arrays and find the targetValue in cell [0]
-        for (int i = 0; i < directions.length; i++) {
-            if (directions[i][0] == targetValue) {
-                minIndex = i; // save direction
-                foundIndices.add(i); // save direction
-                danced++; // increase variable
-            }
-        }
-        // no floor found -> move random
-        if (foundIndices.size() <= 1) {
-            // Check if the coordinates of the avatar where also visited before
-            // and and visualize this with a color
-            if (isVisited(directions)) {
-            }
-            return randomDirection();
-        }
-        // choose direction based on the index
-        return chooseDirBasedOnIndex(minIndex);
-    }
-
-    // Choose the direction based on the
-    // index.
+    // Choose the direction
     // -> return Direction
     // ----------------------------------
     private Direction chooseDirBasedOnIndex(int minIndex) {
         switch (minIndex) {
             case 0:
-                desicion = "LEFT";
+            decision = "[Target found -> LEFT]";
                 return Direction.LEFT;
             case 1:
-                desicion = "UP";
+            decision = "[Target found -> UP]";
                 return Direction.UP;
             case 2:
-                desicion = "DOWN";
+            decision = "[Target found -> DOWN]";
                 return Direction.DOWN;
             case 3:
-                desicion = "RIGHT";
+            decision = "[Target found -> RIGHT]";
                 return Direction.RIGHT;
             default:
-                desicion = "RIGHT";
-                return Direction.RIGHT;
+                return Direction.STAY;
         }
+    }
+    private Direction chooseDirBasedOnVisitedSpaces(boolean left, boolean above, boolean bottom, boolean right) {
+        // if all directions have been visited, choose direction based on index
+        if (left && above && bottom && right) {
+            decision = "[Target not found | No unseen cell -> RANDOM]";
+            return randomDirection();
+        }
+        // Create a list to hold unvisited directions
+        List<Direction> unvisitedDirs = new ArrayList<>();
+        // Add unvisited directions to the list
+        if (!left) {
+            unvisitedDirs.add(Direction.LEFT);
+        }
+        if (!above) {
+            unvisitedDirs.add(Direction.UP);
+        }
+        if (!bottom) {
+            unvisitedDirs.add(Direction.DOWN);
+        }
+        if (!right) {
+            unvisitedDirs.add(Direction.RIGHT);
+        }
+        decision = "[Target not found | No unseen cell -> RANDOM]";
+        // Randomly choose one of the unvisited directions
+        Random random = new Random();
+        Direction dir = unvisitedDirs.get(random.nextInt(unvisitedDirs.size()));
+        decision = "[Target not found | Unseen cell -> " + dir + "]";
+        return dir;
     }
 
     // Blink, to identify avatar from
@@ -340,6 +351,23 @@ public class OleAvatar extends SuperAvatar {
     // the replicated room.
     // ----------------------------------
     private void visitedSpaces(int[][] directions) {
+        // mark wall above as visited
+        for (int i = 0; i < 40; ++i) {
+            visitedCells[0][i] = VISITED;
+        }
+        // mark wall at the bottom as visited
+        for (int i = 0; i < 40; ++i) {
+            visitedCells[19][i] = VISITED;
+        }
+        // mark wall at left as visited
+        for (int i = 0; i < 20; ++i) {
+            visitedCells[i][0] = VISITED;
+        }
+        // mark wall at right as visited
+        for (int i = 0; i < 20; ++i) {
+            visitedCells[i][39] = VISITED;
+        }
+        // calculate actual visited spaces
         int myX = directions[0][1] + 1; // calculate my x coordinate (leftx = myx + 1)
         int myY = directions[0][2]; // lefty = myy
         visitedCells[myY][myX] = VISITED; // give the cell a unique value to identify it later
@@ -351,8 +379,23 @@ public class OleAvatar extends SuperAvatar {
             int type = directions[i][0];
             seenEnvironment[y][x] = type; // save type as integer value in corresponding cell
         }
+        seenEnvironment[myY][myX] = VISITED;
         // output of the saved map as txt file
         createTxtFile();
+    }
+
+    // Check if a space has already
+    // been visited.
+    // -> return boolean
+    // ----------------------------------
+    private boolean checkIfVisitedBefore(int[][] directions, int dir) {
+        // Check all four directions
+        int y = directions[dir][2];
+        int x = directions[dir][1];
+        if (visitedCells[y][x] == VISITED) {
+            return true;
+        }
+        return false;
     }
 
     // Create a txt file and save the
@@ -361,7 +404,7 @@ public class OleAvatar extends SuperAvatar {
     private void createTxtFile() {
         // Write the visited grid to a text file -> "OlesVisitedSpaces.txt"
         try (FileWriter writer = new FileWriter("OlesVisitedSpaces.txt")) {
-            // writer.write(" The avatar moves " + desicion + "\n");
+            writer.write(decision+"\n\n");
             writer.write("+=============================================================================+\n");
             writer.write("\t\t\t\t\t\t\tMap saved in Ole's head:\n");
             writer.write("-------------------------------------------------------------------------------\n");
@@ -418,6 +461,9 @@ public class OleAvatar extends SuperAvatar {
                         case 8:
                             cellSymbol = 'X';
                             break;
+                        case 99:
+                            cellSymbol = 'O';
+                            break;
                         default:
                             cellSymbol = '?';
                             break;
@@ -430,35 +476,18 @@ public class OleAvatar extends SuperAvatar {
             writer.write("+=============================================================================+\n");
             writer.write("\n\t  Legend\n");
             writer.write("------------------\n");
-            writer.write("1 -> B:\tBAR\n");
-            writer.write("2 -> A:\tAVATAR\n");
-            writer.write("3 -> F:\tDANCEFLOOR\n");
-            writer.write("4 ->  :\tEMPTY\n");
-            writer.write("5 -> D:\tDJBOOTH\n");
-            writer.write("6 -> S:\tSEATS\n");
-            writer.write("7 -> T:\tTOILET\n");
-            writer.write("8 -> X:\tOBSTACLE\n");
+            writer.write("B:\tBAR\n");
+            writer.write("A:\tAVATAR\n");
+            writer.write("F:\tDANCEFLOOR\n");
+            writer.write(" :\tEMPTY\n");
+            writer.write("D:\tDJBOOTH\n");
+            writer.write("S:\tSEATS\n");
+            writer.write("T:\tTOILET\n");
+            writer.write("X:\tOBSTACLE\n");
+            writer.write("O:\tOle\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    // Check if a space has already
-    // been visited.
-    // -> return boolean
-    // ----------------------------------
-    private boolean isVisited(int[][] directions) {
-        // Check all four directions
-        for (int i = 0; i < directions.length; i++) {
-            int y = directions[i][2];
-            int x = directions[i][1];
-            // If cell is 99, it means it has been visited
-            if (visitedCells[y][x] == VISITED) {
-                blink(Color.LIGHT_GRAY, Color.GRAY);
-                return true;
-            }
-        }
-        return false;
     }
 
     // Delay the application.
@@ -482,19 +511,14 @@ public class OleAvatar extends SuperAvatar {
         // check the random number and return a direction based on the number
         switch (directionNumber) {
             case 0:
-                desicion = "LEFT";
                 return Direction.LEFT;
             case 1:
-                desicion = "RIGHT";
                 return Direction.RIGHT;
             case 2:
-                desicion = "UP";
                 return Direction.UP;
             case 3:
-                desicion = "DOWN";
                 return Direction.DOWN;
             default:
-                desicion = "STAY";
                 return Direction.STAY;
         }
     }
