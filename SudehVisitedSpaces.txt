@@ -1,32 +1,32 @@
 +=============================================================================+
 							Map of Nightclub exploration by SudehAvatar
 -------------------------------------------------------------------------------
- SudehAvatar was wandering in the nightclub for 1659 turns.
- @ BAR                       41 turns.
- @ DANCEFLOOR                73 turns.
- @ DJBOOTH                   7 turns.
- @ TOILET                    19 turns.
- @ SEATS                     30 turns.
- followed another avatar for 0 turns. In total followed 10 Avatars
+ SudehAvatar was wandering in the nightclub for 3191 turns.
+ @ BAR                       89 turns.
+ @ DANCEFLOOR                178 turns.
+ @ DJBOOTH                   30 turns.
+ @ TOILET                    9 turns.
+ @ SEATS                     49 turns.
+ followed another avatar for 0 turns. In total followed 24 Avatars
 +=============================================================================+
-. . X X X X X X X X . . . . . . X . . . . X X X X X X X . . . . . . . . . . . . 
-. .                 . . . . . J J . . . .               . . . . . . . . . . . . 
-. .                 . . .   J J J J . . J                   . . . . . . . . . . 
-. .                 . .             . .   .                 . . . . . . . . . . 
-. .                 .     . D D D . D . D .                 . . . . . . . . . . 
-.                   .   . D D D D D D D D .                 . . . . . . . . . . 
-.                   .     D D D D D D D . .                 . . . . . . . . . . 
-. B B                     . . D D D D . . .                 . . . . . . . . . . 
-. B B                     . D D D A . . . .                 . . . . . . . . . . 
-. B B                 .   D D D D D D . . .                 . . . . . . . . . . 
-. B B                 .   D D D D D D . . D                   . . . . . . . . . 
-. B B                     D D D D D . . . D                   . . . .     B . . 
-. B B                     D D D D D . . . D                               B . . 
-. .                                 . . .                   .   . .       A . . 
-.                                 . . . .                   .   . .         . . 
-. S                   .           . . . .                   .   . . . . .   . . 
-.                     .           . . . .                 . .   . . .       . . 
-. S S                 .           . . . .                 . .         T T . . . 
+X X X X X X X X X X X . . . . . . . . . . X X . . . . . . . . . . . . . . . . . 
+X                     . . . . . J . J J J     . . . . . . . . . . . . . . . . . 
+X                     . . . J J J J J J J     . . . . . . . . . . . . . . . . . 
+X                     . . .                   . . . .     . . . . . . . . . . . 
+X                     . . . D D D D D D D D   . . . .     . . . . . . . . . . . 
+X                     . . . D D D D D D D D   . . . .     . . . . . . . .   . . 
+.                       . . D D A D D D D .   . . . .     . . . . . . .     . . 
+. B B               .     D D D A D D D D .     . . .     . . . . . .     B . . 
+. B B               . .   D D D D D D D D D       . .     .     . . .     B . . 
+. B B               . .   D D D D D D D D D                     . . .     B . . 
+. B B               . .   . D D D D D D D D   . . . .     . .   . . .     B . . 
+. B B               . .   . D D D D D D D D   . . . .     . .             B . . 
+X B B                     D D D D D . . D D   . . . . .   . .   . .       B . . 
+X                                   . . .     . . . . . . . .   . .   . . . . . 
+X .                                 . . .     . . . . . . . .   . .   . . . . . 
+X     S   A                         . . .     . . . . . . . .   . .   . . . . . 
+X       A A                         . . .     . . . . . . . .   .     . . . . . 
+X     S             .               . . .     . . . . . . . .         . . . . . 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 +=============================================================================+

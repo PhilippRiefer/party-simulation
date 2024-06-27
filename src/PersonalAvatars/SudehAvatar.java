@@ -12,23 +12,26 @@ import Environment.SpaceType;
 import AvatarInterface.SuperAvatar;
 
 public class SudehAvatar extends SuperAvatar {
-    private int[][] seenEnvironment = new int[20][40];
-    private int[][] visitedCells = new int[20][40];
+
+    private int[][] seenEnvironment = new int[20][40]; //keep track of environment seen by avatar
+    private int[][] visitedCells = new int[20][40]; //keep track the visited cells by avatar
     private static final Map<String, Integer> TYPE = new HashMap<>();
-    private int stayCounter;
-    private int followCounter;
+    private int stayCounter; //controls the duration of staying in one place
+    private int followCounter; //to control how long to follow other avatars
     private Coordinate targetAvatar;
     private Random random = new Random();
     private Deque<Coordinate> stack = new ArrayDeque<>();
     private Set<Coordinate> visitedSet = new HashSet<>();
 
+    //track avatars activities
     private int drink = 0;
     private int dance = 0;
     private int peeOrDrug = 0;
     private int dj = 0;
     private int rest = 0;
     private int talk = 0;
-
+    
+    //init a TYPE map to mapenvironment object types
     static {
         TYPE.put("BAR", 1);
         TYPE.put("AVATAR", 2);
@@ -47,7 +50,11 @@ public class SudehAvatar extends SuperAvatar {
         this.followCounter = 0;
         this.stack.push(new Coordinate(0, 0)); // Start at the initial position
     }
-
+    /**
+     * yourTurn:
+     * The main decision-making method called every turn. It decides whether to stay, 
+     * follow another avatar, or move based on the environment and internal counters.
+     */
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         Direction direction;
@@ -80,7 +87,9 @@ public class SudehAvatar extends SuperAvatar {
 
         return direction;
     }
-
+    /**
+     * Determines the best direction to move based on the perceived spaces.
+     */
     private Direction findBestDirection(ArrayList<SpaceInfo> spacesInRange) {
         for (SpaceInfo space : spacesInRange) {
             if (space.getType() == SpaceType.AVATAR) {
@@ -144,7 +153,11 @@ public class SudehAvatar extends SuperAvatar {
     private boolean isValidCoordinate(Coordinate coord) {
         return coord.getX() >= 0 && coord.getX() < 40 && coord.getY() >= 0 && coord.getY() < 20;
     }
-
+    /**
+     * Calculates a heuristic cost for prioritizing movement towards different types of spaces.
+     * @param space
+     * @return
+     */
     private int heuristicCost(SpaceInfo space) {
         SpaceType type = space.getType();
         int baseCost = switch (type) {
@@ -160,19 +173,19 @@ public class SudehAvatar extends SuperAvatar {
         int distance = Math.abs(coord.getX()) + Math.abs(coord.getY());
         return baseCost + distance;
     }
-
+    //Returns a color based on the type of space
     private Color getColorForType(SpaceType type) {
         return switch (type) {
-            case BAR, DJBOOTH, TOILET, SEATS, AVATAR -> new Color(0, 120, 60);
+            case DJBOOTH, TOILET, SEATS, AVATAR -> new Color(0, 120, 60);
             case DANCEFLOOR -> new Color(0, 120, 60);
+            case BAR -> new Color(100, 20, 60);
             default -> new Color(0, 120, 60);
         };
     }
-
+    //Determines how long to stay at a specific type of space.
     private int getStayDuration(SpaceType type) {
         return switch (type) {
             case AVATAR -> {
-                talk++;
                 yield 3;
             }
             case DANCEFLOOR -> {
@@ -198,7 +211,7 @@ public class SudehAvatar extends SuperAvatar {
             default -> 0;
         };
     }
-
+    //Translates a coordinate into a movement direction
     private Direction getDirectionFromCoordinate(Coordinate coordinate) {
         int x = coordinate.getX();
         int y = coordinate.getY();
@@ -226,7 +239,7 @@ public class SudehAvatar extends SuperAvatar {
             default -> Direction.STAY;
         };
     }
-
+    //Updates the seenEnvironment based on the perceived spaces.
     private int[] checkSpace(ArrayList<SpaceInfo> spacesInRange, int spaceNumber) {
         SpaceType type;
         String typeAsString;
@@ -250,7 +263,7 @@ public class SudehAvatar extends SuperAvatar {
         array[0] = TYPE.getOrDefault(typeAsString, 8);
         return array;
     }
-
+    //Increments the count of visits to cells and triggers createTxtFile after a certain number of moves
     private void visitedSpaces(int[][] directions) {
         int myX = directions[0][1] + 1;
         int myY = directions[0][2];
