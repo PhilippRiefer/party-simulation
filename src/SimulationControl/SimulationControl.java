@@ -47,18 +47,8 @@ public class SimulationControl {
                 e.printStackTrace();
             }
         }
-        // Explicitly instantiate the avatars
-        // SuperAvatar sudeh1 = new SudehAvatar(nextAvatarID++, perceptionRange, (new Color(0, 77, 64)));
-        // //SuperAvatar sudeh2 = new SudehAvatar(nextAvatarID++, perceptionRange, (new Color(10, 77, 64)));
-
-        // SuperAvatar paola1 = new PaolaAvatar(nextAvatarID++, perceptionRange, (new Color(255, 0, 0)));
-
-        // avatars.add(paola1);
-
-        // avatars.add(sudeh1);
-        //avatars.add(sudeh2);
+    
         
-
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
         }

@@ -31,7 +31,7 @@ public class Environment {
         paintDancefloor();
         paintToilet();
         paintSeats();
-        paintRandomAvatar();
+        //paintRandomAvatar();
         model.createBlueprint();
     }
 

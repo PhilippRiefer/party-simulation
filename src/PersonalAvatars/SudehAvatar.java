@@ -16,7 +16,11 @@ public class SudehAvatar extends SuperAvatar {
     private int[][] visitedCells = new int[20][40];
     private static final Map<String, Integer> TYPE = new HashMap<>();
     private int stayCounter;
+    private int followCounter;
+    private Coordinate targetAvatar;
     private Random random = new Random();
+    private Deque<Coordinate> stack = new ArrayDeque<>();
+    private Set<Coordinate> visitedSet = new HashSet<>();
 
     private int drink = 0;
     private int dance = 0;
@@ -40,6 +44,8 @@ public class SudehAvatar extends SuperAvatar {
     public SudehAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, color);
         this.stayCounter = 0;
+        this.followCounter = 0;
+        this.stack.push(new Coordinate(0, 0)); // Start at the initial position
     }
 
     @Override
@@ -49,15 +55,22 @@ public class SudehAvatar extends SuperAvatar {
             stayCounter--;
             if (stayCounter == 0) {
                 System.out.println("Stay duration over. Resuming movement.");
-                direction = randomDirection();
+                direction = nextExplorationDirection(spacesInRange);
             } else {
                 System.out.println("Staying in place for " + stayCounter + " turns.");
                 direction = Direction.STAY;
             }
+        } else if (followCounter > 0 && targetAvatar != null) {
+            followCounter--;
+            direction = getDirectionFromCoordinate(targetAvatar);
+            if (direction == Direction.STAY) {
+                targetAvatar = null;
+                direction = nextExplorationDirection(spacesInRange);
+            }
         } else {
             direction = findBestDirection(spacesInRange);
             if (direction == Direction.STAY) {
-                direction = randomDirection();
+                direction = nextExplorationDirection(spacesInRange);
             }
         }
 
@@ -69,6 +82,15 @@ public class SudehAvatar extends SuperAvatar {
     }
 
     private Direction findBestDirection(ArrayList<SpaceInfo> spacesInRange) {
+        for (SpaceInfo space : spacesInRange) {
+            if (space.getType() == SpaceType.AVATAR) {
+                targetAvatar = space.getRelativeToAvatarCoordinate();
+                followCounter = 10; // Follow for ... turns
+                talk++;
+                return getDirectionFromCoordinate(targetAvatar);
+            }
+        }
+
         PriorityQueue<SpaceInfo> queue = new PriorityQueue<>(Comparator.comparingInt(this::heuristicCost));
         for (SpaceInfo space : spacesInRange) {
             queue.offer(space);
@@ -89,6 +111,40 @@ public class SudehAvatar extends SuperAvatar {
         return Direction.STAY;
     }
 
+    private Direction nextExplorationDirection(ArrayList<SpaceInfo> spacesInRange) {
+        while (!stack.isEmpty()) {
+            Coordinate current = stack.peek();
+            if (visitedSet.contains(current)) {
+                stack.pop();
+                continue;
+            }
+            visitedSet.add(current);
+
+            for (Direction direction : Direction.values()) {
+                Coordinate next = getNextCoordinate(current, direction);
+                if (isValidCoordinate(next) && !visitedSet.contains(next)) {
+                    stack.push(next);
+                    return direction;
+                }
+            }
+        }
+        return randomDirection();
+    }
+
+    private Coordinate getNextCoordinate(Coordinate current, Direction direction) {
+        return switch (direction) {
+            case LEFT -> new Coordinate(current.getX() - 1, current.getY());
+            case RIGHT -> new Coordinate(current.getX() + 1, current.getY());
+            case UP -> new Coordinate(current.getX(), current.getY() - 1);
+            case DOWN -> new Coordinate(current.getX(), current.getY() + 1);
+            default -> current;
+        };
+    }
+
+    private boolean isValidCoordinate(Coordinate coord) {
+        return coord.getX() >= 0 && coord.getX() < 40 && coord.getY() >= 0 && coord.getY() < 20;
+    }
+
     private int heuristicCost(SpaceInfo space) {
         SpaceType type = space.getType();
         int baseCost = switch (type) {
@@ -107,9 +163,9 @@ public class SudehAvatar extends SuperAvatar {
 
     private Color getColorForType(SpaceType type) {
         return switch (type) {
-            case BAR, DANCEFLOOR, DJBOOTH, TOILET, SEATS -> new Color(0, 90, 80);
-            case AVATAR -> new Color(204, 0, 200);
-            default -> new Color(0, 90, 80);
+            case BAR, DJBOOTH, TOILET, SEATS, AVATAR -> new Color(0, 120, 60);
+            case DANCEFLOOR -> new Color(0, 120, 60);
+            default -> new Color(0, 120, 60);
         };
     }
 
@@ -117,27 +173,27 @@ public class SudehAvatar extends SuperAvatar {
         return switch (type) {
             case AVATAR -> {
                 talk++;
-                yield 2;
+                yield 3;
             }
             case DANCEFLOOR -> {
                 dance++;
-                yield 10;
+                yield 5;
             }
             case DJBOOTH -> {
                 dj++;
-                yield 10;
+                yield 2;
             }
             case TOILET -> {
                 peeOrDrug++;
-                yield 10;
+                yield 2;
             }
             case BAR -> {
                 drink++;
-                yield 10;
+                yield 5;
             }
             case SEATS -> {
                 rest++;
-                yield 10;
+                yield 5;
             }
             default -> 0;
         };
@@ -213,16 +269,16 @@ public class SudehAvatar extends SuperAvatar {
     private void createTxtFile() {
         try (FileWriter writer = new FileWriter("SudehVisitedSpaces.txt")) {
             writer.write("+=============================================================================+\n");
-            writer.write("\t\t\t\t\t\t\tMap of SudehAvatar's Decisions\n");
+            writer.write("\t\t\t\t\t\t\tMap of Nightclub exploration by SudehAvatar\n");
             writer.write("-------------------------------------------------------------------------------\n");
-            writer.write(" SudehAvatar was wandering in the nightclub for " + wander + " minutes.\n");
-            writer.write(" then it Decided to: \n\n");
-            writer.write(" buy a Drink      " + drink + " times.\n");
-            writer.write(" Dance for        " + dance + " minutes.\n");
-            writer.write(" be the DJ for    " + dj + " rounds.\n");
-            writer.write(" be social for    " + talk + " seconds.\n");
-            writer.write(" go to the Toilet " + peeOrDrug + " times, for pee or drug?.\n");
-            writer.write(" chill for        " + rest + " minutes.\n");
+            writer.write(" SudehAvatar was wandering in the nightclub for " + wander + " turns.\n");
+            
+            writer.write(" @ BAR                       " + drink + " turns.\n");
+            writer.write(" @ DANCEFLOOR                " + dance + " turns.\n");
+            writer.write(" @ DJBOOTH                   " + dj + " turns.\n");
+            writer.write(" @ TOILET                    " + peeOrDrug + " turns.\n");
+            writer.write(" @ SEATS                     " + rest + " turns.\n");
+            writer.write(" followed another avatar for " + followCounter + " turns. In total followed "+talk+" Avatars\n");
             writer.write("+=============================================================================+\n");
             for (int i = 0; i < seenEnvironment.length; i++) {
                 for (int j = 0; j < seenEnvironment[i].length; j++) {
@@ -231,9 +287,9 @@ public class SudehAvatar extends SuperAvatar {
                         case 0 -> cellSymbol = '.';
                         case 1 -> cellSymbol = 'B';
                         case 2 -> cellSymbol = 'A';
-                        case 3 -> cellSymbol = 'Y';
+                        case 3 -> cellSymbol = 'D';
                         case 4 -> cellSymbol = ' ';
-                        case 5 -> cellSymbol = 'D';
+                        case 5 -> cellSymbol = 'J';
                         case 6 -> cellSymbol = 'S';
                         case 7 -> cellSymbol = 'T';
                         case 8 -> cellSymbol = 'X';
@@ -248,9 +304,9 @@ public class SudehAvatar extends SuperAvatar {
             writer.write("------------------\n");
             writer.write("1 -> B:\tBAR\n");
             writer.write("2 -> A:\tAVATAR\n");
-            writer.write("3 -> /:\tDANCEFLOOR\n");
+            writer.write("3 -> D:\tDANCEFLOOR\n");
             writer.write("4 ->  :\tEMPTY\n");
-            writer.write("5 -> D:\tDJBOOTH\n");
+            writer.write("5 -> J:\tDJBOOTH\n");
             writer.write("6 -> S:\tSEATS\n");
             writer.write("7 -> T:\tTOILET\n");
             writer.write("8 -> X:\tOBSTACLE\n");
