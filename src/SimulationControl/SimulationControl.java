@@ -53,11 +53,33 @@ public class SimulationControl {
 
         // SuperAvatar paola1 = new PaolaAvatar(nextAvatarID++, perceptionRange, (new Color(255, 0, 0)));
 
-        // avatars.add(paola1);
+        Color color = Color.orange;
+        Color color2 = Color.BLUE;
+        Color color3 = Color.RED;
 
-        // avatars.add(sudeh1);
-        //avatars.add(sudeh2);
-        
+        SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
+        SuperAvatar Nasser1 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
+        SuperAvatar Nasser2 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
+        SuperAvatar Nasser3 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
+        SuperAvatar Nasser4 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
+        SuperAvatar Nasser5 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
+
+       // avatars.add(Nasser);
+        //avatars.add(Nasser1);
+
+        for(int i=0;i<2;i++){
+            avatars.add(new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN));
+        }
+
+    
+
+        SuperAvatar Tom = new TomAvatar(nextAvatarID++, perceptionRange, Color.BLUE);
+        SuperAvatar Tom1 = new TomAvatar(nextAvatarID++, perceptionRange, Color.BLUE);
+     
+
+        //avatars.add(Tom);
+        //avatars.add(Tom1);
+    
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
