@@ -11,12 +11,12 @@ import java.util.Arrays;
 public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 
 	// Basic Needs
-	int needToDance =   3000;
+	int needToDance =   4700;
 	int needToPee =    	6000;
-	int needToRest = 	1500;
-	int needToTalk =   	2500;
-	int needToMusic =  	9000; // implement needToMusic 
-	int needToDrink =   4000; // implement needToDrink 
+	int needToRest = 	5000;
+	int needToTalk =   	4500;
+	int needToMusic =  	5200; // implement needToMusic 
+	int needToDrink =   4200; // implement needToDrink 
 
 	int[] needsInOrder = { needToDance, needToPee, needToRest, needToTalk, needToMusic, needToDrink };
 	SpaceType ObjectNeeded = null;
@@ -158,24 +158,25 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 	void refreshNeeds(SpaceType objectDone) {
 
 		if (objectDone == SpaceType.AVATAR) {
-			needToTalk += 300; // need to talk gets less
+			needToTalk+=50; // need to talk gets less
 			System.out.println("------------------------------------ Avatar talked");
 		}
 		if (objectDone == SpaceType.TOILET) {
-			needToPee = 5000; // need to pee gets less
+			needToPee+=300; // need to pee gets less
 		}
 		if (objectDone == SpaceType.SEATS) {
-			needToRest += 1250; // need to rest gets less
+			needToRest+=3; // need to rest gets less
 		}
 		if (objectDone == SpaceType.DANCEFLOOR) {
-			needToDance += 80; // need to dance gets less
+			needToDance+=3; // need to dance gets less
+			needToRest-=5;
 		}
 		if (objectDone == SpaceType.BAR) {
-			needToDrink += 90; // need to Drink gets less
+			needToDrink+=3; // need to Drink gets less
 			needToPee -= 10;
 		}
 		if (objectDone == SpaceType.DJBOOTH) {
-			needToMusic += 180; // need to make Music gets less
+			needToMusic+=3; // need to make Music gets less
 		}
 		if (needToDance < 0) {
 			needToDance = 0;
@@ -195,12 +196,12 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		if (needToMusic < 0) {
 			needToMusic = 0;
 		}
-		needToDance -= 5;
-		needToPee -= 22;
-		needToRest -= 3;
-		needToTalk -= 1;
-		needToMusic -= 3;
-		needToDrink -= 10;
+		needToDance--;
+		needToPee--;
+		needToRest--;
+		needToTalk--;
+		needToMusic--;
+		needToDrink--;
 	}
 
 	public void memory(ArrayList<SpaceInfo> spacesInRange) {
@@ -225,8 +226,8 @@ public class IvenAvatar extends SuperAvatar { // implements AvatarInterface
 		if (orientate < 5){	
 			switch(orientate) {
 				case 0: findCoords = new Coordinate(2, 2); break;
-				case 1: findCoords = new Coordinate(36,17); break;
-				case 2: findCoords = new Coordinate(3,17); break;
+				case 1: findCoords = new Coordinate(3,17); break;
+				case 2: findCoords = new Coordinate(36,17); break;
 				case 3: findCoords = new Coordinate(36,2); break;
 				case 4: findCoords = new Coordinate(17,3); break;
 			} 
