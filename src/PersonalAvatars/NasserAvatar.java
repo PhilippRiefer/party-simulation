@@ -380,6 +380,7 @@ public class NasserAvatar extends SuperAvatar {
         int currentPhase = 0; // Richtung ist geradeaus
         // wenn plan1 = 0 ist dann findet erstmal die Rekonstruktion der Karte statt
         if (plan1 == 0) {
+          
             // Avatar geht zuerst ganz nach oben und dann ganz nach links
             if ("OBSTACLE".equals(String.valueOf(top.getType())) && count == 0) {
                 currentPhase = 3;
