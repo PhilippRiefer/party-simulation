@@ -35,7 +35,6 @@ public class SimulationControl {
 
         for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
             try {
-                
                 Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255), 255);
                 SuperAvatar avatar = personalAvatarClass.getDeclaredConstructor(int.class, int.class, Color.class)
                         .newInstance(nextAvatarID++, perceptionRange, color);
@@ -47,12 +46,23 @@ public class SimulationControl {
                 e.printStackTrace();
             }
         }
+        // Explicitly instantiate the avatars
+        // SuperAvatar sudeh1 = new SudehAvatar(nextAvatarID++, perceptionRange, (new Color(0, 77, 64)));
+        // //SuperAvatar sudeh2 = new SudehAvatar(nextAvatarID++, perceptionRange, (new Color(10, 77, 64)));
+
+        // SuperAvatar paola1 = new PaolaAvatar(nextAvatarID++, perceptionRange, (new Color(255, 0, 0)));
+
+        // avatars.add(paola1);
+
+        // avatars.add(sudeh1);
+        //avatars.add(sudeh2);
+        
 
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
         }
     }
-
+    
     public static void wait(int ms) {
         try {
             Thread.sleep(ms);
@@ -74,8 +84,8 @@ public class SimulationControl {
                 Direction dir = avatar.yourTurn(si);
                 boolean hasMoved = environment.moveAvatar(avatar.getAvatarID(), dir, avatar.getAvatarColor());
                 avatar.setHasMoved(hasMoved);
-                //System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
-                wait(1);
+                System.out.println("Avatar" + avatar.getAvatarID() + " has moved = " + hasMoved);
+                wait(10);
             } catch (Exception e) {
                 System.err.println("Error processing avatar " + avatar.getAvatarID() + ": " + e.getMessage());
                 e.printStackTrace();
