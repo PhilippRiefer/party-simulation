@@ -3,36 +3,43 @@ package PersonalAvatars;
 import AvatarInterface.SuperAvatar;
 import Environment.*;
 import java.awt.Color;
-import java.net.CookieManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
+/**
+ * Paola's avatar
+ */
 public class PaolaAvatar extends SuperAvatar {
 
+    // Constants for energy levels
     final private int ENERGY_MAX = 2400;
     final private int ENERGY_LOW_WARNING = 50;
     final private int ENERGY_MIN = 0;
     final private int ENERGY_LOSS_PER_TURN = 1;
     final private int ENERGY_INCREMENT_PER_TURN_IN_BAR = 500;
 
+    // Constants for bladder levels
     final private int FULL_BLADDER = 2000;
     final private int BLADDER_HIGH_WARNING = 900;
     final private int EMPTY_BLADDER = 0;
     final private int BLADDER_FILL_PER_TURN = 10;
     final private int BLADDER_EMPTYING_PER_TURN_IN_TOILET = 200;
 
+    // Constants for social interaction levels
     final private int SOCIAL_MAX = 1000;
     final private int SOCIAL_MIN = 0;
     final private int SOCIAL_INCREASE_PER_TURN = 10;
 
+    // Constants for fun levels
     final private int FUN_MAX = 1000;
     final private int FUN_MIN = 0;
     final private int FUN_DECREMENT_PER_TURN = 10;
     final private int FUN_INCREMENT_PER_TURN_IN_DANCEFLOOR_OR_DJBOOTH = 5;
 
+    // Grid dimensions
     final private int ROWS = 20;
     final private int COLUMNS = 40;
 
@@ -49,6 +56,9 @@ public class PaolaAvatar extends SuperAvatar {
     private Plan plan;
     private boolean internalMapHasAllElements = false;
 
+    /**
+     * Inner class representing the plan of the avatar
+     */
     private class Plan {
         private SpaceType target;
         private Queue<Coordinate> queue = new LinkedList<>();
@@ -71,6 +81,9 @@ public class PaolaAvatar extends SuperAvatar {
             }
         }
 
+        /**
+         * Calculates the route to the target using BFS
+         */
         void calculateRoute() {
             for (int i = 0; i < ROWS; i++) {
                 for (int j = 0; j < COLUMNS; j++) {
@@ -98,6 +111,10 @@ public class PaolaAvatar extends SuperAvatar {
             }
         }
 
+        /**
+         * Calculates the route to the given target coordinate using BFS
+         * @param targetCoordinate the target coordinate to reach
+         */
         private void calculateRoute(Coordinate targetCoordinate) {
             reachedEnd = false;
             for (int i = 0; i < ROWS; i++) {
@@ -123,6 +140,11 @@ public class PaolaAvatar extends SuperAvatar {
             }
         }
 
+        /**
+         * Reconstructs the route from the start coordinate to the end coordinate
+         * @param startCoordinate the start coordinate
+         * @param endCoordinate the end coordinate
+         */
         private void reconstructRoute(Coordinate startCoordinate, Coordinate endCoordinate) {
             route.add(endCoordinate);
             Coordinate at = prev[endCoordinate.getY()][endCoordinate.getX()];
@@ -133,6 +155,10 @@ public class PaolaAvatar extends SuperAvatar {
             Collections.reverse(route);
         }
 
+        /**
+         * Explores the neighboring coordinates of the given coordinate
+         * @param coordinate the coordinate to explore neighbors of
+         */
         private void exploreNeighbors(Coordinate coordinate) {
             for (int i = 0; i < 4; i++) {
                 int neighboringRow = coordinate.getY() + directionEastWest[i];
@@ -155,6 +181,11 @@ public class PaolaAvatar extends SuperAvatar {
             }
         }
 
+        /**
+         * Checks if the given coordinate is adjacent to the current location
+         * @param coordinateToExploreLater the coordinate to check
+         * @return true if the coordinate is adjacent, false otherwise
+         */
         private boolean coordinateIsAdjacentToCurrentLocation(Coordinate coordinateToExploreLater) {
             for (int i = 0; i < 4; i++) {
                 int neighboringRow = coordinateToExploreLater.getY() + directionEastWest[i];
@@ -167,22 +198,37 @@ public class PaolaAvatar extends SuperAvatar {
             return false;
         }
 
+        /**
+         * Makes an assumption about the target's location if the map is incomplete
+         * @return the assumed target coordinate
+         */
         private Coordinate makeAssumption() {
             if (asumptionHasBeenMade) {
                 return targetCoordinate;
             }
-
+            
             int ranX;
             int ranY;
-
-            ranX = 1 + (int) (Math.random() * (COLUMNS - 2));
-            ranY = 1 + (int) (Math.random() * (ROWS - 2));
-
+            
+            if (target == SpaceType.TOILET) {
+                int startX = (int) (COLUMNS * 0.75); // Start at 75% of the grid width
+                int startY = (int) (ROWS * 0.75); // Start at 75% of the grid height
+                ranX = startX + (int) (Math.random() * (COLUMNS - startX - 2)); // between startX and COLUMNS - 1
+                ranY = startY + (int) (Math.random() * (ROWS - startY - 2)); // between startY and ROWS - 1
+            } else {
+                ranX = 1 + (int) (Math.random() * (COLUMNS - 2)); // between 1 and COLUMNS - 1
+                ranY = 1 + (int) (Math.random() * (ROWS - 2)); // between 1 and ROWS - 1
+            }
+            
             targetCoordinate = new Coordinate(ranX, ranY);
             asumptionHasBeenMade = true;
             return targetCoordinate;
         }
 
+        /**
+         * Gets the next milestone on the route to the target
+         * @return the next milestone coordinate
+         */
         Coordinate nextMilestone() {
             route.clear();
             if (!internalMapHasAllElements) {
@@ -208,6 +254,13 @@ public class PaolaAvatar extends SuperAvatar {
         }
     }
 
+    /**
+     * Constructs a PaolaAvatar object with the specified ID and perception range.
+     *
+     * @param id              the ID of the avatar
+     * @param perceptionRange the perception range of the avatar
+     * @param color           the color of the avatar
+     */
     public PaolaAvatar(int id, int perceptionRange, Color color) {
         super(id, perceptionRange, Color.decode("#8b1a93"));
         Random random = new Random();
@@ -217,6 +270,13 @@ public class PaolaAvatar extends SuperAvatar {
         fun = random.nextInt(FUN_MIN, FUN_MAX);
     }
 
+    /**
+     * Determines the direction for the avatar's next turn based on the spaces within its perception range.
+     * This method can be overridden to implement a more sophisticated strategy.
+     *
+     * @param spacesInRange the list of spaces within the avatar's perception range
+     * @return the direction for the avatar's next turn
+     */
     @Override
     public Direction yourTurn(ArrayList<SpaceInfo> spacesInRange) {
         currentAvatarLocation = calculateCurrentLocation(spacesInRange.get(1));
@@ -246,12 +306,15 @@ public class PaolaAvatar extends SuperAvatar {
             chooseAGoal();
         }
 
-        System.out.println("Internal map");
-        printMap(internalMap);
-        System.out.println();
+        // System.out.println("Internal map");
+        // printMap(internalMap);
+        // System.out.println();
         return randomDirection();
     }
 
+    /**
+     * Updates the avatar's needs based on its current location
+     */
     private void updateNeeds() {
         if (internalMap[currentAvatarLocation.getY()][currentAvatarLocation.getX()] != null) {
             switch (internalMap[currentAvatarLocation.getY()][currentAvatarLocation.getX()]) {
@@ -263,6 +326,7 @@ public class PaolaAvatar extends SuperAvatar {
                     fun = FUN_MAX;
                     break;
                 case BAR:
+                case SEATS:
                     energy = ENERGY_MAX;
                     break;
                 default:
@@ -278,26 +342,32 @@ public class PaolaAvatar extends SuperAvatar {
         }
     }
 
+    /**
+     * Updates the avatar's color based on its current needs
+     */
     private void updateColorBasedOnNeeds() {
-        if (bladder >= BLADDER_HIGH_WARNING) {
-            this.color = Color.decode("#89A203");
+        if (bladder >= BLADDER_HIGH_WARNING && energy <= ENERGY_LOW_WARNING) {
+            this.color = Color.decode("#7a5901"); // ugly brown
         } else if (energy <= ENERGY_LOW_WARNING) {
             this.color = Color.RED;
+        } else if (bladder >= BLADDER_HIGH_WARNING) {
+            this.color = Color.decode("#89A203"); // ugly green
         } else {
             this.color = Color.decode("#8b1a93"); // Default color
         }
     }
 
+    /**
+     * Chooses a goal based on the avatar's current needs
+     */
     private void chooseAGoal() {
         int funWeight = FUN_MAX - fun;
-        int seatWeight = FUN_MAX / 2;
-        int barWeight = (ENERGY_MAX - energy) / 2;
-        int toiletWeight = bladder;
-
-        int totalWeight = funWeight + seatWeight + barWeight + toiletWeight;
-
+        int barWeight = (ENERGY_MAX - energy) / 8;
+    
+        int totalWeight = funWeight + barWeight;
+    
         int randomWeight = (int) (Math.random() * totalWeight);
-
+    
         if (randomWeight < funWeight) {
             plan = new Plan();
             if (Math.random() < 0.5) {
@@ -305,24 +375,33 @@ public class PaolaAvatar extends SuperAvatar {
             } else {
                 plan.target = SpaceType.DJBOOTH;
             }
-        } else if (randomWeight < funWeight + seatWeight) {
+        } else {
             plan = new Plan();
-            plan.target = SpaceType.SEATS;
-        } 
-        // else if (randomWeight < funWeight + seatWeight + barWeight) {
-        //     plan = new Plan();
-        //     plan.target = SpaceType.BAR;
-        // } else {
-        //     plan = new Plan();
-        //     plan.target = SpaceType.TOILET;
-        // }
+            if (Math.random() < 0.5) {
+                plan.target = SpaceType.SEATS;
+            } else {
+                plan.target = SpaceType.BAR;
+            }
+            
+        }
     }
 
+    /**
+     * Calculates the current location of the avatar based on the given space info
+     * @param spaceInfo the space info relative to the avatar
+     * @return the current location of the avatar
+     */
     private Coordinate calculateCurrentLocation(SpaceInfo spaceInfo) {
         Coordinate leftToAvatar = spaceInfo.getRelativeToAvatarCoordinate();
         return new Coordinate(leftToAvatar.getX() + 1, leftToAvatar.getY());
     }
 
+    /**
+     * Calculates the direction to move from the current location to the next milestone
+     * @param nextMilestone the next milestone coordinate
+     * @param currentAvatarCoordinate the current avatar coordinate
+     * @return the direction to move
+     */
     private Direction calculateDirection(Coordinate nextMilestone, Coordinate currentAvatarCoordinate) {
         Coordinate directionCoordinate = currentAvatarCoordinate.subtract(nextMilestone);
 
@@ -331,14 +410,14 @@ public class PaolaAvatar extends SuperAvatar {
         if (directionCoordinate.equals(new Coordinate(0, 1))) return Direction.UP;
         if (directionCoordinate.equals(new Coordinate(0, -1))) return Direction.DOWN;
 
-        return Direction.STAY;
+        return randomDirection();
     }
 
+    /**
+     * Updates the internal map with the spaces in range
+     * @param spacesInRange the list of spaces within the avatar's perception range
+     */
     private void updateInternalMap(ArrayList<SpaceInfo> spacesInRange) {
-        updateMap(spacesInRange);
-    }
-
-    private void updateMap(ArrayList<SpaceInfo> spacesInRange) {
         for (SpaceInfo space : spacesInRange) {
             SpaceType spaceType = space.getType();
             Coordinate spaceCoordinate = space.getRelativeToAvatarCoordinate();
@@ -350,6 +429,9 @@ public class PaolaAvatar extends SuperAvatar {
         }
     }
 
+    /**
+     * Checks if the internal map is complete
+     */
     private void checkIfMapComplete() {
         for (int i = 0; i < internalMap.length; i++) {
             for (int j = 0; j < internalMap[i].length; j++) {
@@ -362,6 +444,9 @@ public class PaolaAvatar extends SuperAvatar {
         internalMapIsComplete = true;
     }
 
+    /**
+     * Checks if the internal map has all required elements (TOILET, DANCEFLOOR, DJBOOTH, BAR, SEATS)
+     */
     private void checkIfMapHasAllElements() {
         boolean hasToilet = false;
         boolean hasDancefloor = false;
@@ -394,6 +479,10 @@ public class PaolaAvatar extends SuperAvatar {
         }
     }
 
+    /**
+     * Generates a random direction for the avatar to move
+     * @return a random direction
+     */
     private Direction randomDirection() {
         int directionNumber = (int) (Math.random() * 4);
 
@@ -411,16 +500,29 @@ public class PaolaAvatar extends SuperAvatar {
         }
     }
 
+    /**
+     * Returns the perception range of the avatar
+     * @return the perception range
+     */
     @Override
     public int getPerceptionRange() {
         return super.getPerceptionRange();
     }
 
+    /**
+     * Sets the perception range of the avatar
+     * @param perceptionRange the perception range to set
+     */
     @Override
     public void setPerceptionRange(int perceptionRange) {
         super.setPerceptionRange(perceptionRange);
     }
 
+    /**
+     * Prints the internal map
+     * @param <T> the type of the map
+     * @param map the map to print
+     */
     public <T> void printMap(T[][] map) {
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
@@ -428,5 +530,8 @@ public class PaolaAvatar extends SuperAvatar {
             }
             System.out.println();
         }
-    }
+    }   
+    
 }
+
+
