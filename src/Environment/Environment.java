@@ -123,11 +123,49 @@ public class Environment {
             setSpaceType(x, 0, SpaceType.OBSTACLE);
             setSpaceType(x, 19, SpaceType.OBSTACLE);
         }
+        for(int x = 24; x < 30; ++x){
+            view.paintComponent(x, 2, Color.GRAY);
+            view.paintComponent(x, 3, Color.GRAY);
+            view.paintComponent(x, 4, Color.GRAY);
+            view.paintComponent(x, 5, Color.GRAY);
+            view.paintComponent(x, 6, Color.GRAY);
+            view.paintComponent(x, 7, Color.GRAY);
+            view.paintComponent(x, 8, Color.GRAY);
+            setSpaceType(x, 2, SpaceType.OBSTACLE);
+            setSpaceType(x, 3, SpaceType.OBSTACLE);
+            setSpaceType(x, 4, SpaceType.OBSTACLE);
+            setSpaceType(x, 5, SpaceType.OBSTACLE);
+            setSpaceType(x, 6, SpaceType.OBSTACLE);
+            setSpaceType(x, 7, SpaceType.OBSTACLE);
+            setSpaceType(x, 8, SpaceType.OBSTACLE);
+        }
+        for(int x = 0; x < 40; ++x){
+            view.paintComponent(x, 10, Color.GRAY);
+            setSpaceType(x, 10, SpaceType.OBSTACLE);
+        }
+        for(int x = 3; x < 12; ++x){
+            view.paintComponent(x, 13, Color.GRAY);
+            setSpaceType(x, 13, SpaceType.OBSTACLE);
+        }
         for(int y = 1; y < 19; ++y){
             view.paintComponent(0, y, Color.GRAY);
             view.paintComponent(39, y, Color.GRAY);
             setSpaceType(0, y, SpaceType.OBSTACLE);
             setSpaceType(39, y, SpaceType.OBSTACLE);
+        }
+        for(int y = 2; y < 8; ++y){
+            view.paintComponent(24, y, Color.GRAY);
+            view.paintComponent(29, y, Color.GRAY);
+            setSpaceType(24, y, SpaceType.OBSTACLE);
+            setSpaceType(29, y, SpaceType.OBSTACLE);
+        }
+        for(int y = 13; y < 19; ++y){
+            view.paintComponent(31, y, Color.GRAY);
+            setSpaceType(31, y, SpaceType.OBSTACLE);
+        }
+        for(int y = 14; y < 19; ++y){
+            view.paintComponent(11, y, Color.GRAY);
+            setSpaceType(11, y, SpaceType.OBSTACLE);
         }
     }
     /**

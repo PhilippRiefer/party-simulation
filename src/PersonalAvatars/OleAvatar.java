@@ -316,7 +316,7 @@ public class OleAvatar extends SuperAvatar {
         }
         // output of the saved map as console output and as txt file
         // printForConsole();
-         createTxtFile();
+         //createTxtFile();
     }
 
     // Output of the saved map as
