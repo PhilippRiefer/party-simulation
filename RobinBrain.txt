@@ -1,13 +1,13 @@
-Cycles: 3190
+Cycles: 2130
 State: FILL_NEED
 Didn't try to move.
 Path unknown.
 Needs:
-	BAR:	58
-	DANCEFLOOR:	89
-	SEATS:	93
-	TOILET:	93
-Focussing on TOILET
+	BAR:	88
+	DANCEFLOOR:	54
+	SEATS:	95
+	TOILET:	89
+Focussing on BAR
 Moved as planed.
 Space Types:
                                                                                  
@@ -23,28 +23,28 @@ Space Types:
                                                                                  
                                                                                  
                                                                                  
+                             OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO            
+                             O             JJJJJJJ              S   O            
+                             O             JJJJJJJ          S       O            
+                             O                                S   S O            
+                             O            DDDDDDDDD                 O            
+                             O            DDDDDDDDD                 O            
+                             O            DDDDDDDDD                 O            
+                             OBB          DDDDDDDDD               BBO            
+                             OBB          DDDDDDDDD               BBO            
+                             OBB          DDDDDDDDD               BBO            
+                             OBB          DDDDDDDDD               BBO            
+                             OBB          DDDDDDDDD               BBO            
+                             OBB          DDDDDDDDD               BBO            
+                             O                                      O            
+                             O                                      O            
+                             O  S                                   O            
+                             O    S                                 O            
+                             O S                                TTTTO            
+                             OS                                 TTTTO            
+                             OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO            
                                                                                  
                                                                                  
-                       OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO                  
-                       O             JJJJJJJ               S  O                  
-                       O             JJJJJJJ          S       O                  
-                       O                                    S O                  
-                       O            DDDD DDDD               S O                  
-                       O            DDDDDDDDD                 O                  
-                       O            DDDDDDDDD                 O                  
-                       OBB          DDDDDDDDD               BBO                  
-                       OBB          DDDDDDDDD               BBO                  
-                       OBB          DDDDDDDDD               BBO                  
-                       OBB          DDDDDDDDD               BBO                  
-                       OBB          DDDDDDDDD               BBO                  
-                       OBB          DDDDDDDDD               BBO                  
-                       O                                      O                  
-                       O                                      O                  
-                       O  S                                   O                  
-                       O   S                                  O                  
-                       O  S                               TTTTO                  
-                       OS                                 TTTTO                  
-                       OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO                  
                                                                                  
                                                                                  
                                                                                  
@@ -65,28 +65,28 @@ Personal Field Types:
                                                                                  
                                                                                  
                                                                                  
+                             OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO            
                                                                                  
                                                                                  
-                       OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO                  
-                       OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO                  
                                                                                  
                                                                                  
                                                                                  

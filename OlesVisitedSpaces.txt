@@ -1,29 +1,29 @@
 +=============================================================================+
 							Map saved in Ole's head:
 -------------------------------------------------------------------------------
- Option 2: Search the Bar and get a drink.
- The avatar has moved 3191 times and drank 21 drinks.
+ Option 1: Imitate a police officer and interrogate conspicuous avatars.
+ The avatar has moved 2131 times and interrogated 66 suspects.
 +=============================================================================+
-. . . . X X X X X X X X X X X X X X X X X X X X . . X X X X X X X . . . . . . . 
-. .                         D D D D D D D                             . . .   . 
-.                           D D D D D D D         A         A S               X 
-. .                                                                       S   X 
-. . . .                   F F F F F F F F F                               S   X 
-. . . .                   F F F F F F F F F                                   X 
-. . . .                   F F F F F F F F F A                                 X 
-. . . .                   F F F F F F F F F                               B B X 
-. . .                     F F F F F F F F F                               B B X 
-. . .                     F F F F F F F F F                               B B X 
-. . .                     A F F F F A F F F                               B B X 
-. . . .                   F F F F F F F F F                               B B X 
-. . . .                   F F F F F F F F F                               B B X 
-. . . .                                 .                                     X 
-. . .                                   .                                     X 
-. . . .                               . .                                     X 
-. . . . .                             . .                                     X 
-. . . . .                     . .   . .                               T T T T X 
-. . . . . .                 . . . . . .                               T T T T X 
-. . . . . . . . X X X X . . . . . . . . . X X X X . X X X X X X X X X X X X X . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . .   . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . F F F . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . F F F F . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . F F F F F F F . .   . . . . . . . . . . . . . . . . . 
+. . B   . .   . . . . .   F F F F F F F F F     . . . . . . . . . . . . . . . . 
+. B B             .       F F F F F F F F F     .   . . . . . . . . . . . . . . 
+. B B                     F F F F F F F F F           . . . . . . . . . . . . . 
+X B B                     F F F F F F F F F         A   . . . . . . . . . . . . 
+X B B                     F F F F F F F F F         A   . . . . . . . . . . . . 
+X B B                     F F F F F F F F F               . . . . . . . . . . . 
+X                                                         . .   . . . . . . . . 
+X                                                                   . . . . . . 
+X     S                                                               . . . . . 
+X         S                                                           . . . . . 
+X   S                                             A                 . . . . . . 
+X S                                                               . . . . . . . 
+. X X X X X X X X X X X X X X X X X X X X X X X X X X X X . X X . . . . . . . . 
 +=============================================================================+
 
 	  Legend
