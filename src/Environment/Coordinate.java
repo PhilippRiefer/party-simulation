@@ -66,6 +66,24 @@ public class Coordinate {
         Coordinate that = (Coordinate) obj;
         return x == that.x && y == that.y;
     }
+    
+    /**
+     * Subtracts the x and y values of another Coordinate object from this Coordinate object.
+     * @param that The Coordinate object to subtract from this Coordinate.
+     * @return A new Coordinate object with the result of the subtraction.
+     */
+    public Coordinate subtract(Coordinate that){
+        return new Coordinate(this.x - that.x, this.y-that.y);
+    }
+
+    /**
+     * Adds the x and y values of another Coordinate object to this Coordinate object.
+     * @param that The Coordinate object to subtract from this Coordinate.
+     * @return A new Coordinate object with the result of the subtraction.
+     */
+    public Coordinate add(Coordinate that){
+        return new Coordinate(this.x + that.x, this.y+that.y);
+    }
 
     /**
      * Returns a hash code for this coordinate.
@@ -86,5 +104,9 @@ public class Coordinate {
 
     public void setX(int x) {
         this.x = x;
+    }
+
+    public String toString(){
+        return "("+ this.getX() + "," + this.getY() + ")";
     }
 }

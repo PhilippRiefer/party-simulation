@@ -234,6 +234,7 @@ public class Environment {
 
             // Erase the avatar from the old position
             try {
+                model.setSpace(new Coordinate(oldX, oldY), oldSpaceType);
                 if (oldSpaceType == SpaceType.EMPTY) {
                     model.setSpace(new Coordinate(oldX, oldY), SpaceType.EMPTY);
                 }
