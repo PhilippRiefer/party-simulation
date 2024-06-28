@@ -31,6 +31,7 @@ public class Environment {
         paintDancefloor();
         paintToilet();
         paintSeats();
+        //paintRandomAvatar();
         model.createBlueprint();
     }
 
@@ -56,6 +57,22 @@ public class Environment {
             view.paintComponent(randomX, randomY, new Color(255, 245, 157  ));
             
             setSpaceType(randomX, randomY, SpaceType.SEATS);
+        }
+    }
+
+    public void paintRandomAvatar(){
+        Random random = new Random();
+        for(int i = 0; i < 3; ++i){
+            int randomX = random.nextInt(3, 10);
+            int randomY = random.nextInt(2, 17);
+            view.paintComponent(randomX, randomY, new Color(174, 214, 241  ));
+            setSpaceType(randomX, randomY, SpaceType.AVATAR);
+
+            randomX = random.nextInt(23, 30);
+            randomY = random.nextInt(2, 17);
+            view.paintComponent(randomX, randomY, new Color(174, 214, 241  ));
+            
+            setSpaceType(randomX, randomY, SpaceType.AVATAR);
         }
     }
 
@@ -91,8 +108,12 @@ public class Environment {
     }
     public void paintToilet(){
         for(int x = 35; x <= 38; ++x){
-            view.paintComponent(x, 18, new Color(79, 195, 247));
-            setSpaceType(x, 18, SpaceType.TOILET);
+            for(int y = 17; y <= 18; ++y){
+            view.paintComponent(x,y, new Color(79, 195, 247));
+            setSpaceType(x, y, SpaceType.TOILET);
+
+            }
+            
         }
     }
     public void paintWall(){

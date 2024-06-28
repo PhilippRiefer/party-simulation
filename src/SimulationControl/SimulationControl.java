@@ -32,55 +32,30 @@ public class SimulationControl {
         environment = new Environment();
         System.out.println("environment created");
 
-        Reflections reflections = new Reflections("PersonalAvatars");
+        // Reflections reflections = new Reflections("PersonalAvatars");
 
-        for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
-            try {
-                Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255), 255);
-                SuperAvatar avatar = personalAvatarClass.getDeclaredConstructor(int.class, int.class, Color.class)
-                        .newInstance(nextAvatarID++, perceptionRange, color);
-                avatars.add(avatar);
-                String avatarName = avatar.getClass().getSimpleName().replace("Avatar", "");
-                System.out.println("Added " + avatarName + ": ID: " + avatar.getAvatarID() + ", Perception Range: "
-                        + avatar.getPerceptionRange() + ", Color: " + avatar.getAvatarColor());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        // for (Class<? extends SuperAvatar> personalAvatarClass : reflections.getSubTypesOf(SuperAvatar.class)) {
+        //     try {
+        //         Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255), 255);
+        //         SuperAvatar avatar = personalAvatarClass.getDeclaredConstructor(int.class, int.class, Color.class)
+        //                 .newInstance(nextAvatarID++, perceptionRange, color);
+        //         avatars.add(avatar);
+        //         String avatarName = avatar.getClass().getSimpleName().replace("Avatar", "");
+        //         System.out.println("Added " + avatarName + ": ID: " + avatar.getAvatarID() + ", Perception Range: "
+        //                 + avatar.getPerceptionRange() + ", Color: " + avatar.getAvatarColor());
+        //     } catch (Exception e) {
+        //         e.printStackTrace();
+        //     }
+        // }
+        int numberOfAvatars = 10;
+
+        for(int i = 0; i < numberOfAvatars; i++) {
+        //Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255));
+        SuperAvatar sudeh = new SudehAvatar(nextAvatarID++, perceptionRange, null);
+        avatars.add(sudeh);
         }
-        // Explicitly instantiate the avatars
-        // SuperAvatar sudeh1 = new SudehAvatar(nextAvatarID++, perceptionRange, (new Color(0, 77, 64)));
-        // //SuperAvatar sudeh2 = new SudehAvatar(nextAvatarID++, perceptionRange, (new Color(10, 77, 64)));
-
-        // SuperAvatar paola1 = new PaolaAvatar(nextAvatarID++, perceptionRange, (new Color(255, 0, 0)));
-
-        Color color = Color.orange;
-        Color color2 = Color.BLUE;
-        Color color3 = Color.RED;
-
-        SuperAvatar Nasser = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
-        SuperAvatar Nasser1 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
-        SuperAvatar Nasser2 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
-        SuperAvatar Nasser3 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
-        SuperAvatar Nasser4 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
-        SuperAvatar Nasser5 = new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN);
-
-       // avatars.add(Nasser);
-        //avatars.add(Nasser1);
-
-        for(int i=0;i<2;i++){
-            avatars.add(new NasserAvatar(nextAvatarID++, perceptionRange,Color.GREEN));
-        }
-
     
-
-        SuperAvatar Tom = new TomAvatar(nextAvatarID++, perceptionRange, Color.BLUE);
-        SuperAvatar Tom1 = new TomAvatar(nextAvatarID++, perceptionRange, Color.BLUE);
-     
-
-        //avatars.add(Tom);
-        //avatars.add(Tom1);
-    
-
+        
         for (SuperAvatar avatar : avatars) {
             environment.placeAvatar(avatar.getAvatarID());
         }

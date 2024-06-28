@@ -1,0 +1,96 @@
+Cycles: 2130
+State: FILL_NEED
+Didn't try to move.
+Path unknown.
+Needs:
+	BAR:	88
+	DANCEFLOOR:	54
+	SEATS:	95
+	TOILET:	89
+Focussing on BAR
+Moved as planed.
+Space Types:
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                             OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO            
+                             O             JJJJJJJ              S   O            
+                             O             JJJJJJJ          S       O            
+                             O                                S   S O            
+                             O            DDDDDDDDD                 O            
+                             O            DDDDDDDDD                 O            
+                             O            DDDDDDDDD                 O            
+                             OBB          DDDDDDDDD               BBO            
+                             OBB          DDDDDDDDD               BBO            
+                             OBB          DDDDDDDDD               BBO            
+                             OBB          DDDDDDDDD               BBO            
+                             OBB          DDDDDDDDD               BBO            
+                             OBB          DDDDDDDDD               BBO            
+                             O                                      O            
+                             O                                      O            
+                             O  S                                   O            
+                             O    S                                 O            
+                             O S                                TTTTO            
+                             OS                                 TTTTO            
+                             OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO            
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+Personal Field Types:
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                             OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWO            
+                             OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO            
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+Spaces blocked by Avatars: 

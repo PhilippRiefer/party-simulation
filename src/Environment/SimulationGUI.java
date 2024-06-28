@@ -204,6 +204,9 @@ public class SimulationGUI {
             case SEATS:
                 cellToRepaint.setBackground(new Color(255, 245, 157  ));
                 break;
+            case AVATAR:
+                cellToRepaint.setBackground(new Color(174, 214, 241   ));
+                break;
             default:
                 cellToRepaint.setBackground(Color.WHITE);
                 break;
