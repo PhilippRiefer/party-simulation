@@ -16,10 +16,18 @@ public class Main {
         // Scanner scanner = new Scanner(System.in);
         int perceptionRange = 1;
         System.out.println("Perception range is set to " + perceptionRange);
+
         
         SimulationControl simcontrol = new SimulationControl(perceptionRange);
         while(true){
-            simcontrol.loopThroughAvatars();    
+            simcontrol.loopThroughAvatars();
+            try {
+                // Make the program wait for one second (1000 milliseconds)
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                // Handle the exception if the sleep is interrupted
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-// package PersonalAvatars;
+package PersonalAvatars;
 
 import java.lang.Math;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class MaximSpockAvatar extends SuperAvatar {
+public class MaximKirkAvatar extends SuperAvatar {
     // wohin auslagern?
     final private int MAXSTAT = 200;
     final private int MINSTAT = 0;
@@ -23,6 +23,7 @@ public class MaximSpockAvatar extends SuperAvatar {
     final private int XCOORDINATEMAX = 40;
     final private int YCOORDINATEMAX = 20;
     // internal stats of Mr. Spock
+    int fun = MAXSTAT;
     int energy = MAXSTAT;
     int hydration = MAXSTAT;
     int bowelMovement = MINSTAT;
@@ -42,8 +43,8 @@ public class MaximSpockAvatar extends SuperAvatar {
     ArrayList<Direction> listOfDirections = new ArrayList<Direction>();
 
     // perception Range should be higher than of a human!
-    public MaximSpockAvatar(int id, int perceptionRange, Color color) {
-        super(id, perceptionRange, new Color(0, 73, 144));
+    public MaximKirkAvatar(int id, int perceptionRange, Color color) {
+        super(id, perceptionRange, new Color(205, 220, 57));
     }
 
     @Override
@@ -173,22 +174,6 @@ public class MaximSpockAvatar extends SuperAvatar {
         }
     }
 
-    void rewardsForArrivingAtObjective(SpaceType currentObjective){
-        switch (currentObjective) {
-            case SpaceType.TOILET:
-                bowelMovement = MINSTAT;
-                urination = MINSTAT;
-                break;
-            case SpaceType.BAR:
-                hydration = MAXSTAT;
-                break;
-            case SpaceType.SEATS:
-                energy = MAXSTAT;
-                break;
-            default:
-                break;
-        }  
-    } 
 
     public boolean checkIfNextStepOkay(Direction stepOfList, Coordinate personalCoordinates) {
         int x = personalCoordinates.getX();
@@ -324,19 +309,19 @@ public class MaximSpockAvatar extends SuperAvatar {
         return objectiveCoordinates;
     }
 
-//     Coordinate checkVicinityForObjective(SpaceType currentObjective, Coordinate personalCoordinates, int surrounding) {
-//         Coordinate objectiveCoordinates = new Coordinate(personalCoordinates.getX(), personalCoordinates.getY());
-//         int personalMinusSurroundingX = personalCoordinates.getX() - surrounding;
-//         int personalMinusSurroundingY = personalCoordinates.getY() - surrounding;
-//         int xAddition = 0;
-//         int yAddition = 0;
+    Coordinate checkVicinityForObjective(SpaceType currentObjective, Coordinate personalCoordinates, int surrounding) {
+        Coordinate objectiveCoordinates = new Coordinate(personalCoordinates.getX(), personalCoordinates.getY());
+        int personalMinusSurroundingX = personalCoordinates.getX() - surrounding;
+        int personalMinusSurroundingY = personalCoordinates.getY() - surrounding;
+        int xAddition = 0;
+        int yAddition = 0;
 
-//         //System.out.println("\t---StartOf checkVicinity()--- ");
-//         //System.out.println("personalMinusSurroundingX + xAddition: " + (personalMinusSurroundingX + xAddition));
-//         //System.out.println("personalMinusSurroundingY + yAddition: " + (personalMinusSurroundingY + yAddition));
+        System.out.println("\t---StartOf checkVicinity()--- ");
+        System.out.println("personalMinusSurroundingX + xAddition: " + (personalMinusSurroundingX + xAddition));
+        System.out.println("personalMinusSurroundingY + yAddition: " + (personalMinusSurroundingY + yAddition));
 
-//         //System.out.println("\t\t--start of for i++ -- ");
-//         for (xAddition = 0; xAddition < (surrounding * 2 + 1); xAddition++) {
+        System.out.println("\t\t--start of for i++ -- ");
+        for (xAddition = 0; xAddition < (surrounding * 2 + 1); xAddition++) {
 
             if ((personalMinusSurroundingX + xAddition) < XCOORDINATEMAX
                     && (personalMinusSurroundingX + xAddition) >= 0
@@ -404,11 +389,11 @@ public class MaximSpockAvatar extends SuperAvatar {
         return objectiveCoordinates;
     }
 
-//     void printfCheckVicinity(int xAddition, int yAddition, int personalMinusSurroundingX, int personalMinusSurroundingY){
-//         //System.out.println("What is in x == " +xAddition+" and y == " +yAddition+ ": " +  clubMemory[personalMinusSurroundingX + xAddition][personalMinusSurroundingY + yAddition]);
-//         //System.out.println("CoordinateX: " + (personalMinusSurroundingX + xAddition));
-//         //System.out.println("CoordinateY: " + (personalMinusSurroundingY + yAddition));
-//     }
+    void printfCheckVicinity(int xAddition, int yAddition, int personalMinusSurroundingX, int personalMinusSurroundingY){
+        System.out.println("What is in x == " +xAddition+" and y == " +yAddition+ ": " +  clubMemory[personalMinusSurroundingX + xAddition][personalMinusSurroundingY + yAddition]);
+        System.out.println("CoordinateX: " + (personalMinusSurroundingX + xAddition));
+        System.out.println("CoordinateY: " + (personalMinusSurroundingY + yAddition));
+    }
 
     // saves latest Information on Environment
     public void saveSpacesInRange(ArrayList<SpaceInfo> spacesInRange, Coordinate persCoordinate) {
@@ -429,7 +414,9 @@ public class MaximSpockAvatar extends SuperAvatar {
     public SpaceType decideNextMovement() {
         if (bowelMovement > (200 - THRESHOLD) || urination > (200 - THRESHOLD)) {
             return currentObjective = SpaceType.TOILET;
-        } else if (hydration < THRESHOLD) {
+        } else if (fun < THRESHOLD) {
+            return currentObjective = SpaceType.DANCEFLOOR;
+        }else if (hydration < THRESHOLD) {
             return currentObjective = SpaceType.BAR;
         } else if (energy < THRESHOLD) {
             return currentObjective = SpaceType.SEATS;
@@ -438,13 +425,34 @@ public class MaximSpockAvatar extends SuperAvatar {
         }
     }
 
-//     public void updateStats() {
-//         energy--;
-//         hydration--;
-//         bowelMovement++;
-//         urination++;
-//         countedTurns++;
-//     }
+    void rewardsForArrivingAtObjective(SpaceType currentObjective){
+        switch (currentObjective) {
+            case SpaceType.DANCEFLOOR:
+                fun = fun + 20;
+                break;
+            case SpaceType.TOILET:
+                bowelMovement = MINSTAT;
+                urination = MINSTAT;
+                break;
+            case SpaceType.BAR:
+                hydration = MAXSTAT;
+                break;
+            case SpaceType.SEATS:
+                energy = MAXSTAT;
+                break;
+            default:
+                break;
+        }  
+    } 
+
+    public void updateStats() {
+        fun--;
+        energy--;
+        hydration--;
+        bowelMovement++;
+        urination++;
+        countedTurns++;
+    }
 
     @Override
     public int getPerceptionRange() {
