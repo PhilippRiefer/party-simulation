@@ -69,7 +69,7 @@ public class SimulationControl {
        // avatars.add(Nasser);
         //avatars.add(Nasser1);
 
-         for(int i=0;i<=50;i++){
+         for(int i=0;i<=100;i++){
             avatars.add(new NasserAvatar(nextAvatarID++, perceptionRange,Color.BLUE));
         }
 
