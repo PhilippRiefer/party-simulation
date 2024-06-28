@@ -427,17 +427,17 @@ public class MaximKirkAvatar extends SuperAvatar {
 
     void rewardsForArrivingAtObjective(SpaceType currentObjective){
         switch (currentObjective) {
-            case SpaceType.DANCEFLOOR:
+            case DANCEFLOOR:
                 fun = fun + 20;
                 break;
-            case SpaceType.TOILET:
+            case TOILET:
                 bowelMovement = MINSTAT;
                 urination = MINSTAT;
                 break;
-            case SpaceType.BAR:
+            case BAR:
                 hydration = MAXSTAT;
                 break;
-            case SpaceType.SEATS:
+            case SEATS:
                 energy = MAXSTAT;
                 break;
             default:

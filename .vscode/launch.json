@@ -6,7 +6,7 @@
             "name": "Main",
             "request": "launch",
             "mainClass": "Avatar_Interface/SimulationControl.Main",
-            "projectName": "party-simulation_d0df07cd"
+            "projectName": "party-simulation_b76596eb"
         },
         {
             "type": "java",

@@ -1,4 +1,4 @@
-// package PersonalAvatars;
+package PersonalAvatars;
 
 import java.lang.Math;
 import java.util.ArrayList;
@@ -173,22 +173,6 @@ public class MaximSpockAvatar extends SuperAvatar {
         }
     }
 
-    void rewardsForArrivingAtObjective(SpaceType currentObjective){
-        switch (currentObjective) {
-            case SpaceType.TOILET:
-                bowelMovement = MINSTAT;
-                urination = MINSTAT;
-                break;
-            case SpaceType.BAR:
-                hydration = MAXSTAT;
-                break;
-            case SpaceType.SEATS:
-                energy = MAXSTAT;
-                break;
-            default:
-                break;
-        }  
-    } 
 
     public boolean checkIfNextStepOkay(Direction stepOfList, Coordinate personalCoordinates) {
         int x = personalCoordinates.getX();
@@ -324,19 +308,19 @@ public class MaximSpockAvatar extends SuperAvatar {
         return objectiveCoordinates;
     }
 
-//     Coordinate checkVicinityForObjective(SpaceType currentObjective, Coordinate personalCoordinates, int surrounding) {
-//         Coordinate objectiveCoordinates = new Coordinate(personalCoordinates.getX(), personalCoordinates.getY());
-//         int personalMinusSurroundingX = personalCoordinates.getX() - surrounding;
-//         int personalMinusSurroundingY = personalCoordinates.getY() - surrounding;
-//         int xAddition = 0;
-//         int yAddition = 0;
+    Coordinate checkVicinityForObjective(SpaceType currentObjective, Coordinate personalCoordinates, int surrounding) {
+        Coordinate objectiveCoordinates = new Coordinate(personalCoordinates.getX(), personalCoordinates.getY());
+        int personalMinusSurroundingX = personalCoordinates.getX() - surrounding;
+        int personalMinusSurroundingY = personalCoordinates.getY() - surrounding;
+        int xAddition = 0;
+        int yAddition = 0;
 
-//         //System.out.println("\t---StartOf checkVicinity()--- ");
-//         //System.out.println("personalMinusSurroundingX + xAddition: " + (personalMinusSurroundingX + xAddition));
-//         //System.out.println("personalMinusSurroundingY + yAddition: " + (personalMinusSurroundingY + yAddition));
+        System.out.println("\t---StartOf checkVicinity()--- ");
+        System.out.println("personalMinusSurroundingX + xAddition: " + (personalMinusSurroundingX + xAddition));
+        System.out.println("personalMinusSurroundingY + yAddition: " + (personalMinusSurroundingY + yAddition));
 
-//         //System.out.println("\t\t--start of for i++ -- ");
-//         for (xAddition = 0; xAddition < (surrounding * 2 + 1); xAddition++) {
+        System.out.println("\t\t--start of for i++ -- ");
+        for (xAddition = 0; xAddition < (surrounding * 2 + 1); xAddition++) {
 
             if ((personalMinusSurroundingX + xAddition) < XCOORDINATEMAX
                     && (personalMinusSurroundingX + xAddition) >= 0
@@ -404,11 +388,11 @@ public class MaximSpockAvatar extends SuperAvatar {
         return objectiveCoordinates;
     }
 
-//     void printfCheckVicinity(int xAddition, int yAddition, int personalMinusSurroundingX, int personalMinusSurroundingY){
-//         //System.out.println("What is in x == " +xAddition+" and y == " +yAddition+ ": " +  clubMemory[personalMinusSurroundingX + xAddition][personalMinusSurroundingY + yAddition]);
-//         //System.out.println("CoordinateX: " + (personalMinusSurroundingX + xAddition));
-//         //System.out.println("CoordinateY: " + (personalMinusSurroundingY + yAddition));
-//     }
+    void printfCheckVicinity(int xAddition, int yAddition, int personalMinusSurroundingX, int personalMinusSurroundingY){
+        System.out.println("What is in x == " +xAddition+" and y == " +yAddition+ ": " +  clubMemory[personalMinusSurroundingX + xAddition][personalMinusSurroundingY + yAddition]);
+        System.out.println("CoordinateX: " + (personalMinusSurroundingX + xAddition));
+        System.out.println("CoordinateY: " + (personalMinusSurroundingY + yAddition));
+    }
 
     // saves latest Information on Environment
     public void saveSpacesInRange(ArrayList<SpaceInfo> spacesInRange, Coordinate persCoordinate) {
@@ -438,13 +422,30 @@ public class MaximSpockAvatar extends SuperAvatar {
         }
     }
 
-//     public void updateStats() {
-//         energy--;
-//         hydration--;
-//         bowelMovement++;
-//         urination++;
-//         countedTurns++;
-//     }
+    void rewardsForArrivingAtObjective(SpaceType currentObjective){
+        switch (currentObjective) {
+            case TOILET:
+                bowelMovement = MINSTAT;
+                urination = MINSTAT;
+                break;
+            case BAR:
+                hydration = MAXSTAT;
+                break;
+            case SEATS:
+                energy = MAXSTAT;
+                break;
+            default:
+                break;
+        }  
+    } 
+
+    public void updateStats() {
+        energy--;
+        hydration--;
+        bowelMovement++;
+        urination++;
+        countedTurns++;
+    }
 
     @Override
     public int getPerceptionRange() {
