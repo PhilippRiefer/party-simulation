@@ -315,7 +315,7 @@ public class TomAvatar extends SuperAvatar {
      * If an Avatar is hit again, it is moved to the next closest Avatar.
      */
     public Coordinate hitAvatarOnFoundCoordinate(ArrayList<SpaceInfo> spacesInRange, ArrayList<SpaceInfo> aimType, Direction myDirection, Coordinate foundCoordinate){
-        if(conflictDetected(spacesInRange, myDirection) == true){
+        if(conflictDetected(spacesInRange, myDirection) == true && moveInDirection(getMyPosition(spacesInRange), myDirection).equals(foundCoordinate)){
 
             myPosition = getMyPosition(spacesInRange);
             //Sort list by the closest foundCoordinate of the respective SpaceType
