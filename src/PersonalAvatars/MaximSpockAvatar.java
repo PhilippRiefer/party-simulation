@@ -17,7 +17,7 @@ import java.io.IOException;
 
 public class MaximSpockAvatar extends SuperAvatar {
     // wohin auslagern?
-    final private int MAXSTAT = 200;
+    final private int MAXSTAT = 400;
     final private int MINSTAT = 0;
     final private int THRESHOLD = 25;
     final private int XCOORDINATEMAX = 40;

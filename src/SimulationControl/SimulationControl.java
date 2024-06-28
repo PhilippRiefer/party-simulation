@@ -1,12 +1,9 @@
 package SimulationControl;
 
-import java.awt.Color;
-import java.util.ArrayList;
+import AvatarInterface.*;
 import Environment.*;
 import PersonalAvatars.*;
-import AvatarInterface.*;
-import java.util.Random;
-import org.reflections.Reflections;
+import java.util.ArrayList;
 
 /**
  * The SimulationControl class controls the simulation of avatars in an
@@ -36,12 +33,6 @@ public class SimulationControl {
         SuperAvatar Kirk = new MaximKirkAvatar(nextAvatarID++, perceptionRange, null);
         avatars.add(Spock);
         avatars.add(Kirk);
-
-        for(int i = 0; i < numberOfAvatars; i++) {
-        //Color color = new Color((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255));
-        SuperAvatar sudeh = new SudehAvatar(nextAvatarID++, perceptionRange, null);
-        avatars.add(sudeh);
-        }
     
         
         for (SuperAvatar avatar : avatars) {
