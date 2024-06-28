@@ -26,6 +26,7 @@ public class NasserAvatar extends SuperAvatar {
     private int count5 = 0;
     private int count7 = 3;
     private int count8 = 0;
+    private int count10=0;
     private int counttxt = 0;
     private int secondmiddleY;
     private int excludedNumber = 6;
@@ -379,14 +380,19 @@ public class NasserAvatar extends SuperAvatar {
 
         int currentPhase = 0; // Richtung ist geradeaus
         // wenn plan1 = 0 ist dann findet erstmal die Rekonstruktion der Karte statt
-        if (plan1 == 0) {
-          
+         if (plan1 == 0) {
+             count10++;
+            if(count10==80){
+                count=1;
+                count8++;
+                count10=0;
+            }
             // Avatar geht zuerst ganz nach oben und dann ganz nach links
             if ("OBSTACLE".equals(String.valueOf(top.getType())) && count == 0) {
                 currentPhase = 3;
                 count8++;
                 if ("OBSTACLE".equals(String.valueOf(left.getType()))) {
-                    count++;
+                    count=1;
                 }
             }
 
@@ -397,6 +403,7 @@ public class NasserAvatar extends SuperAvatar {
                 if ("OBSTACLE".equals(String.valueOf(right.getType()))) {
                     count = 2;
                     count1 = 0;
+                    count10=130;
                 }
             }
 
