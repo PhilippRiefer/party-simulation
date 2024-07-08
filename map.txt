@@ -1,20 +1,20 @@
-. . . O O O O O O O O O O O O . O O O O . . O O O . . . . . . . . . . . . . . . 
-. . . A A               A A A A A J J J A           A A A A . . . . . . . . . . 
-. . .     A A A A A A A     J J J J J J J             A   A . . . . . . . . . . 
-. . . . . . . .       . A A A A   A A                     A A . . . . . . . . . 
-. . . . . . . .       . . . . . . . . A A D     A . .       A A A A . . . . . . 
-. . . . . . . .       . . . . . . . . . . . . . . . .         A A A A A A . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . .   A A   A A A A A . . . 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         A A B B O 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . A A A B A O 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       B A O 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . B A O 
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . A B O 
-. A B               A     D D D D D D . . . . . . . . .     A A   A       B B O 
-O A A A A A                                                 A               A O 
-O   A S   A A               A A   A A                       A                 O 
-O       . . . . . . . . . . . . A     A A     A A A A A A A A . . . . .   A A . 
-O   A A A A A A   A . . . . . . .       A       . . . . . . . . . . .     A A O 
-O A S                 A         A   A           A       A               A A A O 
-O     S A                         A A A   A A A A A A A A A A A A A A A T A T O 
-. . . . . . . O O O O O O O O O O O O O . O O O O O O O O O O O O O O O O O O O 
+O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O . . . . . . . . . . 
+O                           J J J J J J J                                   A O 
+O                           J J J J J J J                                 S A O 
+O                                                             S S           A O 
+O A                       D D D D D D D D D                             S     O 
+O A                       D D D D D D D D D                                   O 
+O A                       D D D D D D D D D                                   O 
+O B B                     D D D D D D D D D                               B A O 
+O B B                     D D D D D D D D D                               B A O 
+O B B                     D D D D D D D D D                               B A O 
+O A B                     D D D D D D D D D                           A   B B O 
+O A B                     D D D D D D D D D                               B B O 
+O A B                     D D D D D D D D D                               B B O 
+O                                                                             O 
+O   S                                                                         O 
+O                                                                             O 
+O A                                                                           O 
+O   S                                                                         O 
+O S                                                                   T T T T O 
+O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O O 
